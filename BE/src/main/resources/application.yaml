@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: smart-hire
+  datasource:
+    url: jdbc:postgresql://localhost:5432/smartHire
+    username: postgres
+    password: omarqwer1
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
