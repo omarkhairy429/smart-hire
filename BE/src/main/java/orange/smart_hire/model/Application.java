@@ -1,37 +1,4 @@
 package orange.smart_hire.model;
 
-import jakarta.persistence.*;
-import orange.smart_hire.enums.ApplicationStage;
-import orange.smart_hire.enums.ApplicationStatus;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-@Entity
-@Table(name = "applications")
 public class Application {
-
-    @Id
-    @GeneratedValue
-    private UUID id;
-
-    private UUID postingId;
-
-    private UUID candidateId;
-
-    private String coverLetter;
-
-    private String experienceSummary;
-
-    private String resumeUrl;
-
-    @Enumerated(EnumType.STRING)
-    private ApplicationStage stage;
-
-    @Enumerated(EnumType.STRING)
-    private ApplicationStatus status;
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
 }
