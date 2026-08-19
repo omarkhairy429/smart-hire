@@ -1,18 +1,14 @@
-package orange.smart_hire.model;
+package orange.smart_hire.dto;
 
-import jakarta.persistence.*;
+import lombok.Data;
 import orange.smart_hire.enums.ApplicationStage;
 import orange.smart_hire.enums.ApplicationStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
-@Table(name = "applications")
-public class Application {
-
-    @Id
-    @GeneratedValue
+@Data
+public class ApplicationResponse {
     private UUID id;
 
     private UUID postingId;
@@ -25,10 +21,8 @@ public class Application {
 
     private String resumeUrl;
 
-    @Enumerated(EnumType.STRING)
     private ApplicationStage stage;
 
-    @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
 
     private LocalDateTime createdAt;
