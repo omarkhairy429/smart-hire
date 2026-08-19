@@ -1,7 +1,8 @@
 package orange.smart_hire.dto;
 
 import lombok.Data;
-import lombok.NonNull;
+
+import jakarta.validation.constraints.NotNull;
 
 
 import java.util.UUID;
@@ -9,10 +10,10 @@ import java.util.UUID;
 @Data
 public class ApplyRequest {
 
-    @NonNull
+    @NotNull
     private UUID postingId;
     private String coverLetter;
     private String experienceSummary;
-    @NonNull
+    @NotNull
     private String resumeUrl;
 }
