@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:smarthire}
     username: ${DB_USER:smarthire}
-    password: ${DB_PASSWORD:smart123}
+    password: ${DB_PASSWORD:smarthire123}
   jpa:
     hibernate:
       ddl-auto: create-drop
