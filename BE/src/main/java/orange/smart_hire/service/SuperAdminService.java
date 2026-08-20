@@ -1,7 +1,7 @@
 package orange.smart_hire.service;
 
 import lombok.RequiredArgsConstructor;
-import orange.smart_hire.dto.CreateStaffRequest;
+import orange.smart_hire.dto.RegisterRequest;
 import orange.smart_hire.dto.StaffResponse;
 import orange.smart_hire.enums.UserRole;
 import orange.smart_hire.model.User;
@@ -20,7 +20,7 @@ public class SuperAdminService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public User createStaffMember(CreateStaffRequest request) {
+    public User createStaffMember(RegisterRequest request) {
         if (request.getRole() != UserRole.HR_MANAGER && request.getRole() != UserRole.INTERVIEWER) {
             throw new IllegalArgumentException("Super Admin can only create HR Managers or Interviewers");
         }
@@ -33,7 +33,7 @@ public class SuperAdminService {
         staffMember.setFirstName(request.getFirstName());
         staffMember.setLastName(request.getLastName());
         staffMember.setEmail(request.getEmail());
-        staffMember.setPasswordHash(passwordEncoder.encode(request.getRawPassword()));
+        staffMember.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         staffMember.setRole(request.getRole());
         staffMember.setActive(true);
 
