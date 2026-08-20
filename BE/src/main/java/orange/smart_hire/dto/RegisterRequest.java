@@ -9,7 +9,7 @@ import orange.smart_hire.enums.UserRole;
 
 @Getter
 @Setter
-public class CreateStaffRequest {
+public class RegisterRequest {
     @NotBlank
     private String firstName;
 
@@ -21,7 +21,7 @@ public class CreateStaffRequest {
     private String email;
 
     @NotBlank
-    private String rawPassword;
+    private String password;
 
     @NotNull
     private UserRole role;
