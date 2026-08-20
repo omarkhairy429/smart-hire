@@ -1,35 +1,27 @@
 package orange.smart_hire.dto;
 
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import orange.smart_hire.enums.LocationType;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
-public class CreatePostingRequest {
+public class PostingRequest {
 
-    @NotBlank(message = "Title is required")
+    private UUID hrManagerId;
     private String title;
-
-    @NotBlank(message = "Description is required")
     private String description;
-
-    @NotEmpty(message = "Skills are required")
     private List<String> skillsRequired;
-
-    @NotNull(message = "Location type is required")
     private LocationType locationType;
-
     private String location;
-
-    @NotNull(message = "Deadline is required")
-    @Future(message = "Deadline must be in the future")
     private LocalDate deadline;
 
-    public CreatePostingRequest() {
+    public UUID getHrManagerId() {
+        return hrManagerId;
+    }
+
+    public void setHrManagerId(UUID hrManagerId) {
+        this.hrManagerId = hrManagerId;
     }
 
     public String getTitle() {

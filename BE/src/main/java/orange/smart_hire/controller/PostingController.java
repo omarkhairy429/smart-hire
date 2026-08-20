@@ -1,18 +1,21 @@
 package orange.smart_hire.controller;
 
-import jakarta.validation.Valid;
-import orange.smart_hire.dto.CreatePostingRequest;
-import orange.smart_hire.dto.PostingResponse;
+import java.util.List;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import orange.smart_hire.dto.PostingRequest;
 import orange.smart_hire.model.Posting;
 import orange.smart_hire.service.PostingService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/postings")
+@CrossOrigin(origins = "http://localhost:4200")
 public class PostingController {
 
     private final PostingService postingService;
@@ -21,40 +24,13 @@ public class PostingController {
         this.postingService = postingService;
     }
 
-    @PostMapping
-    public ResponseEntity<PostingResponse> createPosting(
-            @Valid @RequestBody CreatePostingRequest request,
-            @RequestParam UUID hrManagerId
-    ) {
-
-        Posting posting = postingService.createPosting(
-                request,
-                hrManagerId
-        );
-
-        PostingResponse response = mapToResponse(posting);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(response);
+    @GetMapping
+    public List<Posting> getAllPostings() {
+        return postingService.getAllPostings();
     }
 
-    private PostingResponse mapToResponse(Posting posting) {
-
-        PostingResponse response = new PostingResponse();
-
-        response.setId(posting.getId());
-        response.setHrManagerId(posting.getHrManager().getId());
-        response.setTitle(posting.getTitle());
-        response.setDescription(posting.getDescription());
-        response.setSkillsRequired(posting.getSkillsRequired());
-        response.setLocationType(posting.getLocationType());
-        response.setLocation(posting.getLocation());
-        response.setStatus(posting.getStatus());
-        response.setDeadline(posting.getDeadline());
-        response.setCreatedAt(posting.getCreatedAt());
-        response.setUpdatedAt(posting.getUpdatedAt());
-
-        return response;
+    @PostMapping
+    public Posting createPosting(@RequestBody PostingRequest request) {
+        return postingService.createPosting(request);
     }
 }

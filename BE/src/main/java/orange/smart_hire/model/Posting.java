@@ -51,7 +51,7 @@ public class Posting {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PostingStatus status = PostingStatus.DRAFT;
+    private PostingStatus status = PostingStatus.PUBLISHED;
 
     private LocalDate deadline;
 
