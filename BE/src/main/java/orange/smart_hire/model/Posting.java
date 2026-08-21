@@ -51,7 +51,11 @@ public class Posting {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+<<<<<<< HEAD
+    private PostingStatus status = PostingStatus.PUBLISHED;
+=======
     private PostingStatus status = PostingStatus.DRAFT;
+>>>>>>> origin/dev
 
     private LocalDate deadline;
 

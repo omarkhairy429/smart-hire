@@ -1,0 +1,123 @@
+<main class="page-shell">
+    <header class="page-header">
+        <div>
+            <p class="eyebrow">SmartHire / Hiring workspace</p>
+            <h1>Build your next great team.</h1>
+            <p class="intro">Publish a clear opportunity and keep every open role in one focused view.</p>
+        </div>
+        <div class="header-mark" aria-hidden="true">SH</div>
+    </header>
+
+    <div class="workspace-grid">
+        <section class="panel create-panel" aria-labelledby="create-title">
+            <div class="section-heading">
+                <div>
+                    <p class="section-kicker">New opportunity</p>
+                    <h2 id="create-title">Create a job posting</h2>
+                </div>
+                <span class="status-dot">Ready to publish</span>
+            </div>
+
+            <form [formGroup]="postingForm" (ngSubmit)="createPosting()" novalidate>
+                <label>
+                    HR manager UUID
+                    <input type="text" formControlName="hrManagerId"
+                        placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+                    @if (fieldHasError('hrManagerId')) { <small>Enter a valid HR manager UUID.</small> }
+                </label>
+
+                <label>
+                    Job title
+                    <input type="text" formControlName="title" placeholder="Senior Product Designer" />
+                    @if (fieldHasError('title')) { <small>Title is required.</small> }
+                </label>
+
+                <label>
+                    Description
+                    <textarea rows="5" formControlName="description"
+                        placeholder="Describe the mission, impact, and what success looks like."></textarea>
+                    @if (fieldHasError('description')) { <small>Description is required.</small> }
+                </label>
+
+                <div class="form-row">
+                    <label>
+                        Work arrangement
+                        <select formControlName="locationType">
+                            @for (locationType of locationTypes; track locationType) {
+                            <option [value]="locationType">{{ locationType === 'ON_SITE' ? 'On-site' : locationType |
+                                titlecase }}</option>
+                            }
+                        </select>
+                    </label>
+                    <label>
+                        Location
+                        <input type="text" formControlName="location" placeholder="Paris, France" />
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <label>
+                        Application deadline
+                        <input type="date" formControlName="deadline" />
+                        @if (fieldHasError('deadline')) { <small>Deadline is required.</small> }
+                    </label>
+                    <label>
+                        Skills
+                        <input type="text" formControlName="skillsRequired"
+                            placeholder="Figma, UX research, prototyping" />
+                        @if (fieldHasError('skillsRequired')) { <small>Add at least one skill.</small> }
+                    </label>
+                </div>
+
+                <button class="primary-button" type="submit" [disabled]="isSubmitting()">
+                    {{ isSubmitting() ? 'Publishing...' : 'Publish job posting' }}
+                </button>
+            </form>
+
+            @if (successMessage()) { <p class="success-message" role="status">{{ successMessage() }}</p> }
+            @if (errorMessage()) { <p class="error-message" role="alert">{{ errorMessage() }}</p> }
+        </section>
+
+        <section class="list-section" aria-labelledby="list-title">
+            <div class="section-heading list-heading">
+                <div>
+                    <p class="section-kicker">Your pipeline</p>
+                    <h2 id="list-title">Open job postings</h2>
+                </div>
+                <span class="count-badge">{{ postings().length }}</span>
+            </div>
+
+            @if (isLoading()) {
+            <div class="empty-state"><span class="loader"></span>
+                <p>Loading postings...</p>
+            </div>
+            } @else if (postings().length === 0) {
+            <div class="empty-state">
+                <p>No postings yet.</p><span>Your next role starts here.</span>
+            </div>
+            } @else {
+            <div class="posting-list">
+                @for (posting of postings(); track posting.id) {
+                <article class="posting-card">
+                    <div class="posting-card-top">
+                        <span class="posting-status">{{ posting.status | titlecase }}</span>
+                        <time [dateTime]="posting.deadline ?? undefined">Due {{ posting.deadline | date: 'MMM d, y'
+                            }}</time>
+                    </div>
+                    <h3>{{ posting.title }}</h3>
+                    <p class="posting-description">{{ posting.description }}</p>
+                    <div class="posting-meta">
+                        <span>{{ posting.locationType === 'ON_SITE' ? 'On-site' : posting.locationType | titlecase
+                            }}</span>
+                        @if (posting.location) { <span>{{ posting.location }}</span> }
+                    </div>
+                    <div class="skills">
+                        @for (skill of posting.skillsRequired; track skill) { <span>{{ skill }}</span> }
+                    </div>
+                </article>
+                }
+            </div>
+            }
+        </section>
+    </div>
+</main>
