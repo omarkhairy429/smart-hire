@@ -6,8 +6,10 @@ import orange.smart_hire.enums.ApplicationStage;
 import orange.smart_hire.enums.ApplicationStatus;
 import orange.smart_hire.model.Application;
 import orange.smart_hire.repository.ApplicationRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -59,6 +61,22 @@ public class ApplicationService {
                 .map(this::mapToResponse)
                 .toList();
     }
+    @Transactional(readOnly = true)
+    public List<ApplicationResponse> getApplicationsByPosting(UUID postingId) {
+        return applicationRepository.findByPostingId(postingId)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public ApplicationResponse getApplicationById(UUID id) {
+        Application application = applicationRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Application not found"));
+
+        return mapToResponse(application);
+    }
 
     private ApplicationResponse mapToResponse(
             Application application
@@ -68,6 +86,7 @@ public class ApplicationService {
 
         response.setId(application.getId());
         response.setPostingId(application.getPostingId());
+        response.setCandidateId(application.getCandidateId());
         response.setCoverLetter(application.getCoverLetter());
         response.setExperienceSummary(
                 application.getExperienceSummary()
