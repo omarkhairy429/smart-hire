@@ -2,6 +2,8 @@ package orange.smart_hire.controller;
 
 import java.util.List;
 
+import orange.smart_hire.dto.PostingResponse;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,12 +27,13 @@ public class PostingController {
     }
 
     @GetMapping
-    public List<Posting> getAllPostings() {
+    public List<PostingResponse> getAllPostings() {
         return postingService.getAllPostings();
     }
 
+    @PreAuthorize("hasRole('HR_MANAGER')")
     @PostMapping
-    public Posting createPosting(@RequestBody PostingRequest request) {
+    public PostingResponse createPosting(@RequestBody PostingRequest request) {
         return postingService.createPosting(request);
     }
 }
