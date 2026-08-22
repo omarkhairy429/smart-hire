@@ -23,6 +23,7 @@ public class ApplicationController {
         this.applicationService = applicationService;
     }
 
+    @PreAuthorize("hasRole('CANDIDATE')")
     @PostMapping
     public ResponseEntity<ApplicationResponse> apply(
             @RequestBody ApplyRequest request,
@@ -39,7 +40,7 @@ public class ApplicationController {
                 .status(HttpStatus.CREATED)
                 .body(response);
     }
-
+    @PreAuthorize("hasRole('CANDIDATE')")
     @GetMapping
     public ResponseEntity<List<ApplicationResponse>> getMyApplications(
             Authentication authentication
