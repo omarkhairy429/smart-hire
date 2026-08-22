@@ -7,9 +7,12 @@ import orange.smart_hire.model.User;
 import orange.smart_hire.repository.PostingRepository;
 import orange.smart_hire.repository.UserRepository;
 import orange.smart_hire.utils.SecurityUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class PostingService {
@@ -61,5 +64,45 @@ public class PostingService {
         response.setUpdatedAt(posting.getUpdatedAt());
 
         return response;
+    }
+    public PostingResponse getPostingById(UUID id) {
+        Posting posting = findPostingOrThrow(id);
+        return mapToResponse(posting);
+    }
+
+    public PostingResponse updatePosting(UUID id, PostingRequest request) {
+        Posting posting = findPostingOrThrow(id);
+        assertOwnedByCurrentUser(posting);
+
+        posting.setTitle(request.getTitle());
+        posting.setDescription(request.getDescription());
+        posting.setSkillsRequired(request.getSkillsRequired());
+        posting.setLocationType(request.getLocationType());
+        posting.setLocation(request.getLocation());
+        posting.setDeadline(request.getDeadline());
+
+        Posting savedPosting = postingRepository.save(posting);
+        return mapToResponse(savedPosting);
+    }
+
+    public void deletePosting(UUID id) {
+        Posting posting = findPostingOrThrow(id);
+        assertOwnedByCurrentUser(posting);
+
+        postingRepository.delete(posting);
+    }
+
+    private Posting findPostingOrThrow(UUID id) {
+        return postingRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Posting WAS not found"));
+    }
+
+    private void assertOwnedByCurrentUser(Posting posting) {
+        User currentUser = SecurityUtils.getCurrentUser();
+        if (!posting.getHrManager().getId().equals(currentUser.getId())) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "you cannot modify this posting");
+        }
     }
 }
