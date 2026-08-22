@@ -3,6 +3,7 @@ package orange.smart_hire.controller;
 import orange.smart_hire.dto.ApplicationResponse;
 import orange.smart_hire.dto.ApplyRequest;
 import orange.smart_hire.service.ApplicationService;
+import orange.smart_hire.utils.SecurityUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -38,13 +39,13 @@ public class ApplicationController {
                 .body(response);
     }
 
-    @GetMapping("/my-apps")
+    @GetMapping
     public ResponseEntity<List<ApplicationResponse>> getMyApplications(
             Authentication authentication
     ) {
 
         UUID candidateId =
-                UUID.fromString(authentication.getName());
+                SecurityUtils.getCurrentUserId();
 
         return ResponseEntity.ok(
                 applicationService.getMyApplications(candidateId)
