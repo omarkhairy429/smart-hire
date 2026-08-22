@@ -1,12 +1,14 @@
 package orange.smart_hire.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import orange.smart_hire.enums.ApplicationStage;
 import orange.smart_hire.enums.ApplicationStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Data
 @Entity
 @Table(name = "applications",
         uniqueConstraints = {
