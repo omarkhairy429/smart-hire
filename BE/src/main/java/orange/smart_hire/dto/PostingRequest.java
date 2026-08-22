@@ -7,22 +7,12 @@ import java.util.List;
 import java.util.UUID;
 
 public class PostingRequest {
-
-    private UUID hrManagerId;
     private String title;
     private String description;
     private List<String> skillsRequired;
     private LocationType locationType;
     private String location;
     private LocalDate deadline;
-
-    public UUID getHrManagerId() {
-        return hrManagerId;
-    }
-
-    public void setHrManagerId(UUID hrManagerId) {
-        this.hrManagerId = hrManagerId;
-    }
 
     public String getTitle() {
         return title;

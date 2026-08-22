@@ -1,10 +1,12 @@
 package orange.smart_hire.service;
 
 import orange.smart_hire.dto.PostingRequest;
+import orange.smart_hire.dto.PostingResponse;
 import orange.smart_hire.model.Posting;
 import orange.smart_hire.model.User;
 import orange.smart_hire.repository.PostingRepository;
 import orange.smart_hire.repository.UserRepository;
+import orange.smart_hire.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,17 +24,17 @@ public class PostingService {
         this.userRepository = userRepository;
     }
 
-    public List<Posting> getAllPostings() {
-        return postingRepository.findAll();
+    public List<PostingResponse> getAllPostings() {
+        return postingRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
-    public Posting createPosting(PostingRequest request) {
-
-        User hrManager = userRepository.findById(request.getHrManagerId())
-                .orElseThrow(() -> new RuntimeException("HR Manager not found"));
+    public PostingResponse createPosting(PostingRequest request) {
+        User hrManager = SecurityUtils.getCurrentUser();
 
         Posting posting = new Posting();
-
         posting.setHrManager(hrManager);
         posting.setTitle(request.getTitle());
         posting.setDescription(request.getDescription());
@@ -41,6 +43,23 @@ public class PostingService {
         posting.setLocation(request.getLocation());
         posting.setDeadline(request.getDeadline());
 
-        return postingRepository.save(posting);
+        Posting savedPosting = postingRepository.save(posting);
+        return mapToResponse(savedPosting);
+    }
+
+    private PostingResponse mapToResponse(Posting posting) {
+        PostingResponse response = new PostingResponse();
+        response.setId(posting.getId());
+        response.setTitle(posting.getTitle());
+        response.setDescription(posting.getDescription());
+        response.setSkillsRequired(posting.getSkillsRequired());
+        response.setLocationType(posting.getLocationType());
+        response.setLocation(posting.getLocation());
+        response.setStatus(posting.getStatus());
+        response.setDeadline(posting.getDeadline());
+        response.setCreatedAt(posting.getCreatedAt());
+        response.setUpdatedAt(posting.getUpdatedAt());
+
+        return response;
     }
 }
