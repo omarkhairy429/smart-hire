@@ -29,7 +29,7 @@ public class ApplicationController {
     ) {
 
         UUID candidateId =
-                UUID.fromString(authentication.getName());
+                SecurityUtils.getCurrentUserId();
 
         ApplicationResponse response =
                 applicationService.apply(request, candidateId);
