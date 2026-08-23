@@ -1,12 +1,34 @@
 <nav class="main-nav">
-  <div class="nav-brand"><a routerLink="/">JobPortal</a></div>
+  <div class="nav-brand"><a routerLink="/">SmartHire</a></div>
+
   <div class="nav-links">
     <a routerLink="/jobs">Browse Jobs</a>
-    <!-- We will add *ngIf logic here later to hide these when logged in -->
-    <a routerLink="/login">Log In</a>
-    <a routerLink="/register" class="btn-primary">Sign Up</a>
+
+    @if (isLoggedIn) {
+      <!-- SUPER_ADMIN exclusive -->
+      @if (userRole === 'SUPER_ADMIN') {
+        <a routerLink="/admin" class="nav-role-link">⚙️ Admin Panel</a>
+      }
+
+      <!-- HR_MANAGER and SUPER_ADMIN -->
+      @if (userRole === 'HR_MANAGER' || userRole === 'SUPER_ADMIN') {
+        <a routerLink="/hr/postings" class="nav-role-link">📋 My Postings</a>
+        <a routerLink="/hr/applications" class="nav-role-link">📂 Applications</a>
+      }
+
+      <!-- CANDIDATE only -->
+      @if (userRole === 'CANDIDATE') {
+        <a routerLink="/my-applications" class="nav-role-link">📄 My Applications</a>
+      }
+
+      <span class="nav-greeting">Hi, {{ firstName }} 👋</span>
+      <button class="btn-logout" (click)="logout()">Logout</button>
+    } @else {
+      <a routerLink="/login">Log In</a>
+      <a routerLink="/register" class="btn-primary">Sign Up</a>
+    }
   </div>
 </nav>
 
-<!-- This is where all your page components will render based on the URL -->
+<!-- Page components render here -->
 <router-outlet></router-outlet>

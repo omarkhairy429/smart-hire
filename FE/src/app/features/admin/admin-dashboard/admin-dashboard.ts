@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AdminService } from '../../../core/services/admin';
@@ -13,13 +13,14 @@ import { AdminService } from '../../../core/services/admin';
 export class AdminDashboardComponent implements OnInit {
   staffList: any[] = [];
   successMessage = '';
+  errorMessage = '';
   staffForm: FormGroup;
 
   constructor(
     private adminService: AdminService,
     private fb: FormBuilder,
+    private cdr: ChangeDetectorRef
   ) {
-
     this.staffForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
@@ -35,8 +36,14 @@ export class AdminDashboardComponent implements OnInit {
 
   loadStaff() {
     this.adminService.getStaff().subscribe({
-      next: (data: any) => (this.staffList = data),
-      error: (err: any) => console.log('Waiting for backend GET endpoint', err),
+      next: (data: any) => {
+        this.staffList = data;
+        this.cdr.markForCheck();
+      },
+      error: (err: any) => {
+        console.log('Error fetching staff', err);
+        this.cdr.markForCheck();
+      },
     });
   }
 
@@ -49,10 +56,16 @@ export class AdminDashboardComponent implements OnInit {
     this.adminService.createStaff(this.staffForm.value).subscribe({
       next: () => {
         this.successMessage = 'Staff member created successfully.';
+        this.errorMessage = '';
         this.staffForm.reset({ role: 'HR_MANAGER' });
         this.loadStaff();
+        this.cdr.markForCheck();
       },
-      error: (err: any) => console.error('Failed to create staff', err),
+      error: (err: any) => {
+        this.errorMessage = 'Failed to create staff member.';
+        console.error('Failed to create staff', err);
+        this.cdr.markForCheck();
+      },
     });
   }
 }

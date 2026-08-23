@@ -45,7 +45,17 @@
           {{ job.location }} • <span class="badge">{{ job.locationType }}</span>
         </p>
       </div>
-      <button class="btn-primary apply-btn">Apply Now</button>
+
+      <!-- Show Apply button only for candidates or guests — hide for HR/Admin -->
+      @if (!isStaff) {
+        <button class="btn-primary apply-btn" (click)="onApplyClick()">
+          @if (!isLoggedIn) {
+            Sign In to Apply
+          } @else {
+            Apply Now
+          }
+        </button>
+      }
     </div>
 
     <div class="detail-body">
@@ -54,7 +64,6 @@
 
       <h3 class="mt-2">Skills Required</h3>
       <ul>
-        <!-- Using track $index prevents Angular from silently crashing on string arrays! -->
         @for (skill of job.skillsRequired; track $index) {
           <li>{{ skill }}</li>
         } @empty {

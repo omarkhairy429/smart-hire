@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { PostingService } from '../../../core/services/postings.service';
@@ -14,12 +14,18 @@ import { PostingResponse } from '../../../core/models/api.models';
 export class JobListComponent implements OnInit {
   jobs: PostingResponse[] = [];
 
-  constructor(private postingService: PostingService) {}
+  constructor(private postingService: PostingService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.postingService.getPostings().subscribe({
-      next: (data: PostingResponse[]) => (this.jobs = data),
-      error: (err: any) => console.error('Error fetching jobs', err),
+      next: (data: PostingResponse[]) => {
+        this.jobs = data;
+        this.cdr.markForCheck();
+      },
+      error: (err: any) => {
+        console.error('Error fetching jobs', err);
+        this.cdr.markForCheck();
+      },
     });
   }
 }

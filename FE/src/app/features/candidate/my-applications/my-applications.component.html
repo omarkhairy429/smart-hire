@@ -1,0 +1,44 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2>📄 My Applications</h2>
+    <p>Track the status of every position you've applied to.</p>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading-state">Loading your applications...</div>
+  } @else if (errorMessage) {
+    <div class="error-banner">{{ errorMessage }}</div>
+  } @else if (applications.length === 0) {
+    <div class="empty-card">
+      <div class="empty-icon">🔍</div>
+      <h3>No applications yet</h3>
+      <p>Start applying to jobs and track your progress here.</p>
+      <a routerLink="/jobs" class="btn-primary">Browse Jobs</a>
+    </div>
+  } @else {
+    <div class="apps-grid">
+      @for (app of applications; track app.id) {
+        <div class="app-card">
+          <div class="app-card-top">
+            <span class="status-badge {{ statusClass(app.status) }}">{{ app.status }}</span>
+            <time class="app-date">{{ formatDate(app.createdAt) }}</time>
+          </div>
+
+          <div class="app-body">
+            <p class="app-label">Posting</p>
+            <a [routerLink]="['/jobs', app.postingId]" class="posting-link">View Job Posting &rarr;</a>
+          </div>
+
+          <div class="app-meta">
+            @if (app.stage) {
+              <span class="stage-pill">Stage: {{ app.stage }}</span>
+            }
+            @if (app.resumeUrl) {
+              <a [href]="app.resumeUrl" target="_blank" class="resume-chip">📎 Resume</a>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

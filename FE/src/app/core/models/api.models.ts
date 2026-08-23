@@ -1,5 +1,6 @@
 export interface PostingResponse {
   id: string;
+  hrManagerId: string;
   title: string;
   description: string;
   skillsRequired: string[];
@@ -26,4 +27,24 @@ export interface StaffResponse {
   role: string;
   isActive: boolean;
   createdAt: string;
+}
+
+export interface ApplicationResponse {
+  id: string;
+  postingId: string;
+  candidateId: string;
+  coverLetter: string;
+  experienceSummary: string;
+  resumeUrl: string;
+  stage: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ApplyRequest {
+  postingId: string;
+  coverLetter?: string;
+  experienceSummary?: string;
+  resumeUrl: string;
 }
