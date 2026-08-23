@@ -11,7 +11,6 @@ import java.util.UUID;
 public class PostingResponse {
 
     private UUID id;
-    private UUID hrManagerId;
     private String title;
     private String description;
     private List<String> skillsRequired;
@@ -33,13 +32,6 @@ public class PostingResponse {
         this.id = id;
     }
 
-    public UUID getHrManagerId() {
-        return hrManagerId;
-    }
-
-    public void setHrManagerId(UUID hrManagerId) {
-        this.hrManagerId = hrManagerId;
-    }
 
     public String getTitle() {
         return title;
