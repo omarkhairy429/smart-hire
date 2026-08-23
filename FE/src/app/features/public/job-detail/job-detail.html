@@ -1,0 +1,66 @@
+@if (isLoading) {
+  <div style="text-align: center; padding: 3rem; font-size: 1.2rem; color: var(--primary-blue)">
+    Loading job details...
+  </div>
+}
+
+@if (errorMessage) {
+  <div
+    style="
+      text-align: center;
+      padding: 2rem;
+      color: #991b1b;
+      background: #fee2e2;
+      border-radius: 8px;
+      margin: 2rem auto;
+      max-width: 600px;
+      border: 1px solid #f87171;
+    "
+  >
+    <h3>Oops! Something went wrong.</h3>
+    <p>{{ errorMessage }}</p>
+    <a routerLink="/jobs" class="btn-primary" style="margin-top: 1rem; display: inline-block"
+      >Back to Jobs</a
+    >
+  </div>
+}
+
+@if (!isLoading && !errorMessage && job) {
+  <div class="detail-container">
+    <a
+      routerLink="/jobs"
+      style="
+        display: inline-block;
+        margin-bottom: 1rem;
+        color: var(--text-muted);
+        text-decoration: none;
+      "
+      >&larr; Back to Jobs</a
+    >
+
+    <div class="detail-header">
+      <div class="header-content">
+        <h1>{{ job.title }}</h1>
+        <p class="meta">
+          {{ job.location }} • <span class="badge">{{ job.locationType }}</span>
+        </p>
+      </div>
+      <button class="btn-primary apply-btn">Apply Now</button>
+    </div>
+
+    <div class="detail-body">
+      <h3>Job Description</h3>
+      <p>{{ job.description }}</p>
+
+      <h3 class="mt-2">Skills Required</h3>
+      <ul>
+        <!-- Using track $index prevents Angular from silently crashing on string arrays! -->
+        @for (skill of job.skillsRequired; track $index) {
+          <li>{{ skill }}</li>
+        } @empty {
+          <li>No specific skills listed.</li>
+        }
+      </ul>
+    </div>
+  </div>
+}

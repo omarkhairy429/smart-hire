@@ -1,1 +1,12 @@
-<router-outlet />
+<nav class="main-nav">
+  <div class="nav-brand"><a routerLink="/">JobPortal</a></div>
+  <div class="nav-links">
+    <a routerLink="/jobs">Browse Jobs</a>
+    <!-- We will add *ngIf logic here later to hide these when logged in -->
+    <a routerLink="/login">Log In</a>
+    <a routerLink="/register" class="btn-primary">Sign Up</a>
+  </div>
+</nav>
+
+<!-- This is where all your page components will render based on the URL -->
+<router-outlet></router-outlet>

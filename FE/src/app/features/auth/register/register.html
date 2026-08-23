@@ -1,0 +1,66 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Create an Account</h2>
+      <p>Join to apply for your next dream job</p>
+    </div>
+
+    <!-- Connected to the ReactiveForm -->
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <!-- Side-by-side First and Last Name -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input
+            type="text"
+            id="firstName"
+            formControlName="firstName"
+            class="form-control"
+            placeholder="Omar"
+          />
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input
+            type="text"
+            id="lastName"
+            formControlName="lastName"
+            class="form-control"
+            placeholder="Fayed"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          class="form-control"
+          placeholder="you@example.com"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          class="form-control"
+          placeholder="••••••••"
+        />
+      </div>
+
+      <!-- Button disables if form is invalid -->
+      <button type="submit" class="btn-primary auth-submit" [disabled]="registerForm.invalid">
+        Sign Up
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Already have an account? <a routerLink="/login">Log in here</a></p>
+    </div>
+  </div>
+</div>

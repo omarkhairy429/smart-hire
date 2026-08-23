@@ -1,0 +1,21 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2>Latest Job Openings</h2>
+    <p>Discover opportunities and take the next step in your career.</p>
+  </div>
+
+  <div class="job-grid">
+    <div class="job-card" *ngFor="let job of jobs">
+      <div class="job-card-header">
+        <h3 class="job-title">{{ job.title }}</h3>
+        <!-- Replaced job.type with job.locationType -->
+        <span class="job-type-badge">{{ job.locationType }}</span>
+      </div>
+      <!-- Removed job.company completely since your backend does not send it -->
+      <p class="job-location">📍 {{ job.location }}</p>
+      <div class="job-card-footer">
+        <a [routerLink]="['/jobs', job.id]" class="btn-primary-outline">View Details</a>
+      </div>
+    </div>
+  </div>
+</div>
