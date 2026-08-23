@@ -29,21 +29,35 @@
         @if (!hasAutoId) {
           <label>
             HR Manager UUID
-            <input type="text" formControlName="hrManagerId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
-            @if (fieldHasError('hrManagerId')) { <small>Enter a valid HR manager UUID.</small> }
+            <input
+              type="text"
+              formControlName="hrManagerId"
+              placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+            />
+            @if (fieldHasError('hrManagerId')) {
+              <small>Enter a valid HR manager UUID.</small>
+            }
           </label>
         }
 
         <label>
           Job title
           <input type="text" formControlName="title" placeholder="Senior Product Designer" />
-          @if (fieldHasError('title')) { <small>Title is required.</small> }
+          @if (fieldHasError('title')) {
+            <small>Title is required.</small>
+          }
         </label>
 
         <label>
           Description
-          <textarea rows="4" formControlName="description" placeholder="Describe the role, impact, and responsibilities."></textarea>
-          @if (fieldHasError('description')) { <small>Description is required.</small> }
+          <textarea
+            rows="4"
+            formControlName="description"
+            placeholder="Describe the role, impact, and responsibilities."
+          ></textarea>
+          @if (fieldHasError('description')) {
+            <small>Description is required.</small>
+          }
         </label>
 
         <div class="form-row">
@@ -57,7 +71,7 @@
           </label>
           <label>
             Location
-            <input type="text" formControlName="location" placeholder="Amman, Jordan" />
+            <input type="text" formControlName="location" placeholder="Cairo, Egypt" />
           </label>
         </div>
 
@@ -65,12 +79,20 @@
           <label>
             Application deadline
             <input type="date" formControlName="deadline" />
-            @if (fieldHasError('deadline')) { <small>Deadline is required.</small> }
+            @if (fieldHasError('deadline')) {
+              <small>Deadline is required.</small>
+            }
           </label>
           <label>
             Skills (comma-separated)
-            <input type="text" formControlName="skillsRequired" placeholder="Java, Spring Boot, SQL" />
-            @if (fieldHasError('skillsRequired')) { <small>Add at least one skill.</small> }
+            <input
+              type="text"
+              formControlName="skillsRequired"
+              placeholder="Java, Spring Boot, SQL"
+            />
+            @if (fieldHasError('skillsRequired')) {
+              <small>Add at least one skill.</small>
+            }
           </label>
         </div>
 
@@ -79,8 +101,12 @@
         </button>
       </form>
 
-      @if (successMessage) { <p class="success-message" role="status">{{ successMessage }}</p> }
-      @if (errorMessage) { <p class="error-message" role="alert">{{ errorMessage }}</p> }
+      @if (successMessage) {
+        <p class="success-message" role="status">{{ successMessage }}</p>
+      }
+      @if (errorMessage) {
+        <p class="error-message" role="alert">{{ errorMessage }}</p>
+      }
     </section>
 
     <!-- POSTINGS LIST -->
@@ -94,27 +120,37 @@
       </div>
 
       @if (isLoading) {
-        <div class="empty-state"><span class="loader"></span><p>Loading postings...</p></div>
+        <div class="empty-state">
+          <span class="loader"></span>
+          <p>Loading postings...</p>
+        </div>
       } @else if (postings.length === 0) {
         <div class="empty-state">
-          <p>No postings yet.</p><span>Your next role starts here.</span>
+          <p>No postings yet.</p>
+          <span>Your next role starts here.</span>
         </div>
       } @else {
         <div class="posting-list">
           @for (posting of postings; track posting.id) {
             <article class="posting-card">
               <div class="posting-card-top">
-                <span class="posting-status {{ posting.status | lowercase }}">{{ posting.status }}</span>
+                <span class="posting-status {{ posting.status | lowercase }}">{{
+                  posting.status
+                }}</span>
                 <time>Due {{ posting.deadline | date: 'MMM d, y' }}</time>
               </div>
               <h3>{{ posting.title }}</h3>
               <p class="posting-description">{{ posting.description }}</p>
               <div class="posting-meta">
                 <span>{{ formatLocationType(posting.locationType) }}</span>
-                @if (posting.location) { <span>{{ posting.location }}</span> }
+                @if (posting.location) {
+                  <span>{{ posting.location }}</span>
+                }
               </div>
               <div class="skills">
-                @for (skill of posting.skillsRequired; track skill) { <span>{{ skill }}</span> }
+                @for (skill of posting.skillsRequired; track skill) {
+                  <span>{{ skill }}</span>
+                }
               </div>
             </article>
           }
