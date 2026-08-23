@@ -1,0 +1,77 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2>📂 Applications Received</h2>
+    <p>Select one of your job postings to view all candidate applications.</p>
+    <a routerLink="/hr/postings" class="back-link">&larr; Back to My Postings</a>
+  </div>
+
+  @if (isLoadingPostings) {
+    <div class="loading-state">Loading your postings...</div>
+  } @else if (postings.length === 0) {
+    <div class="empty-state-card">
+      <p>You have no postings yet.</p>
+      <a routerLink="/hr/postings" class="btn-primary">Create a Posting</a>
+    </div>
+  } @else {
+    <!-- Posting selector -->
+    <div class="selector-card">
+      <label for="posting-select" class="selector-label">Select a job posting:</label>
+      <select id="posting-select" class="posting-select" [(ngModel)]="selectedPostingId" (change)="onPostingSelect()">
+        <option value="">— Choose a posting —</option>
+        @for (posting of postings; track posting.id) {
+          <option [value]="posting.id">{{ posting.title }} ({{ posting.status }})</option>
+        }
+      </select>
+    </div>
+
+    <!-- Applications table -->
+    @if (isLoadingApps) {
+      <div class="loading-state">Loading applications...</div>
+    } @else if (selectedPostingId && applications.length === 0) {
+      <div class="empty-state-card">
+        <p>No applications received for "{{ selectedPostingTitle }}" yet.</p>
+      </div>
+    } @else if (applications.length > 0) {
+      <div class="table-card">
+        <div class="table-header">
+          <h3>Applications for: <span>{{ selectedPostingTitle }}</span></h3>
+          <span class="count-badge">{{ applications.length }}</span>
+        </div>
+        <table class="apps-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Candidate ID</th>
+              <th>Status</th>
+              <th>Stage</th>
+              <th>Resume</th>
+              <th>Applied On</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (app of applications; track app.id; let i = $index) {
+              <tr>
+                <td>{{ i + 1 }}</td>
+                <td class="candidate-id">{{ app.candidateId }}</td>
+                <td><span class="status-badge status-{{ app.status | lowercase }}">{{ app.status }}</span></td>
+                <td><span class="stage-badge">{{ app.stage }}</span></td>
+                <td>
+                  @if (app.resumeUrl) {
+                    <a [href]="app.resumeUrl" target="_blank" class="resume-link">View Resume</a>
+                  } @else {
+                    <span class="text-muted">—</span>
+                  }
+                </td>
+                <td>{{ formatDate(app.createdAt) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    @if (errorMessage) {
+      <div class="error-banner">{{ errorMessage }}</div>
+    }
+  }
+</div>
