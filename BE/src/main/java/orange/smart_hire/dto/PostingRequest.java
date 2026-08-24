@@ -8,11 +8,14 @@ import java.util.UUID;
 
 public class PostingRequest {
     private String title;
+    private String company;
     private String description;
     private List<String> skillsRequired;
     private LocationType locationType;
     private String location;
     private LocalDate deadline;
+
+
 
     public String getTitle() {
         return title;
@@ -20,6 +23,14 @@ public class PostingRequest {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
     }
 
     public String getDescription() {

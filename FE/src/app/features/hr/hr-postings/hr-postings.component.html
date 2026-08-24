@@ -1,3 +1,4 @@
+=
 <div class="page-shell">
   <header class="page-header">
     <div>
@@ -19,11 +20,11 @@
         <span class="status-dot">Ready to publish</span>
       </div>
 
-      @if (hasAutoId) {
+      <!-- @if (hasAutoId) {
         <div class="auto-id-banner">
           ✅ Your HR Manager ID has been auto-filled from your account.
         </div>
-      }
+      } -->
 
       <form [formGroup]="postingForm" (ngSubmit)="createPosting()" novalidate>
         @if (!hasAutoId) {
@@ -45,6 +46,15 @@
           <input type="text" formControlName="title" placeholder="Senior Product Designer" />
           @if (fieldHasError('title')) {
             <small>Title is required.</small>
+          }
+        </label>
+
+        <!-- Added Company Field -->
+        <label>
+          Company
+          <input type="text" formControlName="company" placeholder="Acme Corp" />
+          @if (fieldHasError('company')) {
+            <small>Company name is required.</small>
           }
         </label>
 
@@ -140,13 +150,20 @@
                 <time>Due {{ posting.deadline | date: 'MMM d, y' }}</time>
               </div>
               <h3>{{ posting.title }}</h3>
-              <p class="posting-description">{{ posting.description }}</p>
+
+              <!-- Added Company Display in Meta -->
               <div class="posting-meta">
+                @if (posting.company) {
+                  <span class="company-name">🏢 {{ posting.company }}</span>
+                }
                 <span>{{ formatLocationType(posting.locationType) }}</span>
                 @if (posting.location) {
                   <span>{{ posting.location }}</span>
                 }
               </div>
+
+              <p class="posting-description">{{ posting.description }}</p>
+
               <div class="skills">
                 @for (skill of posting.skillsRequired; track skill) {
                   <span>{{ skill }}</span>

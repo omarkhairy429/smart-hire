@@ -6,6 +6,7 @@ import orange.smart_hire.enums.ApplicationStage;
 import orange.smart_hire.enums.ApplicationStatus;
 import orange.smart_hire.model.Application;
 import orange.smart_hire.repository.ApplicationRepository;
+import orange.smart_hire.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +20,12 @@ import java.util.UUID;
 @Transactional
 public class ApplicationService {
     private final ApplicationRepository applicationRepository;
+    private final UserRepository userRepository;
 
-    public ApplicationService(ApplicationRepository applicationRepository) {
+    public ApplicationService(ApplicationRepository applicationRepository,
+                              UserRepository userRepository) {
         this.applicationRepository = applicationRepository;
+        this.userRepository = userRepository;
     }
     public ApplicationResponse apply(ApplyRequest request, UUID candidateId) {
         if (applicationRepository.existsByPostingIdAndCandidateId(
@@ -78,24 +82,27 @@ public class ApplicationService {
         return mapToResponse(application);
     }
 
-    private ApplicationResponse mapToResponse(
-            Application application
-    ) {
-
+    private ApplicationResponse mapToResponse(Application application) {
         ApplicationResponse response = new ApplicationResponse();
 
         response.setId(application.getId());
         response.setPostingId(application.getPostingId());
         response.setCandidateId(application.getCandidateId());
         response.setCoverLetter(application.getCoverLetter());
-        response.setExperienceSummary(
-                application.getExperienceSummary()
-        );
+        response.setExperienceSummary(application.getExperienceSummary());
         response.setResumeUrl(application.getResumeUrl());
         response.setStage(application.getStage());
         response.setStatus(application.getStatus());
         response.setCreatedAt(application.getCreatedAt());
         response.setUpdatedAt(application.getUpdatedAt());
+
+
+        if (application.getCandidateId() != null) {
+            userRepository.findById(application.getCandidateId()).ifPresent(user -> {
+                response.setCandidateName(user.getFirstName());
+                response.setCandidateEmail(user.getEmail());
+            });
+        }
 
         return response;
     }

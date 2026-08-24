@@ -42,6 +42,9 @@
       <div class="header-content">
         <h1>{{ job.title }}</h1>
         <p class="meta">
+          @if (job.company) {
+            <span class="company-name">🏢 {{ job.company }}</span> •
+          }
           {{ job.location }} • <span class="badge">{{ job.locationType }}</span>
         </p>
       </div>
