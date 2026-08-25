@@ -4,6 +4,7 @@ export type PostingStatus = 'PUBLISHED' | 'CLOSED' | 'DRAFT';
 export interface PostingRequest {
     hrManagerId: string;
     title: string;
+    company: string;
     description: string;
     skillsRequired: string[];
     locationType: LocationType;
@@ -15,6 +16,7 @@ export interface Posting {
     id: string;
     hrManagerId: string;
     title: string;
+    company: string;
     description: string;
     skillsRequired: string[];
     locationType: LocationType;

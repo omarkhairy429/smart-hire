@@ -28,7 +28,9 @@
   font-weight: 500;
 }
 
-.back-link:hover { text-decoration: underline; }
+.back-link:hover {
+  text-decoration: underline;
+}
 
 .loading-state {
   text-align: center;
@@ -46,7 +48,9 @@
   color: var(--text-muted);
 }
 
-.empty-state-card p { margin-bottom: 1.25rem; }
+.empty-state-card p {
+  margin-bottom: 1.25rem;
+}
 
 /* Selector */
 .selector-card {
@@ -79,7 +83,9 @@
   background: var(--bg-main);
   color: var(--text-main);
   cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .posting-select:focus {
@@ -93,7 +99,7 @@
   background: var(--white);
   border-radius: 16px;
   box-shadow: var(--shadow-md);
-  overflow: hidden;
+  overflow-x: auto;
 }
 
 .table-header {
@@ -142,6 +148,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
 }
 
 .apps-table td {
@@ -151,39 +158,75 @@
   vertical-align: middle;
 }
 
-.apps-table tbody tr:last-child td { border-bottom: none; }
-
-.apps-table tbody tr:hover { background: var(--bg-main); }
-
-.candidate-id {
-  font-family: monospace;
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.apps-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
+.apps-table tbody tr:hover {
+  background: var(--bg-main);
+}
+
+/* Candidate Details */
+.candidate-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.candidate-name {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.candidate-email {
+  font-size: 0.8rem;
+}
+
+.candidate-email a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.candidate-email a:hover {
+  color: var(--primary-blue);
+  text-decoration: underline;
+}
+
+/* Badges */
 .status-badge {
+  display: inline-block;
   padding: 0.25rem 0.65rem;
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
-.status-pending  { background: #fef9c3; color: #854d0e; }
-.status-accepted { background: #d1fae5; color: #065f46; }
-.status-rejected { background: #fee2e2; color: #991b1b; }
+.status-pending,
+.status-in_review {
+  background: #fef9c3;
+  color: #854d0e;
+}
+.status-accepted,
+.status-hired {
+  background: #d1fae5;
+  color: #065f46;
+}
+.status-rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
 
 .stage-badge {
+  display: inline-block;
   background: var(--accent-blue);
   color: var(--primary-blue);
   padding: 0.25rem 0.65rem;
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .resume-link {
@@ -191,11 +234,16 @@
   text-decoration: none;
   font-weight: 500;
   font-size: 0.85rem;
+  white-space: nowrap;
 }
 
-.resume-link:hover { text-decoration: underline; }
+.resume-link:hover {
+  text-decoration: underline;
+}
 
-.text-muted { color: var(--text-muted); }
+.text-muted {
+  color: var(--text-muted);
+}
 
 .error-banner {
   background: #fef2f2;

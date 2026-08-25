@@ -37,6 +37,7 @@ export class HrPostingsComponent implements OnInit {
     this.postingForm = this.fb.group({
       hrManagerId: ['', [Validators.required, Validators.pattern(UUID_REGEX)]],
       title: ['', [Validators.required, Validators.maxLength(120)]],
+      company: ['', [Validators.required, Validators.maxLength(120)]],
       description: ['', [Validators.required, Validators.maxLength(3000)]],
       skillsRequired: ['', Validators.required],
       locationType: ['REMOTE', Validators.required],
