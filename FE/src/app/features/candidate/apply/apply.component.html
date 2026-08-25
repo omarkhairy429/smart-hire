@@ -1,0 +1,81 @@
+@if (isLoadingJob) {
+  <div class="loading-overlay">Loading job details...</div>
+}
+
+@if (!isLoadingJob && job) {
+  <div class="apply-page">
+    <!-- Job Summary Banner -->
+    <div class="job-banner">
+      <a routerLink="/jobs" class="back-link">&larr; Back to Jobs</a>
+      <div class="job-banner-content">
+        <div>
+          <h1>{{ job.title }}</h1>
+          <p class="job-meta">{{ job.location }} &bull; <span class="badge">{{ job.locationType }}</span></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Application Form -->
+    <div class="form-card">
+      <h2>Your Application</h2>
+      <p class="form-subtitle">Fill in the details below to apply for this position.</p>
+
+      @if (successMessage) {
+        <div class="alert-success">{{ successMessage }}</div>
+      }
+      @if (errorMessage) {
+        <div class="alert-error">{{ errorMessage }}</div>
+      }
+
+      <form [formGroup]="applyForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="field-group">
+          <label for="resumeUrl">Resume URL <span class="required">*</span></label>
+          <input
+            id="resumeUrl"
+            type="url"
+            formControlName="resumeUrl"
+            placeholder="https://drive.google.com/your-resume.pdf"
+            [class.input-error]="applyForm.get('resumeUrl')?.invalid && applyForm.get('resumeUrl')?.touched"
+          />
+          @if (applyForm.get('resumeUrl')?.invalid && applyForm.get('resumeUrl')?.touched) {
+            <small class="error-text">Resume URL is required.</small>
+          }
+        </div>
+
+        <div class="field-group">
+          <label for="coverLetter">Cover Letter <span class="optional">(optional)</span></label>
+          <textarea
+            id="coverLetter"
+            rows="5"
+            formControlName="coverLetter"
+            placeholder="Tell us why you're a great fit for this role..."
+          ></textarea>
+        </div>
+
+        <div class="field-group">
+          <label for="experienceSummary">Experience Summary <span class="optional">(optional)</span></label>
+          <textarea
+            id="experienceSummary"
+            rows="4"
+            formControlName="experienceSummary"
+            placeholder="Summarize your most relevant experience..."
+          ></textarea>
+        </div>
+
+        <div class="form-actions">
+          <a routerLink="/jobs" class="btn-cancel">Cancel</a>
+          <button type="submit" class="btn-primary submit-btn" [disabled]="isSubmitting || !!successMessage">
+            {{ isSubmitting ? 'Submitting...' : 'Submit Application' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+@if (!isLoadingJob && !job && errorMessage) {
+  <div class="error-page">
+    <p>{{ errorMessage }}</p>
+    <a routerLink="/jobs" class="btn-primary">Back to Jobs</a>
+  </div>
+}
