@@ -2,6 +2,8 @@ package orange.smart_hire.controller;
 
 import orange.smart_hire.dto.ApplicationResponse;
 import orange.smart_hire.dto.ApplyRequest;
+import orange.smart_hire.dto.PipelineResponse;
+import orange.smart_hire.dto.UpdateStageRequest;
 import orange.smart_hire.service.ApplicationService;
 import orange.smart_hire.utils.SecurityUtils;
 import org.springframework.http.HttpStatus;
@@ -40,6 +42,7 @@ public class ApplicationController {
                 .status(HttpStatus.CREATED)
                 .body(response);
     }
+
     @PreAuthorize("hasRole('CANDIDATE')")
     @GetMapping
     public ResponseEntity<List<ApplicationResponse>> getMyApplications(
@@ -53,6 +56,7 @@ public class ApplicationController {
                 applicationService.getMyApplications(candidateId)
         );
     }
+
     @GetMapping("/posting/{postingId}")
     @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
     public ResponseEntity<List<ApplicationResponse>> getApplicationsByPosting(
@@ -71,5 +75,25 @@ public class ApplicationController {
         return ResponseEntity.ok(
                 applicationService.getApplicationById(id)
         );
+    }
+
+    @GetMapping("/postings/{postingId}/pipeline")
+    @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
+    public ResponseEntity<List<PipelineResponse>> getPipeline(
+            @PathVariable UUID postingId
+    ) {
+        return ResponseEntity.ok(applicationService.getPipeline(postingId));
+    }
+
+
+    @PatchMapping("/applications/{applicationId}/stage")
+    @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
+    public ResponseEntity<ApplicationResponse> updateStage(
+            @PathVariable UUID applicationId,
+            @RequestBody UpdateStageRequest request
+    ) {
+        ApplicationResponse response =
+                applicationService.updateStage(applicationId, request.getStage());
+        return ResponseEntity.ok(response);
     }
 }

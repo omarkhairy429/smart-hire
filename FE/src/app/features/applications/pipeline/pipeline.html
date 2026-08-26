@@ -1,0 +1,74 @@
+<div class="page-shell">
+
+    <div class="page-header">
+        <div>
+            <p class="eyebrow">Recruitment Pipeline</p>
+
+            <h1>Candidate Pipeline</h1>
+
+            <p class="intro">
+                Review candidates and move them through the hiring process.
+            </p>
+        </div>
+
+        <div class="header-mark">
+            PIPE
+        </div>
+    </div>
+
+    <div *ngIf="loading" class="loading-container">
+        <div class="loader"></div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+    </div>
+
+    <div class="pipeline-board" *ngIf="!loading">
+
+        <div class="pipeline-column" *ngFor="let stage of stages">
+
+            <div class="column-header">
+                <h3>{{ stage }}</h3>
+
+                <span class="count">
+                    {{ getApplications(stage).length }}
+                </span>
+            </div>
+
+            <div class="application-card" *ngFor="let application of getApplications(stage)">
+
+                <h4>
+                    {{ application.candidateName || 'Unknown Candidate' }}
+                </h4>
+
+                <p *ngIf="application.candidateEmail">
+                    {{ application.candidateEmail }}
+                </p>
+
+                <p *ngIf="application.experienceSummary">
+                    {{ application.experienceSummary }}
+                </p>
+
+                <a *ngIf="application.resumeUrl" [href]="application.resumeUrl" target="_blank"
+                    rel="noopener noreferrer">
+                    View Resume
+                </a>
+
+                <select [value]="application.stage" (change)="updateStage(application, $event)">
+                    <option *ngFor="let targetStage of stages" [value]="targetStage">
+                        {{ targetStage }}
+                    </option>
+                </select>
+
+            </div>
+
+            <div class="empty-column" *ngIf="getApplications(stage).length === 0">
+                No candidates
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
