@@ -13,7 +13,12 @@ public class ApplicationResponse {
 
     private UUID postingId;
 
+
     private UUID candidateId;
+
+    private String candidateName;
+
+    private String candidateEmail;
 
     private String coverLetter;
 

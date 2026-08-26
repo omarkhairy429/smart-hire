@@ -2,6 +2,7 @@ export interface PostingResponse {
   id: string;
   hrManagerId: string;
   title: string;
+  company: string;
   description: string;
   skillsRequired: string[];
   locationType: string;
@@ -33,9 +34,11 @@ export interface ApplicationResponse {
   id: string;
   postingId: string;
   candidateId: string;
-  coverLetter: string;
-  experienceSummary: string;
-  resumeUrl: string;
+  candidateName?: string;
+  candidateEmail?: string;
+  coverLetter?: string;
+  experienceSummary?: string;
+  resumeUrl?: string;
   stage: string;
   status: string;
   createdAt: string;

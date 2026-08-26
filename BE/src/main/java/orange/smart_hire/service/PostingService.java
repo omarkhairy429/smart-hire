@@ -40,6 +40,7 @@ public class PostingService {
         Posting posting = new Posting();
         posting.setHrManager(hrManager);
         posting.setTitle(request.getTitle());
+        posting.setCompany(request.getCompany());
         posting.setDescription(request.getDescription());
         posting.setSkillsRequired(request.getSkillsRequired());
         posting.setLocationType(request.getLocationType());
@@ -53,6 +54,7 @@ public class PostingService {
     private PostingResponse mapToResponse(Posting posting) {
         PostingResponse response = new PostingResponse();
         response.setId(posting.getId());
+        response.setCompany(posting.getCompany());
         response.setTitle(posting.getTitle());
         response.setDescription(posting.getDescription());
         response.setSkillsRequired(posting.getSkillsRequired());

@@ -16,7 +16,12 @@
     <!-- Posting selector -->
     <div class="selector-card">
       <label for="posting-select" class="selector-label">Select a job posting:</label>
-      <select id="posting-select" class="posting-select" [(ngModel)]="selectedPostingId" (change)="onPostingSelect()">
+      <select
+        id="posting-select"
+        class="posting-select"
+        [(ngModel)]="selectedPostingId"
+        (change)="onPostingSelect()"
+      >
         <option value="">— Choose a posting —</option>
         @for (posting of postings; track posting.id) {
           <option [value]="posting.id">{{ posting.title }} ({{ posting.status }})</option>
@@ -34,14 +39,16 @@
     } @else if (applications.length > 0) {
       <div class="table-card">
         <div class="table-header">
-          <h3>Applications for: <span>{{ selectedPostingTitle }}</span></h3>
+          <h3>
+            Applications for: <span>{{ selectedPostingTitle }}</span>
+          </h3>
           <span class="count-badge">{{ applications.length }}</span>
         </div>
         <table class="apps-table">
           <thead>
             <tr>
               <th>#</th>
-              <th>Candidate ID</th>
+              <th>Candidate</th>
               <th>Status</th>
               <th>Stage</th>
               <th>Resume</th>
@@ -52,9 +59,26 @@
             @for (app of applications; track app.id; let i = $index) {
               <tr>
                 <td>{{ i + 1 }}</td>
-                <td class="candidate-id">{{ app.candidateId }}</td>
-                <td><span class="status-badge status-{{ app.status | lowercase }}">{{ app.status }}</span></td>
-                <td><span class="stage-badge">{{ app.stage }}</span></td>
+                <td>
+                  <div class="candidate-info">
+                    <span class="candidate-name">{{
+                      app.candidateName || 'Unknown Candidate'
+                    }}</span>
+                    @if (app.candidateEmail) {
+                      <span class="candidate-email">
+                        <a [href]="'mailto:' + app.candidateEmail">{{ app.candidateEmail }}</a>
+                      </span>
+                    }
+                  </div>
+                </td>
+                <td>
+                  <span class="status-badge status-{{ app.status | lowercase }}">{{
+                    app.status
+                  }}</span>
+                </td>
+                <td>
+                  <span class="stage-badge">{{ app.stage }}</span>
+                </td>
                 <td>
                   @if (app.resumeUrl) {
                     <a [href]="app.resumeUrl" target="_blank" class="resume-link">View Resume</a>
