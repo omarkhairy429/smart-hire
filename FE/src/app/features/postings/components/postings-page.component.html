@@ -114,6 +114,9 @@
                     <div class="skills">
                         @for (skill of posting.skillsRequired; track skill) { <span>{{ skill }}</span> }
                     </div>
+                    <button class="pipeline-button" [routerLink]="['/postings', posting.id, 'pipeline']">
+                        View Pipeline
+                    </button>
                 </article>
                 }
             </div>
