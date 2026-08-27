@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PostingService } from '../../../core/services/postings.service';
 import { ApplicationService } from '../../../core/services/application.service';
-import { PostingResponse, ApplicationResponse, ApplicationStage } from '../../../core/models/api.models';
+import { PostingResponse, ApplicationResponse } from '../../../core/models/api.models';
 
 @Component({
   selector: 'app-hr-applications',
@@ -19,14 +19,6 @@ export class HrApplicationsComponent implements OnInit {
   selectedPostingId: string = '';
   selectedPostingTitle: string = '';
 
-  stages: ApplicationStage[] = [
-    ApplicationStage.APPLIED,
-    ApplicationStage.SCREENING,
-    ApplicationStage.INTERVIEW,
-    ApplicationStage.OFFERED,
-    ApplicationStage.REJECTED
-  ];
-
   isLoadingPostings = true;
   isLoadingApps = false;
   errorMessage = '';
@@ -35,7 +27,7 @@ export class HrApplicationsComponent implements OnInit {
     private postingService: PostingService,
     private applicationService: ApplicationService,
     private cdr: ChangeDetectorRef
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.loadPostings();
@@ -80,29 +72,6 @@ export class HrApplicationsComponent implements OnInit {
         this.cdr.markForCheck();
       }
     });
-  }
-
-  onStageChange(app: ApplicationResponse, event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    const newStage = select.value as ApplicationStage;
-
-    if (app.stage === newStage) {
-      return;
-    }
-
-    this.applicationService
-      .updateApplicationStage(app.id, newStage)
-      .subscribe({
-        next: () => {
-          app.stage = newStage;
-          this.cdr.markForCheck();
-        },
-        error: (err) => {
-          console.error('Failed to update application stage:', err);
-          this.errorMessage = 'Could not update application stage.';
-          this.cdr.markForCheck();
-        }
-      });
   }
 
   formatDate(dateStr: string): string {

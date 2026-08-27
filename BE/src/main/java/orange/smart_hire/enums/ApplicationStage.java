@@ -4,6 +4,6 @@ public enum ApplicationStage {
     APPLIED,
     SCREENING,
     INTERVIEW,
-    OFFERED,
-    REJECTED
+    OFFER,
+    DECISION
 }
