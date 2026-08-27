@@ -3,13 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { ApplicationResponse, ApplyRequest } from '../models/api.models';
+import { ApplicationResponse, ApplyRequest, ApplicationStage, PipelineResponse } from '../models/api.models';
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationService {
   private apiUrl = `${environment.apiUrl}/applications`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   applyToPosting(req: ApplyRequest): Observable<ApplicationResponse> {
     return this.http.post<any>(this.apiUrl, req).pipe(
@@ -31,5 +31,17 @@ export class ApplicationService {
     return this.http.get<any>(`${this.apiUrl}/posting/${postingId}`).pipe(
       map((res: any) => (Array.isArray(res) ? res : (res?.data ?? res)))
     );
+  }
+
+  getPipeline(postingId: string): Observable<PipelineResponse[]> {
+    return this.http.get<PipelineResponse[]>(`${this.apiUrl}/postings/${postingId}/pipeline`);
+  }
+
+  updateApplicationStage(applicationId: string, stage: ApplicationStage):
+    Observable<ApplicationResponse> {
+    return this.http.patch<ApplicationResponse>(
+      `${this.apiUrl}/${applicationId}/stage`,
+      { stage }
+    )
   }
 }
