@@ -1,10 +1,15 @@
 <div class="page-shell">
 
     <div class="page-header">
-        <div>
-            <p class="eyebrow">Recruitment Pipeline</p>
 
-            <h1>Candidate Pipeline</h1>
+        <div>
+            <p class="eyebrow">
+                Recruitment Pipeline
+            </p>
+
+            <h1>
+                Candidate Pipeline
+            </h1>
 
             <p class="intro">
                 Review candidates and move them through the hiring process.
@@ -14,20 +19,25 @@
         <div class="header-mark">
             PIPE
         </div>
+
     </div>
 
 
     @if (loading) {
+
     <div class="loading-container">
         <div class="loader"></div>
     </div>
+
     }
 
 
     @if (errorMessage) {
+
     <div class="error-message">
         {{ errorMessage }}
     </div>
+
     }
 
 
@@ -65,25 +75,31 @@
 
 
                 @if (application.candidateEmail) {
+
                 <p>
                     {{ application.candidateEmail }}
                 </p>
+
                 }
 
 
                 @if (application.experienceSummary) {
+
                 <p>
                     {{ application.experienceSummary }}
                 </p>
+
                 }
 
 
                 @if (application.resumeUrl) {
+
                 <a [href]="application.resumeUrl" target="_blank" rel="noopener noreferrer">
 
                     View Resume
 
                 </a>
+
                 }
 
 
@@ -95,7 +111,9 @@
                     ) {
 
                     <option [value]="targetStage">
+
                         {{ targetStage }}
+
                     </option>
 
                     }
