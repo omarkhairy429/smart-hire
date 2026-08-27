@@ -39,7 +39,7 @@ export interface ApplicationResponse {
   coverLetter?: string;
   experienceSummary?: string;
   resumeUrl?: string;
-  stage: ApplicationStage;
+  stage: string;
   status: string;
   createdAt: string;
   updatedAt: string;
@@ -50,17 +50,4 @@ export interface ApplyRequest {
   coverLetter?: string;
   experienceSummary?: string;
   resumeUrl: string;
-}
-
-export enum ApplicationStage {
-  APPLIED = 'APPLIED',
-  SCREENING = 'SCREENING',
-  INTERVIEW = 'INTERVIEW',
-  OFFER = 'OFFER',
-  DECISION = 'DECISION'
-}
-
-export interface PipelineResponse {
-  stage: ApplicationStage;
-  applications: ApplicationResponse[];
 }

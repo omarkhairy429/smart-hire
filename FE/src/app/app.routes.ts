@@ -12,7 +12,6 @@ import { MyApplicationsComponent } from './features/candidate/my-applications/my
 import { adminGuard } from './core/guards/admin-guard';
 import { hrGuard } from './core/guards/hr-guard';
 import { authGuard } from './core/guards/auth-guard';
-import { PipelineComponent } from './features/applications/pipeline/pipeline';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -38,7 +37,4 @@ export const routes: Routes = [
 
   // Fallback
   { path: '**', redirectTo: '' },
-
-  // Pipeline
-  { path: 'postings/:postingId/pipeline', component: PipelineComponent }
 ];
