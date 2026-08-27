@@ -16,59 +16,111 @@
         </div>
     </div>
 
-    <div *ngIf="loading" class="loading-container">
+
+    @if (loading) {
+    <div class="loading-container">
         <div class="loader"></div>
     </div>
+    }
 
-    <div *ngIf="errorMessage" class="error-message">
+
+    @if (errorMessage) {
+    <div class="error-message">
         {{ errorMessage }}
     </div>
+    }
 
-    <div class="pipeline-board" *ngIf="!loading">
 
-        <div class="pipeline-column" *ngFor="let stage of stages">
+    @if (!loading) {
+
+    <div class="pipeline-board">
+
+        @for (stage of stages; track stage) {
+
+        <div class="pipeline-column">
 
             <div class="column-header">
-                <h3>{{ stage }}</h3>
+
+                <h3>
+                    {{ stage }}
+                </h3>
 
                 <span class="count">
                     {{ getApplications(stage).length }}
                 </span>
+
             </div>
 
-            <div class="application-card" *ngFor="let application of getApplications(stage)">
+
+            @for (
+            application of getApplications(stage);
+            track application.id
+            ) {
+
+            <div class="application-card">
 
                 <h4>
                     {{ application.candidateName || 'Unknown Candidate' }}
                 </h4>
 
-                <p *ngIf="application.candidateEmail">
+
+                @if (application.candidateEmail) {
+                <p>
                     {{ application.candidateEmail }}
                 </p>
+                }
 
-                <p *ngIf="application.experienceSummary">
+
+                @if (application.experienceSummary) {
+                <p>
                     {{ application.experienceSummary }}
                 </p>
+                }
 
-                <a *ngIf="application.resumeUrl" [href]="application.resumeUrl" target="_blank"
-                    rel="noopener noreferrer">
+
+                @if (application.resumeUrl) {
+                <a [href]="application.resumeUrl" target="_blank" rel="noopener noreferrer">
+
                     View Resume
+
                 </a>
+                }
+
 
                 <select [value]="application.stage" (change)="updateStage(application, $event)">
-                    <option *ngFor="let targetStage of stages" [value]="targetStage">
+
+                    @for (
+                    targetStage of stages;
+                    track targetStage
+                    ) {
+
+                    <option [value]="targetStage">
                         {{ targetStage }}
                     </option>
+
+                    }
+
                 </select>
 
             </div>
 
-            <div class="empty-column" *ngIf="getApplications(stage).length === 0">
+            }
+
+
+            @if (getApplications(stage).length === 0) {
+
+            <div class="empty-column">
                 No candidates
             </div>
 
+            }
+
         </div>
 
+        }
+
     </div>
+
+    }
 
 </div>

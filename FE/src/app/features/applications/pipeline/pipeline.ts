@@ -6,8 +6,8 @@ import { ApplicationService } from '../../../core/services/application.service';
 
 @Component({
   selector: 'app-pipeline',
-  templateUrl: './pipeline.component.html',
-  styleUrl: './pipeline.component.css'
+  templateUrl: './pipeline.html',
+  styleUrl: './pipeline.css'
 })
 export class PipelineComponent implements OnInit {
 
