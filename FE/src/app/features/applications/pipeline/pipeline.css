@@ -18,10 +18,10 @@
 }
 
 .eyebrow {
-    color: #b54b32;
-    font-size: .72rem;
+    color: var(--primary-blue);
+    font-size: 0.72rem;
     font-weight: 800;
-    letter-spacing: .12em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     margin: 0 0 10px;
 }
@@ -35,16 +35,17 @@ p {
 }
 
 h1 {
-    color: #18302e;
-    font-family: Georgia, serif;
-    font-size: clamp(2.7rem, 6vw, 5.2rem);
-    font-weight: 500;
-    line-height: .98;
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1;
     margin-bottom: 18px;
+    letter-spacing: -1.5px;
 }
 
 .intro {
-    color: #5b6865;
+    color: var(--text-muted);
     font-size: 1.05rem;
     max-width: 620px;
     line-height: 1.6;
@@ -54,30 +55,46 @@ h1 {
 .header-mark {
     display: grid;
     place-items: center;
+
     width: 76px;
     height: 76px;
-    border: 1px solid #c9674b;
+
+    border: 1px solid var(--primary-blue);
     border-radius: 50%;
-    color: #c9674b;
-    font: 700 1.1rem Georgia, serif;
+
+    color: var(--primary-blue);
+
+    font: 700 1.1rem 'Inter', sans-serif;
+
     transform: rotate(8deg);
+
+    background: var(--accent-blue);
 }
 
-/* Pipeline */
+/* Pipeline Board */
 .pipeline-board {
     display: grid;
     grid-template-columns: repeat(5, minmax(230px, 1fr));
     gap: 16px;
     align-items: start;
+
     overflow-x: auto;
     padding-bottom: 12px;
 }
 
+/* Pipeline Column */
 .pipeline-column {
     min-width: 230px;
-    background: #f8f4ec;
-    border: 1px solid #ded8c9;
+
+    background: var(--accent-blue);
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 10px;
+
     padding: 18px;
+
+    box-shadow: var(--shadow-sm);
 }
 
 /* Column Header */
@@ -87,75 +104,103 @@ h1 {
     justify-content: space-between;
     gap: 12px;
 
-    border-bottom: 1px solid #d9d2c5;
+    border-bottom: 1px solid var(--border-color);
+
     padding-bottom: 16px;
     margin-bottom: 16px;
 }
 
 .column-header h3 {
-    color: #18302e;
-    font-family: Georgia, serif;
-    font-size: 1.25rem;
-    font-weight: 500;
+    color: var(--text-main);
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 1rem;
+    font-weight: 700;
+
     margin: 0;
 }
 
 .count {
     display: grid;
     place-items: center;
+
     min-width: 30px;
     height: 30px;
+
     border-radius: 50%;
-    background: #18302e;
-    color: #fffaf1;
-    font-size: .75rem;
+
+    background: var(--primary-blue);
+    color: var(--white);
+
+    font-size: 0.75rem;
     font-weight: 800;
 }
 
 /* Application Card */
 .application-card {
-    background: #fffdf9;
-    border: 1px solid #ded8c9;
+    background: var(--white);
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 8px;
+
     padding: 18px;
+
     margin-bottom: 12px;
+
     transition:
-        border-color .2s ease,
-        transform .2s ease,
-        box-shadow .2s ease;
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .application-card:hover {
-    border-color: #b54b32;
+    border-color: var(--primary-blue);
+
     transform: translateY(-2px);
-    box-shadow: 0 4px 14px rgba(24, 48, 46, .06);
+
+    box-shadow: var(--shadow-sm);
 }
 
 .application-card h4 {
-    color: #18302e;
-    font-family: Georgia, serif;
-    font-size: 1.15rem;
-    font-weight: 500;
+    color: var(--text-main);
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 1rem;
+    font-weight: 700;
+
     margin-bottom: 8px;
 }
 
 .application-card p {
-    color: #5b6865;
-    font-size: .82rem;
+    color: var(--text-muted);
+
+    font-size: 0.82rem;
+
     line-height: 1.5;
+
     margin-bottom: 7px;
 }
 
+/* Resume Link */
 .application-card a {
     display: inline-block;
-    color: #b54b32;
-    font-size: .78rem;
-    font-weight: 800;
+
+    color: var(--primary-blue);
+
+    font-size: 0.78rem;
+    font-weight: 700;
+
     text-decoration: none;
+
     margin: 8px 0 14px;
 }
 
 .application-card a:hover {
-    color: #913a27;
+    color: var(--primary-hover);
+
     text-decoration: underline;
 }
 
@@ -164,25 +209,38 @@ h1 {
     width: 100%;
     box-sizing: border-box;
 
-    border: 1px solid #d2cabc;
-    border-radius: 2px;
-    background: #fffdf9;
-    color: #18302e;
+    border: 1px solid var(--border-color);
 
-    font: inherit;
-    font-size: .78rem;
-    font-weight: 700;
+    border-radius: 8px;
+
+    background: var(--white);
+
+    color: var(--text-main);
+
+    font-family: 'Inter', sans-serif;
+
+    font-size: 0.78rem;
+    font-weight: 600;
 
     padding: 9px 10px;
+
     outline: none;
+
     cursor: pointer;
 
-    transition: border-color .2s ease, box-shadow .2s ease;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.application-card select:hover {
+    border-color: var(--primary-blue);
 }
 
 .application-card select:focus {
-    border-color: #b54b32;
-    box-shadow: 0 0 0 3px #b54b3222;
+    border-color: var(--primary-blue);
+
+    box-shadow: 0 0 0 3px var(--accent-blue);
 }
 
 /* Empty Column */
@@ -192,10 +250,16 @@ h1 {
 
     min-height: 110px;
 
-    border: 1px dashed #cfc7b8;
+    border: 1px dashed var(--border-color);
 
-    color: #7b837e;
-    font-size: .78rem;
+    border-radius: 8px;
+
+    color: var(--text-muted);
+
+    background: var(--white);
+
+    font-size: 0.78rem;
+
     text-align: center;
 }
 
@@ -203,6 +267,7 @@ h1 {
 .loading-container {
     display: grid;
     place-items: center;
+
     min-height: 300px;
 }
 
@@ -210,11 +275,13 @@ h1 {
     width: 24px;
     height: 24px;
 
-    border: 2px solid #ded8c9;
-    border-top-color: #b54b32;
+    border: 2px solid var(--border-color);
+
+    border-top-color: var(--primary-blue);
+
     border-radius: 50%;
 
-    animation: spin .8s linear infinite;
+    animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
@@ -225,21 +292,28 @@ h1 {
 
 /* Error */
 .error-message {
-    color: #b54b32;
-    background: #fffdf9;
-    border: 1px solid #ded8c9;
+    color: #dc2626;
+
+    background: #fef2f2;
+
+    border: 1px solid #fecaca;
+
+    border-radius: 8px;
 
     padding: 14px 16px;
+
     margin-bottom: 20px;
 
-    font-size: .84rem;
-    font-weight: 700;
+    font-size: 0.84rem;
+
+    font-weight: 600;
 }
 
 /* Responsive */
 @media (max-width: 1100px) {
     .pipeline-board {
         grid-template-columns: repeat(5, 250px);
+
         overflow-x: auto;
     }
 }
@@ -259,10 +333,15 @@ h1 {
 }
 
 @media (max-width: 520px) {
+    .page-header {
+        gap: 12px;
+    }
+
     .header-mark {
         width: 54px;
         height: 54px;
-        font-size: .85rem;
+
+        font-size: 0.85rem;
     }
 
     h1 {

@@ -1,15 +1,11 @@
 <div class="page-shell">
 
+    <!-- Page Header -->
     <div class="page-header">
-
         <div>
-            <p class="eyebrow">
-                Recruitment Pipeline
-            </p>
+            <p class="eyebrow">Recruitment Pipeline</p>
 
-            <h1>
-                Candidate Pipeline
-            </h1>
+            <h1>Candidate Pipeline</h1>
 
             <p class="intro">
                 Review candidates and move them through the hiring process.
@@ -19,28 +15,26 @@
         <div class="header-mark">
             PIPE
         </div>
-
     </div>
 
 
+    <!-- Loading -->
     @if (loading) {
-
     <div class="loading-container">
         <div class="loader"></div>
     </div>
-
     }
 
 
+    <!-- Error -->
     @if (errorMessage) {
-
     <div class="error-message">
         {{ errorMessage }}
     </div>
-
     }
 
 
+    <!-- Pipeline -->
     @if (!loading) {
 
     <div class="pipeline-board">
@@ -49,6 +43,7 @@
 
         <div class="pipeline-column">
 
+            <!-- Column Header -->
             <div class="column-header">
 
                 <h3>
@@ -62,6 +57,7 @@
             </div>
 
 
+            <!-- Applications -->
             @for (
             application of getApplications(stage);
             track application.id
@@ -75,34 +71,27 @@
 
 
                 @if (application.candidateEmail) {
-
                 <p>
                     {{ application.candidateEmail }}
                 </p>
-
                 }
 
 
                 @if (application.experienceSummary) {
-
                 <p>
                     {{ application.experienceSummary }}
                 </p>
-
                 }
 
 
                 @if (application.resumeUrl) {
-
                 <a [href]="application.resumeUrl" target="_blank" rel="noopener noreferrer">
-
                     View Resume
-
                 </a>
-
                 }
 
 
+                <!-- Change Stage -->
                 <select [value]="application.stage" (change)="updateStage(application, $event)">
 
                     @for (
@@ -111,9 +100,7 @@
                     ) {
 
                     <option [value]="targetStage">
-
                         {{ targetStage }}
-
                     </option>
 
                     }
@@ -125,6 +112,7 @@
             }
 
 
+            <!-- Empty Column -->
             @if (getApplications(stage).length === 0) {
 
             <div class="empty-column">
