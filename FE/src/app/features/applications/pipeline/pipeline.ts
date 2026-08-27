@@ -30,8 +30,8 @@ export class PipelineComponent implements OnInit {
     ApplicationStage.APPLIED,
     ApplicationStage.SCREENING,
     ApplicationStage.INTERVIEW,
-    ApplicationStage.OFFER,
-    ApplicationStage.DECISION
+    ApplicationStage.OFFERED,
+    ApplicationStage.REJECTED
   ];
 
   loading = false;

@@ -2,7 +2,6 @@ package orange.smart_hire.controller;
 
 import orange.smart_hire.dto.ApplicationResponse;
 import orange.smart_hire.dto.ApplyRequest;
-import orange.smart_hire.dto.PipelineResponse;
 import orange.smart_hire.dto.UpdateStageRequest;
 import orange.smart_hire.service.ApplicationService;
 import orange.smart_hire.utils.SecurityUtils;
@@ -77,16 +76,7 @@ public class ApplicationController {
         );
     }
 
-    @GetMapping("/postings/{postingId}/pipeline")
-    @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
-    public ResponseEntity<List<PipelineResponse>> getPipeline(
-            @PathVariable UUID postingId
-    ) {
-        return ResponseEntity.ok(applicationService.getPipeline(postingId));
-    }
-
-
-    @PatchMapping("/applications/{applicationId}/stage")
+    @PatchMapping("/{applicationId}/stage")
     @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
     public ResponseEntity<ApplicationResponse> updateStage(
             @PathVariable UUID applicationId,

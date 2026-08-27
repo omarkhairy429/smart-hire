@@ -36,9 +36,10 @@ export const routes: Routes = [
   { path: 'apply/:id', component: ApplyComponent, canActivate: [authGuard] },
   { path: 'my-applications', component: MyApplicationsComponent, canActivate: [authGuard] },
 
-  // Fallback
-  { path: '**', redirectTo: '' },
-
   // Pipeline
-  { path: 'postings/:postingId/pipeline', component: PipelineComponent }
+  { path: 'postings/:postingId/pipeline', component: PipelineComponent, canActivate: [hrGuard] },
+
+  // Fallback
+  { path: '**', redirectTo: '' }
+
 ];

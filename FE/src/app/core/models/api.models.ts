@@ -56,8 +56,8 @@ export enum ApplicationStage {
   APPLIED = 'APPLIED',
   SCREENING = 'SCREENING',
   INTERVIEW = 'INTERVIEW',
-  OFFER = 'OFFER',
-  DECISION = 'DECISION'
+  OFFERED = 'OFFERED',
+  REJECTED = 'REJECTED'
 }
 
 export interface PipelineResponse {
