@@ -190,4 +190,18 @@ public class PostingService {
         posting.setStatus(PostingStatus.CLOSED);
         return mapToResponse(postingRepository.save(posting));
     }
+    public List<PostingResponse> getPublishedPostings() {
+        return postingRepository.findByStatus(PostingStatus.PUBLISHED)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    public List<PostingResponse> getMyPostings() {
+        User currentUser = SecurityUtils.getCurrentUser();
+        return postingRepository.findByHrManagerId(currentUser.getId())
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
 }

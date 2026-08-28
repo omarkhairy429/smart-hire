@@ -72,4 +72,14 @@ public class PostingController {
     public PostingResponse close(@PathVariable UUID id) {
         return postingService.close(id);
     }
+    @GetMapping("/published")
+    public List<PostingResponse> getPublishedPostings() {
+        return postingService.getPublishedPostings();
+    }
+
+    @PreAuthorize("hasRole('HR_MANAGER')")
+    @GetMapping("/mine")
+    public List<PostingResponse> getMyPostings() {
+        return postingService.getMyPostings();
+    }
 }
