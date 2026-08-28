@@ -17,7 +17,7 @@ export class JobListComponent implements OnInit {
   constructor(private postingService: PostingService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.postingService.getPostings().subscribe({
+    this.postingService.getPublishedPostings().subscribe({
       next: (data: PostingResponse[]) => {
         this.jobs = data;
         this.cdr.markForCheck();

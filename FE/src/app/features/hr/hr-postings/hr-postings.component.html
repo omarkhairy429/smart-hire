@@ -15,7 +15,7 @@
       <div class="section-heading">
         <div>
           <p class="section-kicker">New opportunity</p>
-          <h2 id="create-title">Create a job posting</h2>
+          <h2 id="create-title">{{ editingDraftId ? 'Edit draft' : 'Create a job posting' }}</h2>
         </div>
         <span class="status-dot">Ready to publish</span>
       </div>
@@ -106,9 +106,22 @@
           </label>
         </div>
 
-        <button class="btn-primary submit-btn" type="submit" [disabled]="isSubmitting">
-          {{ isSubmitting ? 'Publishing...' : 'Publish Job Posting' }}
-        </button>
+        <div class="form-actions">
+          @if (editingDraftId) {
+            <button type="button" class="card-btn" (click)="cancelEdit()">Cancel</button>
+          }
+          <button
+            class="btn-secondary-outline draft-btn"
+            type="button"
+            [disabled]="isSubmitting"
+            (click)="saveDraft()"
+          >
+            Save Draft
+          </button>
+          <button class="btn-primary submit-btn" type="submit" [disabled]="isSubmitting">
+            {{ isSubmitting ? 'Publishing...' : 'Publish Job Posting' }}
+          </button>
+        </div>
       </form>
 
       @if (successMessage) {
@@ -126,7 +139,20 @@
           <p class="section-kicker">Your pipeline</p>
           <h2 id="list-title">Your job postings</h2>
         </div>
-        <span class="count-badge">{{ postings.length }}</span>
+        <span class="count-badge">{{ filteredPostings.length }}</span>
+      </div>
+
+      <div class="status-tabs">
+        @for (filter of statusFilters; track filter) {
+          <button
+            type="button"
+            class="tab-btn"
+            [class.active]="statusFilter === filter"
+            (click)="statusFilter = filter"
+          >
+            {{ filter }}
+          </button>
+        }
       </div>
 
       @if (isLoading) {
@@ -134,20 +160,22 @@
           <span class="loader"></span>
           <p>Loading postings...</p>
         </div>
-      } @else if (postings.length === 0) {
+      } @else if (filteredPostings.length === 0) {
         <div class="empty-state">
           <p>No postings yet.</p>
           <span>Your next role starts here.</span>
         </div>
       } @else {
         <div class="posting-list">
-          @for (posting of postings; track posting.id) {
+          @for (posting of filteredPostings; track posting.id) {
             <article class="posting-card">
               <div class="posting-card-top">
                 <span class="posting-status {{ posting.status | lowercase }}">{{
                   posting.status
                 }}</span>
-                <time>Due {{ posting.deadline | date: 'MMM d, y' }}</time>
+                @if (posting.deadline) {
+                  <time>Due {{ posting.deadline | date: 'MMM d, y' }}</time>
+                }
               </div>
               <h3>{{ posting.title }}</h3>
 
@@ -164,9 +192,22 @@
 
               <p class="posting-description">{{ posting.description }}</p>
 
-              <div class="skills">
-                @for (skill of posting.skillsRequired; track skill) {
-                  <span>{{ skill }}</span>
+              @if (posting.skillsRequired) {
+                <div class="skills">
+                  @for (skill of posting.skillsRequired; track skill) {
+                    <span>{{ skill }}</span>
+                  }
+                </div>
+              }
+
+              <div class="card-actions">
+                @if (posting.status === 'DRAFT') {
+                  <button type="button" class="card-btn" (click)="editDraft(posting)">Edit</button>
+                }
+                @if (posting.status === 'PUBLISHED') {
+                  <button type="button" class="card-btn danger" (click)="closePosting(posting)">
+                    Close
+                  </button>
                 }
               </div>
             </article>
