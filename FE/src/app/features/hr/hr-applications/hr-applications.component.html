@@ -22,11 +22,6 @@
       <option [value]="posting.id">{{ posting.title }} ({{ posting.status }})</option>
       }
     </select>
-    @if (selectedPostingId) {
-    <button class="pipeline-button" [routerLink]="['/postings', selectedPostingId, 'pipeline']">
-      View Pipeline
-    </button>
-    }
   </div>
 
   <!-- Applications table -->

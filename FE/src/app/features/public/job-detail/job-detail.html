@@ -1,12 +1,11 @@
 @if (isLoading) {
-  <div style="text-align: center; padding: 3rem; font-size: 1.2rem; color: var(--primary-blue)">
-    Loading job details...
-  </div>
+<div style="text-align: center; padding: 3rem; font-size: 1.2rem; color: var(--primary-blue)">
+  Loading job details...
+</div>
 }
 
 @if (errorMessage) {
-  <div
-    style="
+<div style="
       text-align: center;
       padding: 2rem;
       color: #991b1b;
@@ -15,64 +14,79 @@
       margin: 2rem auto;
       max-width: 600px;
       border: 1px solid #f87171;
-    "
-  >
-    <h3>Oops! Something went wrong.</h3>
-    <p>{{ errorMessage }}</p>
-    <a routerLink="/jobs" class="btn-primary" style="margin-top: 1rem; display: inline-block"
-      >Back to Jobs</a
-    >
-  </div>
+    ">
+  <h3>Oops! Something went wrong.</h3>
+  <p>{{ errorMessage }}</p>
+  <a routerLink="/jobs" class="btn-primary" style="margin-top: 1rem; display: inline-block">Back to Jobs</a>
+</div>
 }
 
 @if (!isLoading && !errorMessage && job) {
-  <div class="detail-container">
-    <a
-      routerLink="/jobs"
-      style="
+<div class="detail-container">
+  <a routerLink="/jobs" style="
         display: inline-block;
         margin-bottom: 1rem;
         color: var(--text-muted);
         text-decoration: none;
-      "
-      >&larr; Back to Jobs</a
-    >
+      ">&larr; Back to Jobs</a>
 
-    <div class="detail-header">
-      <div class="header-content">
-        <h1>{{ job.title }}</h1>
-        <p class="meta">
-          @if (job.company) {
-            <span class="company-name">🏢 {{ job.company }}</span> •
-          }
-          {{ job.location }} • <span class="badge">{{ job.locationType }}</span>
-        </p>
-      </div>
-
-      <!-- Show Apply button only for candidates or guests — hide for HR/Admin -->
-      @if (!isStaff) {
-        <button class="btn-primary apply-btn" (click)="onApplyClick()">
-          @if (!isLoggedIn) {
-            Sign In to Apply
-          } @else {
-            Apply Now
-          }
-        </button>
-      }
-    </div>
-
-    <div class="detail-body">
-      <h3>Job Description</h3>
-      <p>{{ job.description }}</p>
-
-      <h3 class="mt-2">Skills Required</h3>
-      <ul>
-        @for (skill of job.skillsRequired; track $index) {
-          <li>{{ skill }}</li>
-        } @empty {
-          <li>No specific skills listed.</li>
+  <div class="detail-header">
+    <div class="header-content">
+      <h1>{{ job.title }}</h1>
+      <p class="meta">
+        @if (job.company) {
+        <span class="company-name">🏢 {{ job.company }}</span> •
         }
-      </ul>
+        {{ job.location }} • <span class="badge">{{ job.locationType }}</span>
+      </p>
     </div>
+
+    <!-- Show Apply button only for candidates or guests — hide for HR/Admin -->
+    @if (!isStaff) {
+
+    @if (!isLoggedIn) {
+
+    <button class="btn-primary apply-btn" (click)="onApplyClick()">
+      Sign In to Apply
+    </button>
+
+    } @else if (isCheckingApplication) {
+
+    <span class="application-status">
+      Checking application...
+    </span>
+
+    } @else if (hasApplied) {
+
+    <div class="application-status">
+      <span class="badge stage-badge">
+        In Stage: {{ applicationStage }}
+      </span>
+    </div>
+
+    } @else {
+
+    <button class="btn-primary apply-btn" (click)="onApplyClick()">
+      Apply Now
+    </button>
+
+    }
+
+    }
   </div>
+
+  <div class="detail-body">
+    <h3>Job Description</h3>
+    <p>{{ job.description }}</p>
+
+    <h3 class="mt-2">Skills Required</h3>
+    <ul>
+      @for (skill of job.skillsRequired; track $index) {
+      <li>{{ skill }}</li>
+      } @empty {
+      <li>No specific skills listed.</li>
+      }
+    </ul>
+  </div>
+</div>
 }

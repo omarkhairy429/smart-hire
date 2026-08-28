@@ -62,6 +62,7 @@ public class PostingController {
         postingService.deletePosting(id);
         return ResponseEntity.noContent().build();
     }
+
     @GetMapping("/{postingId}/pipeline")
     @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
     public ResponseEntity<List<PipelineResponse>> getPipeline(

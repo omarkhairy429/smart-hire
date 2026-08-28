@@ -34,7 +34,7 @@ export class ApplicationService {
   }
 
   getPipeline(postingId: string): Observable<PipelineResponse[]> {
-    return this.http.get<PipelineResponse[]>(`${this.apiUrl}/postings/${postingId}/pipeline`);
+    return this.http.get<PipelineResponse[]>(`${environment.apiUrl}/postings/${postingId}/pipeline`);
   }
 
   updateApplicationStage(applicationId: string, stage: ApplicationStage):
