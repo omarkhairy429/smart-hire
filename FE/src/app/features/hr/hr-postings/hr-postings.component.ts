@@ -13,7 +13,7 @@ const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-
   standalone: true,
   imports: [CommonModule, RouterLink, ReactiveFormsModule],
   templateUrl: './hr-postings.component.html',
-  styleUrls: ['./hr-postings.component.css']
+  styleUrls: ['./hr-postings.component.css'],
 })
 export class HrPostingsComponent implements OnInit {
   postings: PostingResponse[] = [];
@@ -23,7 +23,9 @@ export class HrPostingsComponent implements OnInit {
   errorMessage = '';
   hrManagerId: string = '';
   hasAutoId = false;
-
+  statusFilter: string = 'ALL';
+  editingDraftId: string | null = null;
+  readonly statusFilters = ['ALL', 'DRAFT', 'PUBLISHED', 'CLOSED'];
   readonly locationTypes = ['REMOTE', 'HYBRID', 'ON_SITE'];
 
   postingForm: FormGroup;
@@ -32,7 +34,7 @@ export class HrPostingsComponent implements OnInit {
     private fb: FormBuilder,
     private postingService: PostingService,
     private authService: AuthService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {
     this.postingForm = this.fb.group({
       hrManagerId: ['', [Validators.required, Validators.pattern(UUID_REGEX)]],
@@ -42,7 +44,7 @@ export class HrPostingsComponent implements OnInit {
       skillsRequired: ['', Validators.required],
       locationType: ['REMOTE', Validators.required],
       location: ['', Validators.maxLength(160)],
-      deadline: ['', Validators.required]
+      deadline: ['', Validators.required],
     });
   }
 
@@ -59,7 +61,7 @@ export class HrPostingsComponent implements OnInit {
 
   loadPostings() {
     this.isLoading = true;
-    this.postingService.getPostings().subscribe({
+    this.postingService.getMyPostings().subscribe({
       next: (data) => {
         // Show all postings returned by the BE (server already scopes by role)
         this.postings = data;
@@ -70,7 +72,7 @@ export class HrPostingsComponent implements OnInit {
         this.errorMessage = 'Could not load postings.';
         this.isLoading = false;
         this.cdr.markForCheck();
-      }
+      },
     });
   }
 
@@ -89,32 +91,173 @@ export class HrPostingsComponent implements OnInit {
       skillsRequired: raw.skillsRequired
         .split(',')
         .map((s: string) => s.trim())
-        .filter(Boolean)
+        .filter(Boolean),
     };
 
     this.isSubmitting = true;
+
+    if (this.editingDraftId) {
+      const draftId = this.editingDraftId;
+      this.postingService.updateDraft(draftId, request).subscribe({
+        next: () => {
+          this.postingService.publishPosting(draftId).subscribe({
+            next: () => {
+              this.successMessage = 'Draft published.';
+              this.editingDraftId = null;
+              this.postingForm.reset({ locationType: 'REMOTE', hrManagerId: this.hrManagerId });
+              this.isSubmitting = false;
+              this.loadPostings();
+            },
+            error: (err) => {
+              this.errorMessage = err?.error?.message ?? 'Failed to publish draft.';
+              this.isSubmitting = false;
+              this.cdr.markForCheck();
+            },
+          });
+        },
+        error: (err) => {
+          this.errorMessage = err?.error?.message ?? 'Failed to save draft before publishing.';
+          this.isSubmitting = false;
+          this.cdr.markForCheck();
+        },
+      });
+      return;
+    }
+
     this.postingService.createPosting(request).subscribe({
-      next: (newPosting) => {
-        // Reload from server to guarantee the list is always in sync
-        this.successMessage = `Job posting created successfully!`;
+      next: () => {
+        this.successMessage = 'Job posting created successfully!';
         this.postingForm.reset({ locationType: 'REMOTE', hrManagerId: this.hrManagerId });
         this.isSubmitting = false;
-        this.loadPostings(); // this also calls cdr.markForCheck()
+        this.loadPostings();
       },
       error: (err) => {
         this.errorMessage = err?.error?.message ?? 'Failed to create posting.';
         this.isSubmitting = false;
         this.cdr.markForCheck();
-      }
+      },
     });
   }
+  saveDraft() {
+    this.successMessage = '';
+    this.errorMessage = '';
 
+    const titleCtrl = this.postingForm.get('title');
+    if (!titleCtrl?.value) {
+      titleCtrl?.markAsTouched();
+      this.errorMessage = 'A title is required, even for a draft.';
+      return;
+    }
+
+    const raw = this.postingForm.getRawValue();
+    const request: PostingRequest = {
+      ...raw,
+      skillsRequired: raw.skillsRequired
+        ? raw.skillsRequired
+            .split(',')
+            .map((s: string) => s.trim())
+            .filter(Boolean)
+        : [],
+    };
+
+    this.isSubmitting = true;
+
+    const call = this.editingDraftId
+      ? this.postingService.updateDraft(this.editingDraftId, request)
+      : this.postingService.createDraft(request);
+
+    call.subscribe({
+      next: () => {
+        this.successMessage = this.editingDraftId ? 'Draft updated.' : 'Draft saved.';
+        this.editingDraftId = null;
+        this.postingForm.reset({ locationType: 'REMOTE', hrManagerId: this.hrManagerId });
+        this.isSubmitting = false;
+        this.loadPostings();
+      },
+      error: (err) => {
+        this.errorMessage = err?.error?.message ?? 'Failed to save draft.';
+        this.isSubmitting = false;
+        this.cdr.markForCheck();
+      },
+    });
+  }
+  editDraft(posting: PostingResponse) {
+    this.editingDraftId = posting.id;
+    this.successMessage = '';
+    this.errorMessage = '';
+
+    this.postingForm.patchValue({
+      title: posting.title,
+      company: posting.company ?? '',
+      description: posting.description ?? '',
+      skillsRequired: posting.skillsRequired ? posting.skillsRequired.join(', ') : '',
+      locationType: posting.locationType ?? 'REMOTE',
+      location: posting.location ?? '',
+      deadline: posting.deadline ?? '',
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  cancelEdit() {
+    this.editingDraftId = null;
+    this.postingForm.reset({ locationType: 'REMOTE', hrManagerId: this.hrManagerId });
+    this.successMessage = '';
+    this.errorMessage = '';
+  }
+
+  closePosting(posting: PostingResponse) {
+    this.successMessage = '';
+    this.errorMessage = '';
+
+    this.postingService.closePosting(posting.id).subscribe({
+      next: () => {
+        this.successMessage = 'Posting closed.';
+        this.loadPostings();
+      },
+      error: (err) => {
+        this.errorMessage = err?.error?.message ?? 'Failed to close posting.';
+        this.cdr.markForCheck();
+      },
+    });
+  }
+  deleteDraft(posting: PostingResponse) {
+    if (!confirm(`Delete draft "${posting.title}"? This cannot be undone.`)) {
+      return;
+    }
+
+    this.successMessage = '';
+    this.errorMessage = '';
+
+    this.postingService.deletePosting(posting.id).subscribe({
+      next: () => {
+        this.successMessage = 'Draft deleted.';
+        if (this.editingDraftId === posting.id) {
+          this.cancelEdit();
+        }
+        this.loadPostings();
+      },
+      error: (err) => {
+        this.errorMessage = err?.error?.message ?? 'Failed to delete draft.';
+        this.cdr.markForCheck();
+      },
+    });
+  }
   fieldHasError(field: string): boolean {
     const ctrl = this.postingForm.get(field);
     return !!ctrl && ctrl.invalid && ctrl.touched;
   }
 
-  formatLocationType(type: string): string {
+  formatLocationType(type: string | null | undefined): string {
+    if (!type) {
+      return '—';
+    }
     return type === 'ON_SITE' ? 'On-site' : type.charAt(0) + type.slice(1).toLowerCase();
+  }
+  get filteredPostings(): PostingResponse[] {
+    if (this.statusFilter === 'ALL') {
+      return this.postings;
+    }
+    return this.postings.filter((p) => p.status === this.statusFilter);
   }
 }

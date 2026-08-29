@@ -44,6 +44,19 @@ export class JobDetailComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
 
     if (id) {
+      this.postingService.getPublishedPostingById(id).subscribe({
+        next: (data: PostingResponse) => {
+          this.job = data;
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        },
+        error: (err: any) => {
+          console.error('[JobDetail] error:', err);
+          this.errorMessage = 'Failed to load job details.';
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        },
+      });
       this.loadJob(id);
 
       // Only candidates need to check whether they already applied
