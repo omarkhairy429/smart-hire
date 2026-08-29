@@ -34,7 +34,7 @@ export class JobDetailComponent implements OnInit {
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.postingService.getPostingById(id).subscribe({
+      this.postingService.getPublishedPostingById(id).subscribe({
         next: (data: PostingResponse) => {
           this.job = data;
           this.isLoading = false;
@@ -45,7 +45,7 @@ export class JobDetailComponent implements OnInit {
           this.errorMessage = 'Failed to load job details.';
           this.isLoading = false;
           this.cdr.markForCheck();
-        }
+        },
       });
     } else {
       this.errorMessage = 'No Job ID found in URL.';

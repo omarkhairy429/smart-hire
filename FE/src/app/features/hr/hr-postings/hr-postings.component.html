@@ -202,7 +202,10 @@
 
               <div class="card-actions">
                 @if (posting.status === 'DRAFT') {
-                  <button type="button" class="card-btn" (click)="editDraft(posting)">Edit</button>
+                <button type="button" class="card-btn" (click)="editDraft(posting)">Edit</button>
+                <button type="button" class="card-btn danger" (click)="deleteDraft(posting)">
+                  Delete
+                </button>
                 }
                 @if (posting.status === 'PUBLISHED') {
                   <button type="button" class="card-btn danger" (click)="closePosting(posting)">

@@ -221,6 +221,28 @@ export class HrPostingsComponent implements OnInit {
       },
     });
   }
+  deleteDraft(posting: PostingResponse) {
+    if (!confirm(`Delete draft "${posting.title}"? This cannot be undone.`)) {
+      return;
+    }
+
+    this.successMessage = '';
+    this.errorMessage = '';
+
+    this.postingService.deletePosting(posting.id).subscribe({
+      next: () => {
+        this.successMessage = 'Draft deleted.';
+        if (this.editingDraftId === posting.id) {
+          this.cancelEdit();
+        }
+        this.loadPostings();
+      },
+      error: (err) => {
+        this.errorMessage = err?.error?.message ?? 'Failed to delete draft.';
+        this.cdr.markForCheck();
+      },
+    });
+  }
   fieldHasError(field: string): boolean {
     const ctrl = this.postingForm.get(field);
     return !!ctrl && ctrl.invalid && ctrl.touched;

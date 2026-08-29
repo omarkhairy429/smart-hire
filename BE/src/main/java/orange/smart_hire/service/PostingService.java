@@ -72,6 +72,16 @@ public class PostingService {
         Posting posting = findPostingOrThrow(id);
         return mapToResponse(posting);
     }
+    public PostingResponse getPublishedPostingById(UUID id) {
+        Posting posting = findPostingOrThrow(id);
+
+        if (posting.getStatus() != PostingStatus.PUBLISHED) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Posting was not found");
+        }
+
+        return mapToResponse(posting);
+    }
 
     public PostingResponse updatePosting(UUID id, PostingRequest request) {
         Posting posting = findPostingOrThrow(id);

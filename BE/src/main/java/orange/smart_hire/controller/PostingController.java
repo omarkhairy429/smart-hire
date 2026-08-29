@@ -51,6 +51,10 @@ public class PostingController {
         postingService.deletePosting(id);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/published/{id}")
+    public PostingResponse getPublishedPostingById(@PathVariable UUID id) {
+        return postingService.getPublishedPostingById(id);
+    }
     @PreAuthorize("hasRole('HR_MANAGER')")
     @PostMapping("/drafts")
     public PostingResponse createDraft(@RequestBody PostingRequest request) {
