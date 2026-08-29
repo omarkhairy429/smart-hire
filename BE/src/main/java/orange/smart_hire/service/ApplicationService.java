@@ -2,6 +2,7 @@ package orange.smart_hire.service;
 
 import orange.smart_hire.dto.ApplicationResponse;
 import orange.smart_hire.dto.ApplyRequest;
+import orange.smart_hire.dto.PipelineResponse;
 import orange.smart_hire.enums.ApplicationStage;
 import orange.smart_hire.enums.ApplicationStatus;
 import orange.smart_hire.model.Application;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,10 +29,11 @@ public class ApplicationService {
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
     }
+
     public ApplicationResponse apply(ApplyRequest request, UUID candidateId) {
         if (applicationRepository.existsByPostingIdAndCandidateId(
                 request.getPostingId(), candidateId
-        )){
+        )) {
             throw new IllegalStateException(
                     "Candidate has already applied to this posting"
             );
@@ -65,6 +68,7 @@ public class ApplicationService {
                 .map(this::mapToResponse)
                 .toList();
     }
+
     @Transactional(readOnly = true)
     public List<ApplicationResponse> getApplicationsByPosting(UUID postingId) {
         return applicationRepository.findByPostingId(postingId)
@@ -105,5 +109,42 @@ public class ApplicationService {
         }
 
         return response;
+    }
+
+    public List<PipelineResponse> getPipeline(UUID postingId) {
+
+        List<Application> applications =
+                applicationRepository.findByPostingId(postingId);
+
+        return Arrays.stream(ApplicationStage.values())
+                .map(stage -> {
+
+                    PipelineResponse response =
+                            new PipelineResponse();
+
+                    response.setStage(stage);
+
+                    response.setResponses(
+                            applications.stream()
+                                    .filter(application ->
+                                            application.getStage() == stage
+                                    )
+                                    .map(this::mapToResponse)
+                                    .toList()
+                    );
+
+                    return response;
+                })
+                .toList();
+    }
+
+    public ApplicationResponse updateStage(UUID applicationId, ApplicationStage newStage) {
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new RuntimeException("Application not found"));
+        application.setStage(newStage);
+        application.setUpdatedAt(LocalDateTime.now());
+        Application saved = applicationRepository.save(application);
+        return mapToResponse(saved);
+
     }
 }

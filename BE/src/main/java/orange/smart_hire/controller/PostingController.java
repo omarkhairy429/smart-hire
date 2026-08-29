@@ -3,13 +3,14 @@ package orange.smart_hire.controller;
 import java.util.List;
 import java.util.UUID;
 
+import orange.smart_hire.dto.PipelineResponse;
 import orange.smart_hire.dto.PostingResponse;
+import orange.smart_hire.service.ApplicationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import orange.smart_hire.dto.PostingRequest;
-import orange.smart_hire.model.Posting;
 import orange.smart_hire.service.PostingService;
 
 @RestController
@@ -18,9 +19,11 @@ import orange.smart_hire.service.PostingService;
 public class PostingController {
 
     private final PostingService postingService;
+    private final ApplicationService applicationService;
 
-    public PostingController(PostingService postingService) {
+    public PostingController(PostingService postingService, ApplicationService applicationService) {
         this.postingService = postingService;
+        this.applicationService = applicationService;
     }
 
     @GetMapping
@@ -85,5 +88,12 @@ public class PostingController {
     @GetMapping("/mine")
     public List<PostingResponse> getMyPostings() {
         return postingService.getMyPostings();
+
+    @GetMapping("/{postingId}/pipeline")
+    @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
+    public ResponseEntity<List<PipelineResponse>> getPipeline(
+            @PathVariable UUID postingId
+    ) {
+        return ResponseEntity.ok(applicationService.getPipeline(postingId));
     }
 }

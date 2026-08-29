@@ -94,6 +94,7 @@
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
+
 /* Table */
 .table-card {
   background: var(--white);
@@ -208,25 +209,41 @@
   background: #fef9c3;
   color: #854d0e;
 }
+
 .status-accepted,
 .status-hired {
   background: #d1fae5;
   color: #065f46;
 }
+
 .status-rejected {
   background: #fee2e2;
   color: #991b1b;
 }
 
-.stage-badge {
-  display: inline-block;
-  background: var(--accent-blue);
-  color: var(--primary-blue);
-  padding: 0.25rem 0.65rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
+.stage-select {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--text-main);
+  font-size: 0.8rem;
   font-weight: 600;
-  white-space: nowrap;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.stage-select:hover {
+  border-color: var(--primary-blue);
+}
+
+.stage-select:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .resume-link {
