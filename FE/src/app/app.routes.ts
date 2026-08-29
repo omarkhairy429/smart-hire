@@ -36,5 +36,6 @@ export const routes: Routes = [
   { path: 'my-applications', component: MyApplicationsComponent, canActivate: [authGuard] },
 
   // Fallback
-  { path: '**', redirectTo: '' },
+  { path: '**', redirectTo: '' }
+
 ];
