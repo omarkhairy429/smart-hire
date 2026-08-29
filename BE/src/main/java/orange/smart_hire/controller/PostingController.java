@@ -89,11 +89,12 @@ public class PostingController {
     public List<PostingResponse> getMyPostings() {
         return postingService.getMyPostings();
 
+    }
+
     @GetMapping("/{postingId}/pipeline")
     @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
-    public ResponseEntity<List<PipelineResponse>> getPipeline(
-            @PathVariable UUID postingId
-    ) {
+    public ResponseEntity<List<PipelineResponse>> getPipeline (@PathVariable UUID postingId){
         return ResponseEntity.ok(applicationService.getPipeline(postingId));
     }
+
 }
