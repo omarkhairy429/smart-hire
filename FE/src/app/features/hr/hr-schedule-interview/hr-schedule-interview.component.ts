@@ -3,16 +3,16 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InterviewService } from '../../../core/services/interview.service';
 import { StaffResponse } from '../../../core/models/api.models';
-import { InterviewResponse } from '../../../core/models/interview.models';
+import { InterviewResponse } from '../../../core/models/api.models';
 
 @Component({
-  selector: 'app-schedule-interview',
+  selector: 'app-hr-schedule-interview',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './schedule-interview.component.html',
-  styleUrls: ['./schedule-interview.component.css']
+  templateUrl: './hr-schedule-interview.component.html',
+  styleUrls: ['./hr-schedule-interview.component.css']
 })
-export class ScheduleInterviewComponent implements OnInit {
+export class HrScheduleInterviewComponent implements OnInit {
   @Input({ required: true }) applicationId!: string;
   @Input() candidateName = '';
 

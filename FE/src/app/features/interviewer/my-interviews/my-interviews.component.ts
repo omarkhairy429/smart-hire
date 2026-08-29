@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { InterviewService } from '../../../core/services/interview.service';
-import { InterviewResponse } from '../../../core/models/interview.models';
+import { InterviewResponse } from '../../../core/models/api.models';
 
 @Component({
   selector: 'app-my-interviews',

@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { InterviewService } from '../../../core/services/interview.service';
-import { DossierResponse } from '../../../core/models/interview.models';
+import { DossierResponse } from '../../../core/models/api.models';
 
 @Component({
   selector: 'app-candidate-review',

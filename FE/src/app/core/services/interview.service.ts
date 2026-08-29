@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { StaffResponse } from '../models/api.models';
 import {
   DossierResponse,
   InterviewResponse,
-  ScheduleInterviewRequest
-} from '../models/interview.models';
+  ScheduleInterviewRequest,
+  StaffResponse
+} from '../models/api.models';
 
 @Injectable({ providedIn: 'root' })
 export class InterviewService {
