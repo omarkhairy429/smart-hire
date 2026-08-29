@@ -1,0 +1,61 @@
+<div class="page-container">
+  <a routerLink="/interviewer/my-interviews" class="back-link">← Back to my interviews</a>
+
+  @if (isLoading) {
+    <div class="loading-state">Loading candidate details...</div>
+  } @else if (errorMessage) {
+    <div class="error-banner">{{ errorMessage }}</div>
+  } @else if (dossier) {
+    <div class="page-header">
+      <h2>{{ dossier.candidateName || 'Candidate' }}</h2>
+      <p>{{ dossier.candidateEmail }}</p>
+    </div>
+
+    <section class="card">
+      <h3>Interview</h3>
+      <p><strong>When:</strong> {{ formatDateTime(dossier.scheduledAt) }}</p>
+      <a [href]="dossier.meetingLink" target="_blank" rel="noopener" class="btn-primary">
+        Join Meeting
+      </a>
+    </section>
+
+    <section class="card">
+      <h3>CV</h3>
+      @if (dossier.resumeUrl) {
+        <a [href]="dossier.resumeUrl" target="_blank" rel="noopener" class="cv-link">
+          📄 Open candidate CV
+        </a>
+      } @else {
+        <p class="muted">No CV was attached to this application.</p>
+      }
+    </section>
+
+    @if (dossier.coverLetter || dossier.experienceSummary) {
+      <section class="card">
+        <h3>Application</h3>
+        @if (dossier.coverLetter) {
+          <h4>Cover letter</h4>
+          <p class="pre-wrap">{{ dossier.coverLetter }}</p>
+        }
+        @if (dossier.experienceSummary) {
+          <h4>Experience</h4>
+          <p class="pre-wrap">{{ dossier.experienceSummary }}</p>
+        }
+      </section>
+    }
+
+    <section class="card">
+      <h3>{{ dossier.postingTitle || 'Job requirements' }}</h3>
+      @if (dossier.postingDescription) {
+        <p class="pre-wrap">{{ dossier.postingDescription }}</p>
+      }
+      @if (dossier.skillsRequired?.length) {
+        <ul class="skills">
+          @for (skill of dossier.skillsRequired; track skill) {
+            <li>{{ skill }}</li>
+          }
+        </ul>
+      }
+    </section>
+  }
+</div>
