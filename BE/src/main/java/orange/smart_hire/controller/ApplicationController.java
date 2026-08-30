@@ -42,7 +42,7 @@ public class ApplicationController {
                 .body(response);
     }
 
-    @PreAuthorize("hasRole('CANDIDATE')")
+
     @PreAuthorize("hasRole('CANDIDATE')")
     @GetMapping
     public ResponseEntity<List<ApplicationResponse>> getMyApplications(
@@ -76,25 +76,9 @@ public class ApplicationController {
         );
     }
 
-    @GetMapping("/posting/{postingId}")
-    @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
-    public ResponseEntity<List<ApplicationResponse>> getApplicationsByPosting(
-            @PathVariable UUID postingId
-    ) {
-        return ResponseEntity.ok(
-                applicationService.getApplicationsByPosting(postingId)
-        );
-    }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
-    public ResponseEntity<ApplicationResponse> getApplicationById(
-            @PathVariable UUID id
-    ) {
-        return ResponseEntity.ok(
-                applicationService.getApplicationById(id)
-        );
-    }
+
+
 
     @PatchMapping("/{applicationId}/stage")
     @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")

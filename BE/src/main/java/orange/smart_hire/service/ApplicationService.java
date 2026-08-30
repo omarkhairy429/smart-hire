@@ -86,22 +86,6 @@ public class ApplicationService {
         return mapToResponse(application);
     }
 
-    @Transactional(readOnly = true)
-    public List<ApplicationResponse> getApplicationsByPosting(UUID postingId) {
-        return applicationRepository.findByPostingId(postingId)
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
-    }
-
-    @Transactional(readOnly = true)
-    public ApplicationResponse getApplicationById(UUID id) {
-        Application application = applicationRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Application not found"));
-
-        return mapToResponse(application);
-    }
 
     private ApplicationResponse mapToResponse(Application application) {
         ApplicationResponse response = new ApplicationResponse();

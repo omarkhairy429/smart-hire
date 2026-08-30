@@ -2,6 +2,7 @@ package orange.smart_hire.service;
 
 import orange.smart_hire.dto.PostingRequest;
 import orange.smart_hire.dto.PostingResponse;
+import orange.smart_hire.enums.LocationType;
 import orange.smart_hire.enums.PostingStatus;
 import orange.smart_hire.model.Posting;
 import orange.smart_hire.model.User;
@@ -108,10 +109,6 @@ public class PostingService {
                     HttpStatus.FORBIDDEN, "you cannot modify this posting");
         }
     }
-    public PostingResponse getPostingById(UUID id) {
-        Posting posting = findPostingOrThrow(id);
-        return mapToResponse(posting);
-    }
     public PostingResponse getPublishedPostingById(UUID id) {
         Posting posting = findPostingOrThrow(id);
 
@@ -121,42 +118,6 @@ public class PostingService {
         }
 
         return mapToResponse(posting);
-    }
-
-    public PostingResponse updatePosting(UUID id, PostingRequest request) {
-        Posting posting = findPostingOrThrow(id);
-        assertOwnedByCurrentUser(posting);
-
-        posting.setTitle(request.getTitle());
-        posting.setDescription(request.getDescription());
-        posting.setSkillsRequired(request.getSkillsRequired());
-        posting.setLocationType(request.getLocationType());
-        posting.setLocation(request.getLocation());
-        posting.setDeadline(request.getDeadline());
-
-        Posting savedPosting = postingRepository.save(posting);
-        return mapToResponse(savedPosting);
-    }
-
-    public void deletePosting(UUID id) {
-        Posting posting = findPostingOrThrow(id);
-        assertOwnedByCurrentUser(posting);
-
-        postingRepository.delete(posting);
-    }
-
-    private Posting findPostingOrThrow(UUID id) {
-        return postingRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Posting WAS not found"));
-    }
-
-    private void assertOwnedByCurrentUser(Posting posting) {
-        User currentUser = SecurityUtils.getCurrentUser();
-        if (!posting.getHrManager().getId().equals(currentUser.getId())) {
-            throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN, "you cannot modify this posting");
-        }
     }
 
     public PostingResponse createDraft(PostingRequest request) {
@@ -250,6 +211,17 @@ public class PostingService {
     public List<PostingResponse> getMyPostings() {
         User currentUser = SecurityUtils.getCurrentUser();
         return postingRepository.findByHrManagerId(currentUser.getId())
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    public List<PostingResponse> searchPublishedPostings(String keyword, String location, LocationType locationType, String company) {
+        return postingRepository.searchPublishedPostings(
+                        keyword == null ? "" : keyword,
+                        location == null ? "" : location,
+                        locationType,
+                        company == null ? "" : company)
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
