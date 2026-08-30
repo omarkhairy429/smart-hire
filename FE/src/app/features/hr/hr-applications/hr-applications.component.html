@@ -53,6 +53,7 @@
               <th>Stage</th>
               <th>Resume</th>
               <th>Applied On</th>
+              <th>Interview</th>
               <th>Notes</th>
             </tr>
           </thead>
@@ -84,7 +85,7 @@
                     (change)="onStageChange(app, $event)"
                   >
                     @for (stage of stages; track stage) {
-                      <option [value]="stage">
+                      <option [value]="stage" [selected]="stage === app.stage">
                         {{ stage }}
                       </option>
                     }
@@ -99,7 +100,12 @@
                 </td>
                 <td>{{ formatDate(app.createdAt) }}</td>
                 <td>
-                  <button class="notes-btn" (click)="openNotesPanel(app)">📝 Notes</button>
+                  <button type="button" class="schedule-btn" (click)="openSchedule(app)">
+                    Schedule Interview
+                  </button>
+                </td>
+                <td>
+                  <button type="button" class="notes-btn" (click)="openNotesPanel(app)">📝 Notes</button>
                 </td>
               </tr>
             }
@@ -113,6 +119,15 @@
     }
   }
 </div>
+
+@if (schedulingFor) {
+  <app-hr-schedule-interview
+    [applicationId]="schedulingFor.id"
+    [candidateName]="schedulingFor.candidateName || ''"
+    (scheduled)="onScheduled()"
+    (closed)="closeSchedule()"
+  />
+}
 
 <!-- Notes overlay -->
 @if (notesPanelOpen) {

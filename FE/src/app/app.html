@@ -21,6 +21,11 @@
         <a routerLink="/my-applications" class="nav-role-link">📄 My Applications</a>
       }
 
+      <!-- INTERVIEWER only -->
+      @if (userRole === 'INTERVIEWER') {
+        <a routerLink="/interviewer/my-interviews" class="nav-role-link">🗓️ My Interviews</a>
+      }
+
       <span class="nav-greeting">Hi, {{ firstName }} 👋</span>
       <button class="btn-logout" (click)="logout()">Logout</button>
     } @else {

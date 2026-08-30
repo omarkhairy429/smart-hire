@@ -1,0 +1,63 @@
+.page-container { max-width: 960px; margin: 0 auto; padding: 2rem 1rem; }
+.page-header h2 { margin: 0 0 0.25rem; }
+.page-header p { margin: 0 0 1.5rem; color: var(--text-muted); }
+
+.interviews-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.interview-card {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 1.1rem 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-top { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; }
+.card-top h3 { margin: 0; font-size: 1.05rem; }
+.card-top time { color: var(--text-muted); font-size: 0.85rem; white-space: nowrap; }
+
+.posting-title { margin: 0.4rem 0 0; color: var(--text-muted); font-size: 0.9rem; }
+
+.card-actions { display: flex; gap: 0.5rem; margin-top: 1.25rem; }
+
+.btn-secondary {
+  background-color: var(--white);
+  color: var(--primary-blue);
+  padding: 0.75rem 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-weight: 500;
+  text-decoration: none;
+  text-align: center;
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-main);
+  border-color: var(--primary-blue);
+}
+
+.loading-state, .empty-card {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: var(--text-muted);
+}
+
+.empty-card {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+}
+
+.empty-icon { font-size: 2rem; }
+
+.error-banner {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+}

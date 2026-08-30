@@ -11,11 +11,12 @@ import {
   ApplicationStage,
   CandidateNoteResponse,
 } from '../../../core/models/api.models';
+import { HrScheduleInterviewComponent } from '../hr-schedule-interview/hr-schedule-interview.component';
 
 @Component({
   selector: 'app-hr-applications',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, HrScheduleInterviewComponent],
   templateUrl: './hr-applications.component.html',
   styleUrls: ['./hr-applications.component.css'],
 })
@@ -32,6 +33,8 @@ export class HrApplicationsComponent implements OnInit {
     ApplicationStage.OFFERED,
     ApplicationStage.REJECTED,
   ];
+
+  schedulingFor: ApplicationResponse | null = null;
 
   isLoadingPostings = true;
   isLoadingApps = false;
@@ -174,6 +177,20 @@ export class HrApplicationsComponent implements OnInit {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  openSchedule(app: ApplicationResponse): void {
+    this.schedulingFor = app;
+  }
+
+  onScheduled(): void {
+    // Reload so the Stage column reflects the move to INTERVIEW
+    this.onPostingSelect();
+  }
+
+  closeSchedule(): void {
+    this.schedulingFor = null;
+    this.cdr.markForCheck();
   }
 
   formatDate(dateStr: string): string {
