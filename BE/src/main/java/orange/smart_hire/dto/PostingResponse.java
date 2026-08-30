@@ -12,6 +12,7 @@ public class PostingResponse {
 
     private UUID id;
     private String title;
+    private String company;
     private String description;
     private List<String> skillsRequired;
     private LocationType locationType;
@@ -32,6 +33,13 @@ public class PostingResponse {
         this.id = id;
     }
 
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
 
     public String getTitle() {
         return title;

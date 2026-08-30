@@ -1,0 +1,85 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h2>Super Admin Dashboard</h2>
+    <p>Manage platform personnel and system access.</p>
+  </div>
+
+  <div class="dashboard-content">
+    <!-- CREATE STAFF FORM -->
+    <div class="admin-card">
+      <h3>Create New Staff Member</h3>
+      
+      @if (successMessage) {
+        <div class="alert-success">{{ successMessage }}</div>
+      }
+
+      <form [formGroup]="staffForm" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" formControlName="firstName" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" formControlName="lastName" class="form-control">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" formControlName="email" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" formControlName="password" class="form-control">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Assign Role</label>
+          <select formControlName="role" class="form-control">
+            <option value="HR_MANAGER">HR Manager</option>
+            <option value="INTERVIEWER">Interviewer</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-primary" [disabled]="staffForm.invalid">Create Account</button>
+      </form>
+    </div>
+
+    <!-- STAFF LIST TABLE -->
+    <div class="admin-card mt-2">
+      <h3>System Personnel</h3>
+      
+      <table class="staff-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (staff of staffList; track staff.id) {
+            <tr>
+              <td>{{ staff.firstName }} {{ staff.lastName }}</td>
+              <td>{{ staff.email }}</td>
+              <td><span class="role-badge">{{ staff.role }}</span></td>
+              <td>
+                <span class="status-indicator" [class.active]="staff.isActive">
+                  {{ staff.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="text-center">No staff found or waiting for backend endpoint.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

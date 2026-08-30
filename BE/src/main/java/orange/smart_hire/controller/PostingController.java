@@ -3,7 +3,10 @@ package orange.smart_hire.controller;
 import java.util.List;
 import java.util.UUID;
 
+import orange.smart_hire.dto.PipelineResponse;
 import orange.smart_hire.dto.PostingResponse;
+import org.springframework.http.ResponseEntity;
+import orange.smart_hire.service.ApplicationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,9 +18,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import orange.smart_hire.dto.PostingRequest;
-import orange.smart_hire.model.Posting;
 import orange.smart_hire.service.PostingService;
 
 @RestController
@@ -59,4 +62,65 @@ public class PostingController {
         postingService.deletePosting(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{id}")
+    public PostingResponse getPostingById(@PathVariable UUID id) {
+        return postingService.getPostingById(id);
+    }
+
+    @PreAuthorize("hasRole('HR_MANAGER')")
+    @PutMapping("/{id}")
+    public PostingResponse updatePosting(@PathVariable UUID id, @RequestBody PostingRequest request) {
+        return postingService.updatePosting(id, request);
+    }
+
+    @PreAuthorize("hasRole('HR_MANAGER')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePosting(@PathVariable UUID id) {
+        postingService.deletePosting(id);
+        return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/published/{id}")
+    public PostingResponse getPublishedPostingById(@PathVariable UUID id) {
+        return postingService.getPublishedPostingById(id);
+    }
+    @PreAuthorize("hasRole('HR_MANAGER')")
+    @PostMapping("/drafts")
+    public PostingResponse createDraft(@RequestBody PostingRequest request) {
+        return postingService.createDraft(request);
+    }
+
+    @PreAuthorize("hasRole('HR_MANAGER')")
+    @PutMapping("/drafts/{id}")
+    public PostingResponse updateDraft(@PathVariable UUID id, @RequestBody PostingRequest request) {
+        return postingService.updateDraft(id, request);
+    }
+    @PreAuthorize("hasRole('HR_MANAGER')")
+    @PatchMapping("/{id}/publish")
+    public PostingResponse publish(@PathVariable UUID id) {
+        return postingService.publish(id);
+    }
+    @PreAuthorize("hasRole('HR_MANAGER')")
+    @PatchMapping("/{id}/close")
+    public PostingResponse close(@PathVariable UUID id) {
+        return postingService.close(id);
+    }
+    @GetMapping("/published")
+    public List<PostingResponse> getPublishedPostings() {
+        return postingService.getPublishedPostings();
+    }
+
+    @PreAuthorize("hasRole('HR_MANAGER')")
+    @GetMapping("/mine")
+    public List<PostingResponse> getMyPostings() {
+        return postingService.getMyPostings();
+
+    }
+
+    @GetMapping("/{postingId}/pipeline")
+    @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
+    public ResponseEntity<List<PipelineResponse>> getPipeline (@PathVariable UUID postingId){
+        return ResponseEntity.ok(applicationService.getPipeline(postingId));
+    }
+
 }

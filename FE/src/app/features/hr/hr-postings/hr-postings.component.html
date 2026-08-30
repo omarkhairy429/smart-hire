@@ -1,0 +1,216 @@
+<div class="page-shell">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">SmartHire / HR Workspace</p>
+      <h1>Manage Job Postings</h1>
+      <p class="intro">Create new opportunities and track your open roles in one place.</p>
+    </div>
+    <a routerLink="/hr/applications" class="btn-secondary-outline">📂 View Applications</a>
+  </header>
+
+  <div class="workspace-grid">
+    <!-- CREATE FORM -->
+    <section class="panel create-panel" aria-labelledby="create-title">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">New opportunity</p>
+          <h2 id="create-title">{{ editingDraftId ? 'Edit draft' : 'Create a job posting' }}</h2>
+        </div>
+        <span class="status-dot">Ready to publish</span>
+      </div>
+
+      <form [formGroup]="postingForm" (ngSubmit)="createPosting()" novalidate>
+        @if (!hasAutoId) {
+          <label>
+            HR Manager UUID
+            <input
+              type="text"
+              formControlName="hrManagerId"
+              placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+            />
+            @if (fieldHasError('hrManagerId')) {
+              <small>Enter a valid HR manager UUID.</small>
+            }
+          </label>
+        }
+
+        <label>
+          Job title
+          <input type="text" formControlName="title" placeholder="Senior Product Designer" />
+          @if (fieldHasError('title')) {
+            <small>Title is required.</small>
+          }
+        </label>
+
+        <!-- Company Field -->
+        <label>
+          Company
+          <input type="text" formControlName="company" placeholder="Acme Corp" />
+          @if (fieldHasError('company')) {
+            <small>Company name is required.</small>
+          }
+        </label>
+
+        <label>
+          Description
+          <textarea
+            rows="4"
+            formControlName="description"
+            placeholder="Describe the role, impact, and responsibilities."
+          ></textarea>
+          @if (fieldHasError('description')) {
+            <small>Description is required.</small>
+          }
+        </label>
+
+        <div class="form-row">
+          <label>
+            Work arrangement
+            <select formControlName="locationType">
+              @for (lt of locationTypes; track lt) {
+                <option [value]="lt">{{ formatLocationType(lt) }}</option>
+              }
+            </select>
+          </label>
+          <label>
+            Location
+            <input type="text" formControlName="location" placeholder="Cairo, Egypt" />
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label>
+            Application deadline
+            <input type="date" formControlName="deadline" />
+            @if (fieldHasError('deadline')) {
+              <small>Deadline is required.</small>
+            }
+          </label>
+          <label>
+            Skills (comma-separated)
+            <input
+              type="text"
+              formControlName="skillsRequired"
+              placeholder="Java, Spring Boot, SQL"
+            />
+            @if (fieldHasError('skillsRequired')) {
+              <small>Add at least one skill.</small>
+            }
+          </label>
+        </div>
+
+        <div class="form-actions">
+          @if (editingDraftId) {
+            <button type="button" class="card-btn" (click)="cancelEdit()">Cancel</button>
+          }
+          <button
+            class="btn-secondary-outline draft-btn"
+            type="button"
+            [disabled]="isSubmitting"
+            (click)="saveDraft()"
+          >
+            Save Draft
+          </button>
+          <button class="btn-primary submit-btn" type="submit" [disabled]="isSubmitting">
+            {{ isSubmitting ? 'Publishing...' : 'Publish Job Posting' }}
+          </button>
+        </div>
+      </form>
+
+      @if (successMessage) {
+        <p class="success-message" role="status">{{ successMessage }}</p>
+      }
+      @if (errorMessage) {
+        <p class="error-message" role="alert">{{ errorMessage }}</p>
+      }
+    </section>
+
+    <!-- POSTINGS LIST -->
+    <section class="list-section" aria-labelledby="list-title">
+      <div class="section-heading list-heading">
+        <div>
+          <h2 id="list-title">Your job postings</h2>
+        </div>
+        <span class="count-badge">{{ filteredPostings.length }}</span>
+      </div>
+
+      <div class="status-tabs">
+        @for (filter of statusFilters; track filter) {
+          <button
+            type="button"
+            class="tab-btn"
+            [class.active]="statusFilter === filter"
+            (click)="statusFilter = filter"
+          >
+            {{ filter }}
+          </button>
+        }
+      </div>
+
+      @if (isLoading) {
+        <div class="empty-state">
+          <span class="loader"></span>
+          <p>Loading postings...</p>
+        </div>
+      } @else if (filteredPostings.length === 0) {
+        <div class="empty-state">
+          <p>No postings yet.</p>
+          <span>Your next role starts here.</span>
+        </div>
+      } @else {
+        <div class="posting-list">
+          @for (posting of filteredPostings; track posting.id) {
+            <article class="posting-card">
+              <div class="posting-card-top">
+                <span class="posting-status {{ posting.status | lowercase }}">
+                  {{ posting.status }}
+                </span>
+                @if (posting.deadline) {
+                  <time>Due {{ posting.deadline | date: 'MMM d, y' }}</time>
+                }
+              </div>
+
+              <h3>{{ posting.title }}</h3>
+
+              <div class="posting-meta">
+                @if (posting.company) {
+                  <span class="company-name">🏢 {{ posting.company }}</span>
+                }
+                <span>{{ formatLocationType(posting.locationType) }}</span>
+                @if (posting.location) {
+                  <span>{{ posting.location }}</span>
+                }
+              </div>
+
+              @if (posting.description) {
+                <p class="posting-description">{{ posting.description }}</p>
+              }
+
+              @if (posting.skillsRequired.length) {
+                <div class="skills">
+                  @for (skill of posting.skillsRequired; track skill) {
+                    <span>{{ skill }}</span>
+                  }
+                </div>
+              }
+
+              <div class="card-actions">
+                @if (posting.status === 'DRAFT') {
+                  <button type="button" class="card-btn" (click)="editDraft(posting)">Edit</button>
+                  <button type="button" class="card-btn danger" (click)="deleteDraft(posting)">
+                    Delete
+                  </button>
+                }
+                @if (posting.status === 'PUBLISHED') {
+                  <button type="button" class="card-btn danger" (click)="closePosting(posting)">
+                    Close
+                  </button>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
+  </div>
+</div>

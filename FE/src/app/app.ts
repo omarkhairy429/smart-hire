@@ -1,12 +1,46 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterOutlet, RouterLink, NavigationEnd, Router } from '@angular/router';
+import { AuthService } from './core/services/auth.service';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [RouterOutlet, RouterLink, CommonModule],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrls: ['./app.css']
 })
-export class App {
-  protected readonly title = signal('FE');
+export class AppComponent implements OnInit {
+  isLoggedIn = false;
+  userRole: string | null = null;
+  firstName: string | null = null;
+
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit() {
+    this.syncAuthState();
+    // Re-evaluate auth state after every navigation (login, logout, etc.)
+    this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => {
+      this.syncAuthState();
+      this.cdr.markForCheck();
+    });
+  }
+
+  syncAuthState() {
+    this.isLoggedIn = this.authService.isLoggedIn();
+    const user = this.authService.getCurrentUser();
+    this.userRole = user?.role ?? null;
+    this.firstName = user?.firstName ?? null;
+  }
+
+  logout() {
+    this.authService.logout();
+    this.syncAuthState();
+    this.cdr.markForCheck();
+  }
 }
