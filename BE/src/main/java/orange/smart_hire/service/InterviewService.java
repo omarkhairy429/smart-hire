@@ -4,6 +4,7 @@ import orange.smart_hire.dto.DossierResponse;
 import orange.smart_hire.dto.InterviewResponse;
 import orange.smart_hire.dto.ScheduleInterviewRequest;
 import orange.smart_hire.dto.StaffResponse;
+import orange.smart_hire.enums.ApplicationStage;
 import orange.smart_hire.enums.UserRole;
 import orange.smart_hire.model.Application;
 import orange.smart_hire.model.Interview;
@@ -63,7 +64,18 @@ public class InterviewService {
         interview.setCreatedAt(LocalDateTime.now());
         interview.setUpdatedAt(LocalDateTime.now());
 
-        return mapToResponse(interviewRepository.save(interview));
+        Interview saved = interviewRepository.save(interview);
+
+        // Booking an interview moves the candidate into the INTERVIEW stage, but
+        // never drags an already-decided application backwards.
+        if (application.getStage() == ApplicationStage.APPLIED
+                || application.getStage() == ApplicationStage.SCREENING) {
+            application.setStage(ApplicationStage.INTERVIEW);
+            application.setUpdatedAt(LocalDateTime.now());
+            applicationRepository.save(application);
+        }
+
+        return mapToResponse(saved);
     }
 
     public void cancel(UUID interviewId) {

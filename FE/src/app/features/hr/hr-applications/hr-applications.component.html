@@ -75,7 +75,7 @@
           <td>
             <select class="stage-select" [value]="app.stage" (change)="onStageChange(app, $event)">
               @for (stage of stages; track stage) {
-              <option [value]="stage">
+              <option [value]="stage" [selected]="stage === app.stage">
                 {{ stage }}
               </option>
               }
@@ -111,5 +111,6 @@
 <app-hr-schedule-interview
   [applicationId]="schedulingFor.id"
   [candidateName]="schedulingFor.candidateName || ''"
+  (scheduled)="onScheduled()"
   (closed)="closeSchedule()" />
 }

@@ -112,6 +112,11 @@ export class HrApplicationsComponent implements OnInit {
     this.schedulingFor = app;
   }
 
+  onScheduled(): void {
+    // Reload so the Stage column reflects the move to INTERVIEW
+    this.onPostingSelect();
+  }
+
   closeSchedule(): void {
     this.schedulingFor = null;
     this.cdr.markForCheck();
