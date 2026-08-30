@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PostingService, PostingRequest } from '../../../core/services/postings.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { PostingResponse } from '../../../core/models/api.models';
@@ -11,7 +11,7 @@ const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-
 @Component({
   selector: 'app-hr-postings',
   standalone: true,
-  imports: [CommonModule, RouterLink, ReactiveFormsModule],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule, FormsModule],
   templateUrl: './hr-postings.component.html',
   styleUrls: ['./hr-postings.component.css'],
 })
@@ -24,6 +24,8 @@ export class HrPostingsComponent implements OnInit {
   hrManagerId: string = '';
   hasAutoId = false;
   statusFilter: string = 'ALL';
+  keywordFilter: string = '';
+  locationTypeFilter: string = '';
   editingDraftId: string | null = null;
   readonly statusFilters = ['ALL', 'DRAFT', 'PUBLISHED', 'CLOSED'];
   readonly locationTypes = ['REMOTE', 'HYBRID', 'ON_SITE'];
@@ -255,9 +257,31 @@ export class HrPostingsComponent implements OnInit {
     return type === 'ON_SITE' ? 'On-site' : type.charAt(0) + type.slice(1).toLowerCase();
   }
   get filteredPostings(): PostingResponse[] {
-    if (this.statusFilter === 'ALL') {
-      return this.postings;
+    let result = this.postings;
+
+    if (this.statusFilter !== 'ALL') {
+      result = result.filter((p) => p.status === this.statusFilter);
     }
-    return this.postings.filter((p) => p.status === this.statusFilter);
+
+    if (this.locationTypeFilter) {
+      result = result.filter((p) => p.locationType === this.locationTypeFilter);
+    }
+
+    if (this.keywordFilter.trim()) {
+      const keyword = this.keywordFilter.trim().toLowerCase();
+      result = result.filter(
+        (p) =>
+          p.title.toLowerCase().includes(keyword) ||
+          (p.description ?? '').toLowerCase().includes(keyword),
+      );
+    }
+
+    return result;
+  }
+
+  clearFilters() {
+    this.statusFilter = 'ALL';
+    this.keywordFilter = '';
+    this.locationTypeFilter = '';
   }
 }

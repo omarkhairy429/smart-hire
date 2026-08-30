@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
@@ -45,6 +45,23 @@ export class PostingService {
   getPublishedPostings(): Observable<PostingResponse[]> {
     return this.http
       .get<any>(`${this.apiUrl}/published`)
+      .pipe(map((res: any) => (Array.isArray(res) ? res : (res?.data ?? res))));
+  }
+
+  searchPublicPostings(filters: {
+    keyword?: string;
+    location?: string;
+    locationType?: string;
+    company?: string;
+  }): Observable<PostingResponse[]> {
+    let params = new HttpParams();
+    if (filters.keyword) params = params.set('keyword', filters.keyword);
+    if (filters.location) params = params.set('location', filters.location);
+    if (filters.locationType) params = params.set('locationType', filters.locationType);
+    if (filters.company) params = params.set('company', filters.company);
+
+    return this.http
+      .get<any>(`${environment.apiUrl}/public/postings`, { params })
       .pipe(map((res: any) => (Array.isArray(res) ? res : (res?.data ?? res))));
   }
 

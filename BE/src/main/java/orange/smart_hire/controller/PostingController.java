@@ -1,17 +1,15 @@
 package orange.smart_hire.controller;
 
-import java.util.List;
-import java.util.UUID;
-
 import orange.smart_hire.dto.PipelineResponse;
+import orange.smart_hire.dto.PostingRequest;
 import orange.smart_hire.dto.PostingResponse;
 import orange.smart_hire.service.ApplicationService;
+import orange.smart_hire.service.PostingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import orange.smart_hire.dto.PostingRequest;
-import orange.smart_hire.service.PostingService;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/postings")
@@ -31,10 +29,17 @@ public class PostingController {
         return postingService.getAllPostings();
     }
 
-    @PreAuthorize("hasRole('HR_MANAGER')")
+    @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
     @PostMapping
     public PostingResponse createPosting(@RequestBody PostingRequest request) {
         return postingService.createPosting(request);
+    }
+
+    @PreAuthorize("hasRole('HR_MANAGER')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePosting(@PathVariable UUID id) {
+        postingService.deletePosting(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
@@ -48,12 +53,7 @@ public class PostingController {
         return postingService.updatePosting(id, request);
     }
 
-    @PreAuthorize("hasRole('HR_MANAGER')")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePosting(@PathVariable UUID id) {
-        postingService.deletePosting(id);
-        return ResponseEntity.noContent().build();
-    }
+
     @GetMapping("/published/{id}")
     public PostingResponse getPublishedPostingById(@PathVariable UUID id) {
         return postingService.getPublishedPostingById(id);

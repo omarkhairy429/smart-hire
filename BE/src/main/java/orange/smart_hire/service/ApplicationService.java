@@ -7,6 +7,7 @@ import orange.smart_hire.enums.ApplicationStage;
 import orange.smart_hire.enums.ApplicationStatus;
 import orange.smart_hire.model.Application;
 import orange.smart_hire.repository.ApplicationRepository;
+import org.springframework.http.HttpStatus;
 import orange.smart_hire.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -68,7 +69,6 @@ public class ApplicationService {
                 .map(this::mapToResponse)
                 .toList();
     }
-
     @Transactional(readOnly = true)
     public List<ApplicationResponse> getApplicationsByPosting(UUID postingId) {
         return applicationRepository.findByPostingId(postingId)
@@ -85,6 +85,7 @@ public class ApplicationService {
 
         return mapToResponse(application);
     }
+
 
     private ApplicationResponse mapToResponse(Application application) {
         ApplicationResponse response = new ApplicationResponse();
