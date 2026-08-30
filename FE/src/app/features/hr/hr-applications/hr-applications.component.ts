@@ -5,11 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { PostingService } from '../../../core/services/postings.service';
 import { ApplicationService } from '../../../core/services/application.service';
 import { PostingResponse, ApplicationResponse, ApplicationStage } from '../../../core/models/api.models';
+import { HrScheduleInterviewComponent } from '../hr-schedule-interview/hr-schedule-interview.component';
 
 @Component({
   selector: 'app-hr-applications',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, HrScheduleInterviewComponent],
   templateUrl: './hr-applications.component.html',
   styleUrls: ['./hr-applications.component.css']
 })
@@ -26,6 +27,8 @@ export class HrApplicationsComponent implements OnInit {
     ApplicationStage.OFFERED,
     ApplicationStage.REJECTED
   ];
+
+  schedulingFor: ApplicationResponse | null = null;
 
   isLoadingPostings = true;
   isLoadingApps = false;
@@ -103,6 +106,15 @@ export class HrApplicationsComponent implements OnInit {
           this.cdr.markForCheck();
         }
       });
+  }
+
+  openSchedule(app: ApplicationResponse): void {
+    this.schedulingFor = app;
+  }
+
+  closeSchedule(): void {
+    this.schedulingFor = null;
+    this.cdr.markForCheck();
   }
 
   formatDate(dateStr: string): string {

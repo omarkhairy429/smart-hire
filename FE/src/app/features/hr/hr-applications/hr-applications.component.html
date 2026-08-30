@@ -48,6 +48,7 @@
           <th>Stage</th>
           <th>Resume</th>
           <th>Applied On</th>
+          <th>Interview</th>
         </tr>
       </thead>
       <tbody>
@@ -88,6 +89,11 @@
             }
           </td>
           <td>{{ formatDate(app.createdAt) }}</td>
+          <td>
+            <button type="button" class="schedule-btn" (click)="openSchedule(app)">
+              Schedule Interview
+            </button>
+          </td>
         </tr>
         }
       </tbody>
@@ -100,3 +106,10 @@
   }
   }
 </div>
+
+@if (schedulingFor) {
+<app-hr-schedule-interview
+  [applicationId]="schedulingFor.id"
+  [candidateName]="schedulingFor.candidateName || ''"
+  (closed)="closeSchedule()" />
+}

@@ -38,6 +38,8 @@ export class LoginComponent {
             this.router.navigateByUrl(returnUrl);
           } else if (res.role === 'HR_MANAGER') {
             this.router.navigate(['/hr/postings']);
+          } else if (res.role === 'INTERVIEWER') {
+            this.router.navigate(['/interviewer/my-interviews']);
           } else {
             // SUPER_ADMIN → /jobs (with Admin Panel link in nav)
             // CANDIDATE → /jobs

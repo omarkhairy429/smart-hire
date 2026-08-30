@@ -270,3 +270,19 @@
   border-radius: 10px;
   margin-top: 1rem;
 }
+
+.schedule-btn {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--primary-blue);
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.schedule-btn:hover {
+  border-color: var(--primary-blue);
+}
