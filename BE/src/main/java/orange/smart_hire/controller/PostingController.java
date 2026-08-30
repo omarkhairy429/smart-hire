@@ -29,7 +29,7 @@ public class PostingController {
         return postingService.getAllPostings();
     }
 
-    @PreAuthorize("hasRole('HR_MANAGER')")
+    @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
     @PostMapping
     public PostingResponse createPosting(@RequestBody PostingRequest request) {
         return postingService.createPosting(request);

@@ -333,6 +333,39 @@ form small {
   border-color: var(--primary-blue);
   color: var(--primary-blue);
 }
+.hr-search-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.hr-search-input,
+.hr-search-select {
+  padding: 0.5rem 0.85rem;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  min-width: 220px;
+}
+
+.btn-clear-small {
+  padding: 0.5rem 1rem;
+  border: 1.5px solid var(--border-color);
+  background: var(--white);
+  color: var(--text-muted);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btn-clear-small:hover {
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+}
 
 .tab-btn.active {
   background: var(--primary-blue);

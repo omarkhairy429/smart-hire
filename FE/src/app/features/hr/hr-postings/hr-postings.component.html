@@ -146,6 +146,21 @@
           </button>
         }
       </div>
+      <div class="hr-search-bar">
+        <input
+          type="text"
+          class="hr-search-input"
+          placeholder="Search by title or description..."
+          [(ngModel)]="keywordFilter"
+        />
+        <select class="hr-search-select" [(ngModel)]="locationTypeFilter">
+          <option value="">All Location Types</option>
+          @for (type of locationTypes; track type) {
+          <option [value]="type">{{ type }}</option>
+          }
+        </select>
+        <button type="button" class="btn-clear-small" (click)="clearFilters()">Clear</button>
+      </div>
 
       @if (isLoading) {
         <div class="empty-state">
