@@ -30,6 +30,14 @@ export interface StaffResponse {
   createdAt: string;
 }
 
+export enum ApplicationStage {
+  APPLIED = 'APPLIED',
+  SCREENING = 'SCREENING',
+  INTERVIEW = 'INTERVIEW',
+  OFFERED = 'OFFERED',
+  REJECTED = 'REJECTED'
+}
+
 export interface ApplicationResponse {
   id: string;
   postingId: string;
@@ -52,12 +60,16 @@ export interface ApplyRequest {
   resumeUrl: string;
 }
 
-export enum ApplicationStage {
-  APPLIED = 'APPLIED',
-  SCREENING = 'SCREENING',
-  INTERVIEW = 'INTERVIEW',
-  OFFERED = 'OFFERED',
-  REJECTED = 'REJECTED'
+export interface CandidateNoteRequest {
+  candidateId: string;
+  content: string;
+}
+
+export interface CandidateNoteResponse {
+  id: string;
+  content: string;
+  authorName: string;
+  createdAt: string;
 }
 
 export interface PipelineResponse {
