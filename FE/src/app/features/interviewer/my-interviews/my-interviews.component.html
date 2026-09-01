@@ -1,0 +1,42 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2>🗓️ My Interviews</h2>
+    <p>Upcoming interviews assigned to you.</p>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading-state">Loading your interviews...</div>
+  } @else if (errorMessage) {
+    <div class="error-banner">{{ errorMessage }}</div>
+  } @else if (interviews.length === 0) {
+    <div class="empty-card">
+      <div class="empty-icon">📭</div>
+      <h3>No upcoming interviews</h3>
+      <p>When HR schedules an interview with you, it will show up here.</p>
+    </div>
+  } @else {
+    <div class="interviews-grid">
+      @for (interview of interviews; track interview.id) {
+        <div class="interview-card">
+          <div class="card-top">
+            <h3>{{ interview.candidateName || 'Candidate' }}</h3>
+            <time>{{ formatDateTime(interview.scheduledAt) }}</time>
+          </div>
+
+          @if (interview.postingTitle) {
+            <p class="posting-title">{{ interview.postingTitle }}</p>
+          }
+
+          <div class="card-actions">
+            <a [routerLink]="['/interviewer/interviews', interview.id]" class="btn-secondary">
+              View candidate
+            </a>
+            <a [href]="interview.meetingLink" target="_blank" rel="noopener" class="btn-primary">
+              Join Meeting
+            </a>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

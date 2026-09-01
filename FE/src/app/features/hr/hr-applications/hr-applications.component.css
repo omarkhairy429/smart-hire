@@ -208,25 +208,41 @@
   background: #fef9c3;
   color: #854d0e;
 }
+
 .status-accepted,
 .status-hired {
   background: #d1fae5;
   color: #065f46;
 }
+
 .status-rejected {
   background: #fee2e2;
   color: #991b1b;
 }
 
-.stage-badge {
-  display: inline-block;
-  background: var(--accent-blue);
-  color: var(--primary-blue);
-  padding: 0.25rem 0.65rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
+.stage-select {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--text-main);
+  font-size: 0.8rem;
   font-weight: 600;
-  white-space: nowrap;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.stage-select:hover {
+  border-color: var(--primary-blue);
+}
+
+.stage-select:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .resume-link {
@@ -252,4 +268,265 @@
   padding: 1rem 1.25rem;
   border-radius: 10px;
   margin-top: 1rem;
+}
+
+/* =====================
+   Interview button (table)
+   ===================== */
+.schedule-btn {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--primary-blue);
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
+}
+
+.schedule-btn:hover {
+  border-color: var(--primary-blue);
+  background-color: var(--bg-main);
+}
+
+/* =====================
+   Notes button (table)
+   ===================== */
+.notes-btn {
+  background: var(--accent-blue);
+  color: var(--primary-blue);
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.18s,
+    border-color 0.18s,
+    transform 0.15s;
+}
+
+.notes-btn:hover {
+  background: #dbeafe;
+  border-color: var(--primary-blue);
+  transform: translateY(-1px);
+}
+
+/* =====================
+   Overlay
+   ===================== */
+.notes-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 200;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* =====================
+   Slide-in panel
+   ===================== */
+.notes-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 420px;
+  max-width: 95vw;
+  background: var(--white);
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.12);
+  z-index: 201;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Panel header */
+.notes-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.notes-panel-header h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.2rem;
+}
+
+.notes-panel-subtitle {
+  font-size: 0.85rem;
+  color: var(--primary-blue);
+  font-weight: 500;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  line-height: 1;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.close-btn:hover {
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+/* Compose area */
+.notes-compose {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.notes-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-main);
+  background: var(--bg-main);
+  resize: vertical;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.notes-textarea:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  background: var(--white);
+}
+
+.btn-add-note {
+  align-self: flex-end;
+  background: linear-gradient(135deg, var(--primary-blue), var(--primary-hover));
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  padding: 0.55rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s,
+    opacity 0.15s;
+}
+
+.btn-add-note:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+.btn-add-note:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Error inside panel */
+.notes-error {
+  margin: 0.75rem 1.5rem 0;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+/* Notes list */
+.notes-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.notes-loading,
+.notes-empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 2rem 0;
+}
+
+/* Individual note card */
+.note-card {
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+}
+
+.note-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  gap: 0.5rem;
+}
+
+.note-author {
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--primary-blue);
+}
+
+.note-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.note-content {
+  font-size: 0.88rem;
+  color: var(--text-main);
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
 }

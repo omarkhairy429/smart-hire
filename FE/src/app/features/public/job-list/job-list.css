@@ -26,6 +26,49 @@
   gap: 2rem;
 }
 
+.search-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+  justify-content: center;
+}
+
+.search-input,
+.search-select {
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  min-width: 200px;
+}
+
+.btn-search,
+.btn-clear {
+  padding: 0.65rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-search {
+  background-color: var(--primary-blue);
+  color: var(--white);
+}
+
+.btn-clear {
+  background-color: var(--white);
+  color: var(--primary-blue);
+  border: 2px solid var(--primary-blue);
+}
+
+.no-results {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 3rem 0;
+}
+
 .job-card {
   background-color: var(--white);
   border-radius: 12px;

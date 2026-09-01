@@ -1,4 +1,3 @@
-=
 <div class="page-shell">
   <header class="page-header">
     <div>
@@ -15,16 +14,10 @@
       <div class="section-heading">
         <div>
           <p class="section-kicker">New opportunity</p>
-          <h2 id="create-title">Create a job posting</h2>
+          <h2 id="create-title">{{ editingDraftId ? 'Edit draft' : 'Create a job posting' }}</h2>
         </div>
         <span class="status-dot">Ready to publish</span>
       </div>
-
-      <!-- @if (hasAutoId) {
-        <div class="auto-id-banner">
-          ✅ Your HR Manager ID has been auto-filled from your account.
-        </div>
-      } -->
 
       <form [formGroup]="postingForm" (ngSubmit)="createPosting()" novalidate>
         @if (!hasAutoId) {
@@ -49,7 +42,7 @@
           }
         </label>
 
-        <!-- Added Company Field -->
+        <!-- Company Field -->
         <label>
           Company
           <input type="text" formControlName="company" placeholder="Acme Corp" />
@@ -106,9 +99,22 @@
           </label>
         </div>
 
-        <button class="btn-primary submit-btn" type="submit" [disabled]="isSubmitting">
-          {{ isSubmitting ? 'Publishing...' : 'Publish Job Posting' }}
-        </button>
+        <div class="form-actions">
+          @if (editingDraftId) {
+            <button type="button" class="card-btn" (click)="cancelEdit()">Cancel</button>
+          }
+          <button
+            class="btn-secondary-outline draft-btn"
+            type="button"
+            [disabled]="isSubmitting"
+            (click)="saveDraft()"
+          >
+            Save Draft
+          </button>
+          <button class="btn-primary submit-btn" type="submit" [disabled]="isSubmitting">
+            {{ isSubmitting ? 'Publishing...' : 'Publish Job Posting' }}
+          </button>
+        </div>
       </form>
 
       @if (successMessage) {
@@ -123,10 +129,37 @@
     <section class="list-section" aria-labelledby="list-title">
       <div class="section-heading list-heading">
         <div>
-          <p class="section-kicker">Your pipeline</p>
           <h2 id="list-title">Your job postings</h2>
         </div>
-        <span class="count-badge">{{ postings.length }}</span>
+        <span class="count-badge">{{ filteredPostings.length }}</span>
+      </div>
+
+      <div class="status-tabs">
+        @for (filter of statusFilters; track filter) {
+          <button
+            type="button"
+            class="tab-btn"
+            [class.active]="statusFilter === filter"
+            (click)="statusFilter = filter"
+          >
+            {{ filter }}
+          </button>
+        }
+      </div>
+      <div class="hr-search-bar">
+        <input
+          type="text"
+          class="hr-search-input"
+          placeholder="Search by title or description..."
+          [(ngModel)]="keywordFilter"
+        />
+        <select class="hr-search-select" [(ngModel)]="locationTypeFilter">
+          <option value="">All Location Types</option>
+          @for (type of locationTypes; track type) {
+          <option [value]="type">{{ type }}</option>
+          }
+        </select>
+        <button type="button" class="btn-clear-small" (click)="clearFilters()">Clear</button>
       </div>
 
       @if (isLoading) {
@@ -134,24 +167,26 @@
           <span class="loader"></span>
           <p>Loading postings...</p>
         </div>
-      } @else if (postings.length === 0) {
+      } @else if (filteredPostings.length === 0) {
         <div class="empty-state">
           <p>No postings yet.</p>
           <span>Your next role starts here.</span>
         </div>
       } @else {
         <div class="posting-list">
-          @for (posting of postings; track posting.id) {
+          @for (posting of filteredPostings; track posting.id) {
             <article class="posting-card">
               <div class="posting-card-top">
-                <span class="posting-status {{ posting.status | lowercase }}">{{
-                  posting.status
-                }}</span>
-                <time>Due {{ posting.deadline | date: 'MMM d, y' }}</time>
+                <span class="posting-status {{ posting.status | lowercase }}">
+                  {{ posting.status }}
+                </span>
+                @if (posting.deadline) {
+                  <time>Due {{ posting.deadline | date: 'MMM d, y' }}</time>
+                }
               </div>
+
               <h3>{{ posting.title }}</h3>
 
-              <!-- Added Company Display in Meta -->
               <div class="posting-meta">
                 @if (posting.company) {
                   <span class="company-name">🏢 {{ posting.company }}</span>
@@ -162,11 +197,29 @@
                 }
               </div>
 
-              <p class="posting-description">{{ posting.description }}</p>
+              @if (posting.description) {
+                <p class="posting-description">{{ posting.description }}</p>
+              }
 
-              <div class="skills">
-                @for (skill of posting.skillsRequired; track skill) {
-                  <span>{{ skill }}</span>
+              @if (posting.skillsRequired.length) {
+                <div class="skills">
+                  @for (skill of posting.skillsRequired; track skill) {
+                    <span>{{ skill }}</span>
+                  }
+                </div>
+              }
+
+              <div class="card-actions">
+                @if (posting.status === 'DRAFT') {
+                  <button type="button" class="card-btn" (click)="editDraft(posting)">Edit</button>
+                  <button type="button" class="card-btn danger" (click)="deleteDraft(posting)">
+                    Delete
+                  </button>
+                }
+                @if (posting.status === 'PUBLISHED') {
+                  <button type="button" class="card-btn danger" (click)="closePosting(posting)">
+                    Close
+                  </button>
                 }
               </div>
             </article>

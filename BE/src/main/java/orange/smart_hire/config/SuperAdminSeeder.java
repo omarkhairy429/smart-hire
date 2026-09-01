@@ -3,6 +3,7 @@ package orange.smart_hire.config;
 import orange.smart_hire.enums.UserRole;
 import orange.smart_hire.model.User;
 import orange.smart_hire.repository.UserRepository;
+import orange.smart_hire.service.EmailService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;

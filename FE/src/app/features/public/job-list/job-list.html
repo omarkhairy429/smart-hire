@@ -4,6 +4,29 @@
     <p>Discover opportunities and take the next step in your career.</p>
   </div>
 
+  <div class="search-bar">
+    <input
+      type="text"
+      class="search-input"
+      placeholder="Search by title or description..."
+      [(ngModel)]="keyword"
+      (keyup.enter)="search()"
+    />
+    <input
+      type="text"
+      class="search-input"
+      placeholder="Location..."
+      [(ngModel)]="location"
+      (keyup.enter)="search()"
+    />
+    <select class="search-select" [(ngModel)]="locationType">
+      <option value="">All Location Types</option>
+      <option *ngFor="let type of locationTypes" [value]="type">{{ type }}</option>
+    </select>
+    <button class="btn-search" (click)="search()">Search</button>
+    <button class="btn-clear" (click)="clearFilters()">Clear</button>
+  </div>
+
   <div class="job-grid">
     <div class="job-card" *ngFor="let job of jobs">
       <div class="job-card-header">
@@ -20,5 +43,9 @@
         <a [routerLink]="['/jobs', job.id]" class="btn-primary-outline">View Details</a>
       </div>
     </div>
+  </div>
+
+  <div class="no-results" *ngIf="jobs.length === 0">
+    <p>No postings match your search.</p>
   </div>
 </div>

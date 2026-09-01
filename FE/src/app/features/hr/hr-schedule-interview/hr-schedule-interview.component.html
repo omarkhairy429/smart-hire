@@ -1,0 +1,56 @@
+<div class="modal-backdrop" (click)="close()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h3>Schedule Interview</h3>
+      <button type="button" class="btn-close" (click)="close()">&times;</button>
+    </div>
+
+    @if (candidateName) {
+      <p class="modal-subtitle">Candidate: <strong>{{ candidateName }}</strong></p>
+    }
+
+    @if (isLoading) {
+      <div class="loading-state">Loading interviewers...</div>
+    } @else {
+      @if (errorMessage) {
+        <div class="error-banner">{{ errorMessage }}</div>
+      }
+
+      <div class="form-group">
+        <label for="interviewerId">Interviewer</label>
+        <select id="interviewerId" class="form-control"
+                [(ngModel)]="interviewerId" name="interviewerId">
+          <option value="">Select an interviewer</option>
+          @for (person of interviewers; track person.id) {
+            <option [value]="person.id">{{ fullName(person) }} — {{ person.email }}</option>
+          }
+        </select>
+      </div>
+
+      @if (interviewers.length === 0) {
+        <p class="hint">No interviewer accounts exist yet. Ask the Super Admin to create one.</p>
+      }
+
+      <div class="form-group">
+        <label for="scheduledAt">Date &amp; time</label>
+        <input id="scheduledAt" type="datetime-local" class="form-control"
+               [(ngModel)]="scheduledAt" name="scheduledAt" />
+      </div>
+
+      <div class="form-group">
+        <label for="meetingLink">Meeting link</label>
+        <input id="meetingLink" type="url" class="form-control"
+               [(ngModel)]="meetingLink" name="meetingLink"
+               placeholder="https://meet.example.com/abc-defg" />
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
+        <button type="button" class="btn-primary" (click)="submit()" [disabled]="isSaving">
+          {{ isSaving ? 'Scheduling...' : 'Schedule' }}
+        </button>
+      </div>
+    }
+  </div>
+</div>

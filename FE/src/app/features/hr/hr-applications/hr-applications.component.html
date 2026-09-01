@@ -53,6 +53,8 @@
               <th>Stage</th>
               <th>Resume</th>
               <th>Applied On</th>
+              <th>Interview</th>
+              <th>Notes</th>
             </tr>
           </thead>
           <tbody>
@@ -77,7 +79,17 @@
                   }}</span>
                 </td>
                 <td>
-                  <span class="stage-badge">{{ app.stage }}</span>
+                  <select
+                    class="stage-select"
+                    [value]="app.stage"
+                    (change)="onStageChange(app, $event)"
+                  >
+                    @for (stage of stages; track stage) {
+                      <option [value]="stage" [selected]="stage === app.stage">
+                        {{ stage }}
+                      </option>
+                    }
+                  </select>
                 </td>
                 <td>
                   @if (app.resumeUrl) {
@@ -87,6 +99,14 @@
                   }
                 </td>
                 <td>{{ formatDate(app.createdAt) }}</td>
+                <td>
+                  <button type="button" class="schedule-btn" (click)="openSchedule(app)">
+                    Schedule Interview
+                  </button>
+                </td>
+                <td>
+                  <button type="button" class="notes-btn" (click)="openNotesPanel(app)">📝 Notes</button>
+                </td>
               </tr>
             }
           </tbody>
@@ -99,3 +119,69 @@
     }
   }
 </div>
+
+@if (schedulingFor) {
+  <app-hr-schedule-interview
+    [applicationId]="schedulingFor.id"
+    [candidateName]="schedulingFor.candidateName || ''"
+    (scheduled)="onScheduled()"
+    (closed)="closeSchedule()"
+  />
+}
+
+<!-- Notes overlay -->
+@if (notesPanelOpen) {
+  <div class="notes-overlay" (click)="closeNotesPanel()"></div>
+  <aside class="notes-panel">
+    <!-- Panel header -->
+    <div class="notes-panel-header">
+      <div>
+        <h3>📝 Notes</h3>
+        <p class="notes-panel-subtitle">{{ selectedCandidateName }}</p>
+      </div>
+      <button class="close-btn" (click)="closeNotesPanel()" aria-label="Close notes panel">
+        ✕
+      </button>
+    </div>
+
+    <!-- Add note form -->
+    <div class="notes-compose">
+      <textarea
+        class="notes-textarea"
+        [(ngModel)]="newNoteContent"
+        placeholder="Write a note about this candidate…"
+        rows="3"
+      ></textarea>
+      <button
+        class="btn-add-note"
+        [disabled]="!newNoteContent.trim() || isSavingNote"
+        (click)="submitNote()"
+      >
+        {{ isSavingNote ? 'Saving…' : 'Add Note' }}
+      </button>
+    </div>
+
+    @if (notesError) {
+      <div class="notes-error">{{ notesError }}</div>
+    }
+
+    <!-- Notes list -->
+    <div class="notes-list">
+      @if (isLoadingNotes) {
+        <div class="notes-loading">Loading notes…</div>
+      } @else if (notesList.length === 0) {
+        <div class="notes-empty">No notes yet. Be the first to add one.</div>
+      } @else {
+        @for (note of notesList; track note.id) {
+          <div class="note-card">
+            <div class="note-meta">
+              <span class="note-author">{{ note.authorName }}</span>
+              <span class="note-date">{{ formatDateTime(note.createdAt) }}</span>
+            </div>
+            <p class="note-content">{{ note.content }}</p>
+          </div>
+        }
+      }
+    </div>
+  </aside>
+}

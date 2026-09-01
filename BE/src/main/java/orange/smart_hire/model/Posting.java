@@ -36,26 +36,24 @@ public class Posting {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
     private String company;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "skills_required", nullable = false, columnDefinition = "jsonb")
+    @Column(name = "skills_required", columnDefinition = "jsonb")
     private List<String> skillsRequired = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "location_type", nullable = false)
+    @Column(name = "location_type")
     private LocationType locationType;
 
     private String location;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-
-    private PostingStatus status = PostingStatus.PUBLISHED;
+    private PostingStatus status = PostingStatus.DRAFT;
 
     private LocalDate deadline;
 

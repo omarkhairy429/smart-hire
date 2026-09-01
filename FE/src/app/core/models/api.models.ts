@@ -30,6 +30,14 @@ export interface StaffResponse {
   createdAt: string;
 }
 
+export enum ApplicationStage {
+  APPLIED = 'APPLIED',
+  SCREENING = 'SCREENING',
+  INTERVIEW = 'INTERVIEW',
+  OFFERED = 'OFFERED',
+  REJECTED = 'REJECTED'
+}
+
 export interface ApplicationResponse {
   id: string;
   postingId: string;
@@ -39,7 +47,7 @@ export interface ApplicationResponse {
   coverLetter?: string;
   experienceSummary?: string;
   resumeUrl?: string;
-  stage: string;
+  stage: ApplicationStage;
   status: string;
   createdAt: string;
   updatedAt: string;
@@ -50,4 +58,56 @@ export interface ApplyRequest {
   coverLetter?: string;
   experienceSummary?: string;
   resumeUrl: string;
+}
+
+export interface CandidateNoteRequest {
+  candidateId: string;
+  content: string;
+}
+
+export interface CandidateNoteResponse {
+  id: string;
+  content: string;
+  authorName: string;
+  createdAt: string;
+}
+
+export interface PipelineResponse {
+  stage: ApplicationStage;
+  applications: ApplicationResponse[];
+}
+
+export interface ScheduleInterviewRequest {
+  interviewerId: string;
+  scheduledAt: string;
+  meetingLink: string;
+}
+
+export interface InterviewResponse {
+  id: string;
+  applicationId: string;
+  interviewerId: string;
+  scheduledAt: string;
+  meetingLink: string;
+  createdAt: string;
+  updatedAt: string;
+  interviewerName?: string;
+  candidateName?: string;
+  postingTitle?: string;
+}
+
+export interface DossierResponse {
+  interviewId: string;
+  scheduledAt: string;
+  meetingLink: string;
+  candidateId: string;
+  candidateName?: string;
+  candidateEmail?: string;
+  resumeUrl?: string;
+  coverLetter?: string;
+  experienceSummary?: string;
+  postingId: string;
+  postingTitle?: string;
+  postingDescription?: string;
+  skillsRequired?: string[];
 }

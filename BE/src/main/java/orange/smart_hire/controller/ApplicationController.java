@@ -2,6 +2,7 @@ package orange.smart_hire.controller;
 
 import orange.smart_hire.dto.ApplicationResponse;
 import orange.smart_hire.dto.ApplyRequest;
+import orange.smart_hire.dto.UpdateStageRequest;
 import orange.smart_hire.service.ApplicationService;
 import orange.smart_hire.utils.SecurityUtils;
 import org.springframework.http.HttpStatus;
@@ -40,6 +41,8 @@ public class ApplicationController {
                 .status(HttpStatus.CREATED)
                 .body(response);
     }
+
+
     @PreAuthorize("hasRole('CANDIDATE')")
     @GetMapping
     public ResponseEntity<List<ApplicationResponse>> getMyApplications(
@@ -71,5 +74,20 @@ public class ApplicationController {
         return ResponseEntity.ok(
                 applicationService.getApplicationById(id)
         );
+    }
+
+
+
+
+
+    @PatchMapping("/{applicationId}/stage")
+    @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
+    public ResponseEntity<ApplicationResponse> updateStage(
+            @PathVariable UUID applicationId,
+            @RequestBody UpdateStageRequest request
+    ) {
+        ApplicationResponse response =
+                applicationService.updateStage(applicationId, request.getStage());
+        return ResponseEntity.ok(response);
     }
 }
