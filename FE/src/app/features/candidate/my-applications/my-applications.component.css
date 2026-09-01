@@ -162,3 +162,90 @@
 }
 
 .resume-chip:hover { background: #dcfce7; }
+
+/* Interview Panel */
+.interview-panel {
+  margin-top: 0.25rem;
+  background: #f0f7ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.interview-panel--pending {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.interview-panel-header {
+  display: flex;
+  align-items: center;
+}
+
+.interview-badge {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #1d4ed8;
+  background: #dbeafe;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+}
+
+.interview-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.detail-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.detail-icon {
+  flex-shrink: 0;
+  font-size: 0.9rem;
+}
+
+.detail-label {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  min-width: 80px;
+}
+
+.detail-value {
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.btn-join-meeting {
+  display: inline-block;
+  background: #2563eb;
+  color: #fff;
+  text-decoration: none;
+  padding: 0.55rem 1.1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: center;
+  transition: background 0.2s, transform 0.15s;
+  align-self: flex-start;
+}
+
+.btn-join-meeting:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
