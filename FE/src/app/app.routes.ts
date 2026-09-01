@@ -9,9 +9,12 @@ import { HrPostingsComponent } from './features/hr/hr-postings/hr-postings.compo
 import { HrApplicationsComponent } from './features/hr/hr-applications/hr-applications.component';
 import { ApplyComponent } from './features/candidate/apply/apply.component';
 import { MyApplicationsComponent } from './features/candidate/my-applications/my-applications.component';
+import { MyInterviewsComponent } from './features/interviewer/my-interviews/my-interviews.component';
+import { CandidateReviewComponent } from './features/interviewer/candidate-review/candidate-review.component';
 import { adminGuard } from './core/guards/admin-guard';
 import { hrGuard } from './core/guards/hr-guard';
 import { authGuard } from './core/guards/auth-guard';
+import { interviewerGuard } from './core/guards/interviewer-guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -34,6 +37,10 @@ export const routes: Routes = [
   // Candidate (must be logged in)
   { path: 'apply/:id', component: ApplyComponent, canActivate: [authGuard] },
   { path: 'my-applications', component: MyApplicationsComponent, canActivate: [authGuard] },
+
+  // Interviewer only
+  { path: 'interviewer/my-interviews', component: MyInterviewsComponent, canActivate: [interviewerGuard] },
+  { path: 'interviewer/interviews/:id', component: CandidateReviewComponent, canActivate: [interviewerGuard] },
 
   // Fallback
   { path: '**', redirectTo: '' }

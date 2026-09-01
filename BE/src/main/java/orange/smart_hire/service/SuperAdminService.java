@@ -18,6 +18,8 @@ public class SuperAdminService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+
 
     @Transactional
     public User createStaffMember(RegisterRequest request) {
@@ -36,6 +38,20 @@ public class SuperAdminService {
         staffMember.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         staffMember.setRole(request.getRole());
         staffMember.setActive(true);
+
+        emailService.sendEmail(
+                request.getEmail(),
+                "Welcome to SmartHire – Your Account Credentials",
+                "Welcome to SmartHire!\n\n" +
+                        "Your account has been created successfully.\n\n" +
+                        "Here are your temporary login credentials:\n\n" +
+                        "Email: " + request.getEmail() + "\n" +
+                        "Temporary Password: " + request.getPassword() + "\n\n" +
+                        "Please log in using these credentials and change your password after your first login.\n\n" +
+                        "Best regards,\n" +
+                        "SmartHire Team"
+        );
+
 
         return userRepository.save(staffMember);
     }

@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: "optional:file:../.env[.properties]"
   application:
     name: smart-hire
   datasource:
@@ -15,5 +17,17 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 jwt:
-  secret: ${JWT_SECRET:omardjjdsjslksaacnbbartgfayeddnxmmsghshsaaaashhsngghnsnsljsjsjssggs}
+  secret: ${JWT_SECRET:X7v3k9Qp2N8mZ6wJ4tR1yB5cV0sD3fH8gK7lM2nO9pQ6rT4uW1xY5zA3bC0eG7hJ}
