@@ -113,6 +113,15 @@ public class InterviewService {
     }
 
     @Transactional(readOnly = true)
+    public List<InterviewResponse> getInterviewsByCandidate(UUID candidateId) {
+        List<Application> applications = applicationRepository.findByCandidateId(candidateId);
+        return applications.stream()
+                .flatMap(app -> interviewRepository.findByApplicationId(app.getId()).stream())
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public DossierResponse getDossier(UUID interviewId, UUID interviewerId) {
         Interview interview = interviewRepository.findById(interviewId)
                 .orElseThrow(() -> new ResponseStatusException(

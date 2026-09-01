@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {
   DossierResponse,
@@ -48,5 +49,19 @@ export class InterviewService {
     return this.http.get<DossierResponse>(
       `${this.apiUrl}/interviewer/interviews/${interviewId}/dossier`
     );
+  }
+
+  /** Candidate: get the interview scheduled for a specific application. */
+  getCandidateInterview(applicationId: string): Observable<InterviewResponse | null> {
+    return this.http.get<InterviewResponse[]>(
+      `${this.apiUrl}/applications/${applicationId}/interviews`
+    ).pipe(
+      map((list: InterviewResponse[]) => (list && list.length > 0 ? list[0] : null))
+    );
+  }
+
+  /** Candidate: get all interviews for the currently logged-in candidate. */
+  getMyInterviewsAsCandidate(): Observable<InterviewResponse[]> {
+    return this.http.get<InterviewResponse[]>(`${this.apiUrl}/candidate/my-interviews`);
   }
 }

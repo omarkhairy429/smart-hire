@@ -37,6 +37,46 @@
               <a [href]="app.resumeUrl" target="_blank" class="resume-chip">📎 Resume</a>
             }
           </div>
+
+          <!-- Interview details — shown only when stage is INTERVIEW and data is loaded -->
+          @if (app.stage === 'INTERVIEW' && interviewMap[app.id] !== undefined) {
+            @if (interviewMap[app.id]) {
+              <div class="interview-panel">
+                <div class="interview-panel-header">
+                  <span class="interview-badge">🎙️ Interview Scheduled</span>
+                </div>
+                <div class="interview-details">
+                  @if (interviewMap[app.id]!.interviewerName) {
+                    <div class="detail-row">
+                      <span class="detail-icon">👤</span>
+                      <span class="detail-label">Interviewer</span>
+                      <span class="detail-value">{{ interviewMap[app.id]!.interviewerName }}</span>
+                    </div>
+                  }
+                  <div class="detail-row">
+                    <span class="detail-icon">📅</span>
+                    <span class="detail-label">Date &amp; Time</span>
+                    <span class="detail-value">{{ formatDateTime(interviewMap[app.id]!.scheduledAt) }}</span>
+                  </div>
+                  @if (interviewMap[app.id]!.postingTitle) {
+                    <div class="detail-row">
+                      <span class="detail-icon">💼</span>
+                      <span class="detail-label">Position</span>
+                      <span class="detail-value">{{ interviewMap[app.id]!.postingTitle }}</span>
+                    </div>
+                  }
+                </div>
+                <a [href]="interviewMap[app.id]!.meetingLink" target="_blank" rel="noopener" class="btn-join-meeting">
+                  🔗 Join Meeting
+                </a>
+              </div>
+            } @else {
+              <div class="interview-panel interview-panel--pending">
+                <span class="detail-icon">⏳</span>
+                <span>Interview details will appear here once scheduled.</span>
+              </div>
+            }
+          }
         </div>
       }
     </div>
