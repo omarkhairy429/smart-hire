@@ -13,6 +13,8 @@ export interface PostingRequest {
   locationType: string;
   location: string;
   deadline: string;
+  department?: string;
+  employmentType?: string;
 }
 
 @Injectable({
@@ -101,5 +103,14 @@ export class PostingService {
     return this.http
       .get<any>(`${this.apiUrl}/published/${id}`)
       .pipe(map((res: any) => (res?.id ? res : (res?.data ?? res))));
+  }
+
+  getPostingsByCompany(): Observable<PostingResponse[]> {
+    return this.http
+      .get<any>(`${this.apiUrl}/company`)
+      .pipe(
+        tap((res: any) => console.log('[PostingService] getPostingsByCompany raw response:', res)),
+        map((res: any) => (Array.isArray(res) ? res : (res?.data ?? res)))
+      );
   }
 }

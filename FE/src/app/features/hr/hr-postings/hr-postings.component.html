@@ -80,6 +80,22 @@
 
         <div class="form-row">
           <label>
+            Department <span class="optional-label">(optional)</span>
+            <input type="text" formControlName="department" placeholder="Engineering, Marketing…" />
+          </label>
+          <label>
+            Employment Type <span class="optional-label">(optional)</span>
+            <select formControlName="employmentType">
+              <option value="">— Select —</option>
+              @for (et of employmentTypes; track et) {
+                <option [value]="et">{{ et.replace('_', ' ') }}</option>
+              }
+            </select>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label>
             Application deadline
             <input type="date" formControlName="deadline" />
             @if (fieldHasError('deadline')) {
@@ -194,6 +210,12 @@
                 <span>{{ formatLocationType(posting.locationType) }}</span>
                 @if (posting.location) {
                   <span>{{ posting.location }}</span>
+                }
+                @if (posting.department) {
+                  <span>📁 {{ posting.department }}</span>
+                }
+                @if (posting.employmentType) {
+                  <span class="employment-badge">{{ posting.employmentType.replace('_', ' ') }}</span>
                 }
               </div>
 

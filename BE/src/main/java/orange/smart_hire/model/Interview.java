@@ -3,6 +3,9 @@ package orange.smart_hire.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import orange.smart_hire.enums.InterviewFormat;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -26,12 +29,30 @@ public class Interview {
     @Column(name = "scheduled_at", nullable = false)
     private LocalDateTime scheduledAt;
 
-    @Column(name = "meeting_link", nullable = false, length = 512)
+    /** Format of the interview: IN_PERSON, VIDEO, or PHONE */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private InterviewFormat format = InterviewFormat.VIDEO;
+
+    /**
+     * Physical location for IN_PERSON interviews.
+     * Nullable — only required when format = IN_PERSON.
+     */
+    @Column(length = 512)
+    private String location;
+
+    /**
+     * Meeting link for VIDEO / PHONE interviews.
+     * Nullable — not required for IN_PERSON.
+     */
+    @Column(name = "meeting_link", length = 512)
     private String meetingLink;
 
-    @Column(name = "created_at", nullable = false)
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 }

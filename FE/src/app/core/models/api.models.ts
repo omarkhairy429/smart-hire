@@ -9,6 +9,8 @@ export interface PostingResponse {
   location: string;
   status: string;
   deadline: string;
+  department?: string;
+  employmentType?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -27,6 +29,7 @@ export interface StaffResponse {
   lastName: string;
   role: string;
   isActive: boolean;
+  companyName?: string;
   createdAt: string;
 }
 
@@ -35,7 +38,22 @@ export enum ApplicationStage {
   SCREENING = 'SCREENING',
   INTERVIEW = 'INTERVIEW',
   OFFERED = 'OFFERED',
+  HIRED = 'HIRED',
   REJECTED = 'REJECTED'
+}
+
+export enum InterviewFormat {
+  IN_PERSON = 'IN_PERSON',
+  VIDEO = 'VIDEO',
+  PHONE = 'PHONE'
+}
+
+export enum EmploymentType {
+  FULL_TIME = 'FULL_TIME',
+  PART_TIME = 'PART_TIME',
+  CONTRACT = 'CONTRACT',
+  INTERNSHIP = 'INTERNSHIP',
+  FREELANCE = 'FREELANCE'
 }
 
 export interface ApplicationResponse {
@@ -80,7 +98,9 @@ export interface PipelineResponse {
 export interface ScheduleInterviewRequest {
   interviewerId: string;
   scheduledAt: string;
-  meetingLink: string;
+  format: string;
+  location?: string;
+  meetingLink?: string;
 }
 
 export interface InterviewResponse {
@@ -88,7 +108,9 @@ export interface InterviewResponse {
   applicationId: string;
   interviewerId: string;
   scheduledAt: string;
-  meetingLink: string;
+  format: string;
+  location?: string;
+  meetingLink?: string;
   createdAt: string;
   updatedAt: string;
   interviewerName?: string;
@@ -99,7 +121,9 @@ export interface InterviewResponse {
 export interface DossierResponse {
   interviewId: string;
   scheduledAt: string;
-  meetingLink: string;
+  format: string;
+  location?: string;
+  meetingLink?: string;
   candidateId: string;
   candidateName?: string;
   candidateEmail?: string;
