@@ -1,10 +1,11 @@
 package orange.smart_hire.dto;
 
+import orange.smart_hire.enums.EmploymentType;
 import orange.smart_hire.enums.LocationType;
 import orange.smart_hire.enums.PostingStatus;
 
-import java.time.LocalDate;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,97 +20,49 @@ public class PostingResponse {
     private String location;
     private PostingStatus status;
     private LocalDate deadline;
+    private String department;
+    private EmploymentType employmentType;
     private Instant createdAt;
     private Instant updatedAt;
 
-    public PostingResponse() {
-    }
+    public PostingResponse() {}
 
-    public UUID getId() {
-        return id;
-    }
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public String getCompany() {
-        return company;
-    }
+    public String getCompany() { return company; }
+    public void setCompany(String company) { this.company = company; }
 
-    public void setCompany(String company) {
-        this.company = company;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public String getTitle() {
-        return title;
-    }
+    public List<String> getSkillsRequired() { return skillsRequired; }
+    public void setSkillsRequired(List<String> skillsRequired) { this.skillsRequired = skillsRequired; }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public LocationType getLocationType() { return locationType; }
+    public void setLocationType(LocationType locationType) { this.locationType = locationType; }
 
-    public String getDescription() {
-        return description;
-    }
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public PostingStatus getStatus() { return status; }
+    public void setStatus(PostingStatus status) { this.status = status; }
 
-    public List<String> getSkillsRequired() {
-        return skillsRequired;
-    }
+    public LocalDate getDeadline() { return deadline; }
+    public void setDeadline(LocalDate deadline) { this.deadline = deadline; }
 
-    public void setSkillsRequired(List<String> skillsRequired) {
-        this.skillsRequired = skillsRequired;
-    }
+    public String getDepartment() { return department; }
+    public void setDepartment(String department) { this.department = department; }
 
-    public LocationType getLocationType() {
-        return locationType;
-    }
+    public EmploymentType getEmploymentType() { return employmentType; }
+    public void setEmploymentType(EmploymentType employmentType) { this.employmentType = employmentType; }
 
-    public void setLocationType(LocationType locationType) {
-        this.locationType = locationType;
-    }
+    public Instant getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
 
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public PostingStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PostingStatus status) {
-        this.status = status;
-    }
-
-    public LocalDate getDeadline() {
-        return deadline;
-    }
-
-    public void setDeadline(LocalDate deadline) {
-        this.deadline = deadline;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    public Instant getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
 }

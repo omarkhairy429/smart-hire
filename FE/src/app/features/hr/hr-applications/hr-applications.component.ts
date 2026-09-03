@@ -61,8 +61,8 @@ export class HrApplicationsComponent implements OnInit {
     this.loadPostings();
   }
 
-  loadPostings() {
-    this.postingService.getPostings().subscribe({
+loadPostings() {
+    this.postingService.getPostingsByCompany().subscribe({
       next: (data) => {
         this.postings = data;
         this.isLoadingPostings = false;

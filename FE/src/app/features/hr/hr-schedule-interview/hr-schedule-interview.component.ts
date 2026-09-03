@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectorRef } fro
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InterviewService } from '../../../core/services/interview.service';
-import { StaffResponse } from '../../../core/models/api.models';
+import { StaffResponse, InterviewFormat } from '../../../core/models/api.models';
 import { InterviewResponse } from '../../../core/models/api.models';
 
 @Component({
@@ -22,7 +22,15 @@ export class HrScheduleInterviewComponent implements OnInit {
   interviewers: StaffResponse[] = [];
   interviewerId = '';
   scheduledAt = '';
+  format: string = InterviewFormat.VIDEO;
+  location = '';
   meetingLink = '';
+
+  readonly formats = [
+    { value: InterviewFormat.VIDEO,     label: '📹 Video Call' },
+    { value: InterviewFormat.PHONE,     label: '📞 Phone Call' },
+    { value: InterviewFormat.IN_PERSON, label: '🏢 In Person' },
+  ];
 
   isLoading = true;
   isSaving = false;
@@ -48,9 +56,19 @@ export class HrScheduleInterviewComponent implements OnInit {
     });
   }
 
+  get isInPerson(): boolean {
+    return this.format === InterviewFormat.IN_PERSON;
+  }
+
   submit() {
-    if (!this.interviewerId || !this.scheduledAt || !this.meetingLink.trim()) {
-      this.errorMessage = 'Please fill in the interviewer, date and meeting link.';
+    if (!this.interviewerId || !this.scheduledAt || !this.format) {
+      this.errorMessage = 'Please fill in the interviewer, date, and interview format.';
+      return;
+    }
+
+    // Meeting link is required for VIDEO and PHONE
+    if (!this.isInPerson && !this.meetingLink.trim()) {
+      this.errorMessage = 'Please provide a meeting link for video or phone interviews.';
       return;
     }
 
@@ -60,7 +78,9 @@ export class HrScheduleInterviewComponent implements OnInit {
     this.interviewService.scheduleInterview(this.applicationId, {
       interviewerId: this.interviewerId,
       scheduledAt: this.scheduledAt,
-      meetingLink: this.meetingLink.trim()
+      format: this.format,
+      location: this.location.trim() || undefined,
+      meetingLink: this.isInPerson ? undefined : this.meetingLink.trim(),
     }).subscribe({
       next: (interview) => {
         this.isSaving = false;

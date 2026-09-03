@@ -14,6 +14,8 @@ public interface PostingRepository extends JpaRepository<Posting, UUID> {
 
     List<Posting> findByStatus(PostingStatus status);
 
+    List<Posting> findByCompany(String company);
+
     List<Posting> findByHrManagerId(UUID hrManagerId);
 
     @Query("SELECT p FROM Posting p WHERE p.status = orange.smart_hire.enums.PostingStatus.PUBLISHED " +

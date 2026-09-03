@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import orange.smart_hire.enums.EmploymentType;
 import orange.smart_hire.enums.LocationType;
 import orange.smart_hire.enums.PostingStatus;
 import org.hibernate.annotations.CreationTimestamp;
@@ -51,6 +52,15 @@ public class Posting {
 
     private String location;
 
+    /** Department name e.g. Engineering, Marketing */
+    @Column(length = 255)
+    private String department;
+
+    /** Employment type e.g. FULL_TIME, PART_TIME, CONTRACT */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "employment_type", length = 50)
+    private EmploymentType employmentType;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PostingStatus status = PostingStatus.DRAFT;
@@ -64,4 +74,4 @@ public class Posting {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
-}
+}

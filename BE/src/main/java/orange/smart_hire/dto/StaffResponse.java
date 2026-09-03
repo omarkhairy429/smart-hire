@@ -17,6 +17,7 @@ public class StaffResponse {
     private String lastName;
     private UserRole role;
     private boolean isActive;
+    private String companyName;
     private LocalDateTime createdAt;
 
     public static StaffResponse fromEntity(User user) {
@@ -27,6 +28,7 @@ public class StaffResponse {
                 .lastName(user.getLastName())
                 .role(user.getRole())
                 .isActive(user.isActive())
+                .companyName(user.getCompanyName())
                 .createdAt(user.getCreatedAt())
                 .build();
     }

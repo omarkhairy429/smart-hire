@@ -48,6 +48,8 @@ public class PostingService {
         posting.setLocationType(request.getLocationType());
         posting.setLocation(request.getLocation());
         posting.setDeadline(request.getDeadline());
+        posting.setDepartment(request.getDepartment());
+        posting.setEmploymentType(request.getEmploymentType());
         posting.setStatus(PostingStatus.PUBLISHED);
         Posting savedPosting = postingRepository.save(posting);
         return mapToResponse(savedPosting);
@@ -64,6 +66,8 @@ public class PostingService {
         response.setLocation(posting.getLocation());
         response.setStatus(posting.getStatus());
         response.setDeadline(posting.getDeadline());
+        response.setDepartment(posting.getDepartment());
+        response.setEmploymentType(posting.getEmploymentType());
         response.setCreatedAt(posting.getCreatedAt());
         response.setUpdatedAt(posting.getUpdatedAt());
 
@@ -132,6 +136,8 @@ public class PostingService {
         posting.setLocationType(request.getLocationType());
         posting.setLocation(request.getLocation());
         posting.setDeadline(request.getDeadline());
+        posting.setDepartment(request.getDepartment());
+        posting.setEmploymentType(request.getEmploymentType());
         posting.setStatus(PostingStatus.DRAFT);
 
         return mapToResponse(postingRepository.save(posting));
@@ -153,6 +159,8 @@ public class PostingService {
         posting.setLocationType(request.getLocationType());
         posting.setLocation(request.getLocation());
         posting.setDeadline(request.getDeadline());
+        posting.setDepartment(request.getDepartment());
+        posting.setEmploymentType(request.getEmploymentType());
 
         return mapToResponse(postingRepository.save(posting));
     }
@@ -211,6 +219,16 @@ public class PostingService {
     public List<PostingResponse> getMyPostings() {
         User currentUser = SecurityUtils.getCurrentUser();
         return postingRepository.findByHrManagerId(currentUser.getId())
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    public List<PostingResponse> getPostingsByCompany() {
+        User currentUser = SecurityUtils.getCurrentUser();
+        String companyName = currentUser.getCompanyName();
+
+        return postingRepository.findByCompany(companyName)
                 .stream()
                 .map(this::mapToResponse)
                 .toList();

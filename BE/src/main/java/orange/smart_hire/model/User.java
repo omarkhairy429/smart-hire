@@ -36,6 +36,14 @@ public class User {
     @Column(nullable = false)
     private UserRole role;
 
+    /**
+     * Company name for tenant isolation.
+     * HR_MANAGER and INTERVIEWER must have a non-null company name.
+     * SUPER_ADMIN and CANDIDATE may have null.
+     */
+    @Column(name = "company_name", length = 255)
+    private String companyName;
+
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
@@ -47,3 +55,4 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 }
+

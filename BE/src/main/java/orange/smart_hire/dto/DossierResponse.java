@@ -1,6 +1,7 @@
 package orange.smart_hire.dto;
 
 import lombok.Data;
+import orange.smart_hire.enums.InterviewFormat;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,6 +12,8 @@ public class DossierResponse {
 
     private UUID interviewId;
     private LocalDateTime scheduledAt;
+    private InterviewFormat format;
+    private String location;
     private String meetingLink;
 
     private UUID candidateId;

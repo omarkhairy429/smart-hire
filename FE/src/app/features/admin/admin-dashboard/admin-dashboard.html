@@ -8,9 +8,13 @@
     <!-- CREATE STAFF FORM -->
     <div class="admin-card">
       <h3>Create New Staff Member</h3>
-      
+
       @if (successMessage) {
         <div class="alert-success">{{ successMessage }}</div>
+      }
+
+      @if (errorMessage) {
+        <div class="alert-error">{{ errorMessage }}</div>
       }
 
       <form [formGroup]="staffForm" (ngSubmit)="onSubmit()">
@@ -18,10 +22,16 @@
           <div class="form-group">
             <label>First Name</label>
             <input type="text" formControlName="firstName" class="form-control">
+            @if (staffForm.get('firstName')?.invalid && staffForm.get('firstName')?.touched) {
+              <small class="field-error">First name is required.</small>
+            }
           </div>
           <div class="form-group">
             <label>Last Name</label>
             <input type="text" formControlName="lastName" class="form-control">
+            @if (staffForm.get('lastName')?.invalid && staffForm.get('lastName')?.touched) {
+              <small class="field-error">Last name is required.</small>
+            }
           </div>
         </div>
 
@@ -29,19 +39,39 @@
           <div class="form-group">
             <label>Email Address</label>
             <input type="email" formControlName="email" class="form-control">
+            @if (staffForm.get('email')?.invalid && staffForm.get('email')?.touched) {
+              <small class="field-error">A valid email is required.</small>
+            }
           </div>
           <div class="form-group">
             <label>Password</label>
             <input type="password" formControlName="password" class="form-control">
+            @if (staffForm.get('password')?.invalid && staffForm.get('password')?.touched) {
+              <small class="field-error">Password is required.</small>
+            }
           </div>
         </div>
 
-        <div class="form-group">
-          <label>Assign Role</label>
-          <select formControlName="role" class="form-control">
-            <option value="HR_MANAGER">HR Manager</option>
-            <option value="INTERVIEWER">Interviewer</option>
-          </select>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Assign Role</label>
+            <select formControlName="role" class="form-control">
+              <option value="HR_MANAGER">HR Manager</option>
+              <option value="INTERVIEWER">Interviewer</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Company Name</label>
+            <input
+              type="text"
+              formControlName="companyName"
+              class="form-control"
+              placeholder="e.g. Acme Corp"
+            >
+            @if (staffForm.get('companyName')?.invalid && staffForm.get('companyName')?.touched) {
+              <small class="field-error">Company name is required for staff members.</small>
+            }
+          </div>
         </div>
 
         <button type="submit" class="btn-primary" [disabled]="staffForm.invalid">Create Account</button>
@@ -51,13 +81,14 @@
     <!-- STAFF LIST TABLE -->
     <div class="admin-card mt-2">
       <h3>System Personnel</h3>
-      
+
       <table class="staff-table">
         <thead>
           <tr>
             <th>Name</th>
             <th>Email</th>
             <th>Role</th>
+            <th>Company</th>
             <th>Status</th>
           </tr>
         </thead>
@@ -67,6 +98,7 @@
               <td>{{ staff.firstName }} {{ staff.lastName }}</td>
               <td>{{ staff.email }}</td>
               <td><span class="role-badge">{{ staff.role }}</span></td>
+              <td>{{ staff.companyName ?? '—' }}</td>
               <td>
                 <span class="status-indicator" [class.active]="staff.isActive">
                   {{ staff.isActive ? 'Active' : 'Inactive' }}
@@ -75,7 +107,7 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="4" class="text-center">No staff found or waiting for backend endpoint.</td>
+              <td colspan="5" class="text-center">No staff found.</td>
             </tr>
           }
         </tbody>
