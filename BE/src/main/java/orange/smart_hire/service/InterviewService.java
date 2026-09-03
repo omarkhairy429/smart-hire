@@ -6,6 +6,7 @@ import orange.smart_hire.dto.ScheduleInterviewRequest;
 import orange.smart_hire.dto.StaffResponse;
 import orange.smart_hire.enums.ApplicationStage;
 import orange.smart_hire.enums.InterviewFormat;
+import orange.smart_hire.enums.NotificationType;
 import orange.smart_hire.enums.UserRole;
 import orange.smart_hire.model.Application;
 import orange.smart_hire.model.Interview;
@@ -33,15 +34,18 @@ public class InterviewService {
     private final ApplicationRepository applicationRepository;
     private final PostingRepository postingRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     public InterviewService(InterviewRepository interviewRepository,
                             ApplicationRepository applicationRepository,
                             PostingRepository postingRepository,
-                            UserRepository userRepository) {
+                            UserRepository userRepository,
+                            NotificationService notificationService) {
         this.interviewRepository = interviewRepository;
         this.applicationRepository = applicationRepository;
         this.postingRepository = postingRepository;
         this.userRepository = userRepository;
+        this.notificationService = notificationService;
     }
 
     public InterviewResponse schedule(UUID applicationId, ScheduleInterviewRequest request) {
@@ -76,6 +80,24 @@ public class InterviewService {
 
         Interview saved = interviewRepository.save(interview);
 
+        notificationService.sendNotification(
+                application.getCandidateId(),
+                NotificationType.INTERVIEW_SCHEDULED,
+                "Interview Scheduled",
+                "An interview has been scheduled for your application.",
+                saved.getId()
+        );
+
+        notificationService.sendNotification(
+                interviewer.getId(),
+                NotificationType.INTERVIEW_SCHEDULED,
+                "Interview Assigned",
+                "You have been assigned a new interview.",
+                saved.getId()
+        );
+
+// Scheduling an interview advances the candidate to INTERVIEW stage
+
         // Scheduling an interview advances the candidate to INTERVIEW stage
         // (only if they haven't already reached a later stage)
         if (application.getStage() == ApplicationStage.APPLIED
@@ -91,6 +113,28 @@ public class InterviewService {
         Interview interview = interviewRepository.findById(interviewId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Interview not found"));
+
+        Application application = applicationRepository.findById(
+                interview.getApplicationId()
+        ).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Application not found"
+        ));
+
+        notificationService.sendNotification(
+                application.getCandidateId(),
+                NotificationType.INTERVIEW_CANCELLED,
+                "Interview Cancelled",
+                "Your scheduled interview has been cancelled.",
+                interview.getId()
+        );
+
+        notificationService.sendNotification(
+                interview.getInterviewerId(),
+                NotificationType.INTERVIEW_CANCELLED,
+                "Interview Cancelled",
+                "An interview assigned to you has been cancelled.",
+                interview.getId()
+        );
 
         interviewRepository.delete(interview);
     }

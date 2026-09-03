@@ -21,24 +21,20 @@
 
       <form [formGroup]="postingForm" (ngSubmit)="createPosting()" novalidate>
         @if (!hasAutoId) {
-          <label>
-            HR Manager UUID
-            <input
-              type="text"
-              formControlName="hrManagerId"
-              placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-            />
-            @if (fieldHasError('hrManagerId')) {
-              <small>Enter a valid HR manager UUID.</small>
-            }
-          </label>
+        <label>
+          HR Manager UUID
+          <input type="text" formControlName="hrManagerId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+          @if (fieldHasError('hrManagerId')) {
+          <small>Enter a valid HR manager UUID.</small>
+          }
+        </label>
         }
 
         <label>
           Job title
           <input type="text" formControlName="title" placeholder="Senior Product Designer" />
           @if (fieldHasError('title')) {
-            <small>Title is required.</small>
+          <small>Title is required.</small>
           }
         </label>
 
@@ -47,19 +43,16 @@
           Company
           <input type="text" formControlName="company" placeholder="Acme Corp" />
           @if (fieldHasError('company')) {
-            <small>Company name is required.</small>
+          <small>Company name is required.</small>
           }
         </label>
 
         <label>
           Description
-          <textarea
-            rows="4"
-            formControlName="description"
-            placeholder="Describe the role, impact, and responsibilities."
-          ></textarea>
+          <textarea rows="4" formControlName="description"
+            placeholder="Describe the role, impact, and responsibilities."></textarea>
           @if (fieldHasError('description')) {
-            <small>Description is required.</small>
+          <small>Description is required.</small>
           }
         </label>
 
@@ -68,7 +61,7 @@
             Work arrangement
             <select formControlName="locationType">
               @for (lt of locationTypes; track lt) {
-                <option [value]="lt">{{ formatLocationType(lt) }}</option>
+              <option [value]="lt">{{ formatLocationType(lt) }}</option>
               }
             </select>
           </label>
@@ -80,15 +73,15 @@
 
         <div class="form-row">
           <label>
-            Department <span class="optional-label">(optional)</span>
+            Department
             <input type="text" formControlName="department" placeholder="Engineering, Marketing…" />
           </label>
           <label>
-            Employment Type <span class="optional-label">(optional)</span>
+            Employment Type
             <select formControlName="employmentType">
               <option value="">— Select —</option>
               @for (et of employmentTypes; track et) {
-                <option [value]="et">{{ et.replace('_', ' ') }}</option>
+              <option [value]="et">{{ et.replace('_', ' ') }}</option>
               }
             </select>
           </label>
@@ -99,32 +92,23 @@
             Application deadline
             <input type="date" formControlName="deadline" />
             @if (fieldHasError('deadline')) {
-              <small>Deadline is required.</small>
+            <small>Deadline is required.</small>
             }
           </label>
           <label>
             Skills (comma-separated)
-            <input
-              type="text"
-              formControlName="skillsRequired"
-              placeholder="Java, Spring Boot, SQL"
-            />
+            <input type="text" formControlName="skillsRequired" placeholder="Java, Spring Boot, SQL" />
             @if (fieldHasError('skillsRequired')) {
-              <small>Add at least one skill.</small>
+            <small>Add at least one skill.</small>
             }
           </label>
         </div>
 
         <div class="form-actions">
           @if (editingDraftId) {
-            <button type="button" class="card-btn" (click)="cancelEdit()">Cancel</button>
+          <button type="button" class="card-btn" (click)="cancelEdit()">Cancel</button>
           }
-          <button
-            class="btn-secondary-outline draft-btn"
-            type="button"
-            [disabled]="isSubmitting"
-            (click)="saveDraft()"
-          >
+          <button class="btn-secondary-outline draft-btn" type="button" [disabled]="isSubmitting" (click)="saveDraft()">
             Save Draft
           </button>
           <button class="btn-primary submit-btn" type="submit" [disabled]="isSubmitting">
@@ -134,10 +118,10 @@
       </form>
 
       @if (successMessage) {
-        <p class="success-message" role="status">{{ successMessage }}</p>
+      <p class="success-message" role="status">{{ successMessage }}</p>
       }
       @if (errorMessage) {
-        <p class="error-message" role="alert">{{ errorMessage }}</p>
+      <p class="error-message" role="alert">{{ errorMessage }}</p>
       }
     </section>
 
@@ -152,23 +136,14 @@
 
       <div class="status-tabs">
         @for (filter of statusFilters; track filter) {
-          <button
-            type="button"
-            class="tab-btn"
-            [class.active]="statusFilter === filter"
-            (click)="statusFilter = filter"
-          >
-            {{ filter }}
-          </button>
+        <button type="button" class="tab-btn" [class.active]="statusFilter === filter" (click)="statusFilter = filter">
+          {{ filter }}
+        </button>
         }
       </div>
       <div class="hr-search-bar">
-        <input
-          type="text"
-          class="hr-search-input"
-          placeholder="Search by title or description..."
-          [(ngModel)]="keywordFilter"
-        />
+        <input type="text" class="hr-search-input" placeholder="Search by title or description..."
+          [(ngModel)]="keywordFilter" />
         <select class="hr-search-select" [(ngModel)]="locationTypeFilter">
           <option value="">All Location Types</option>
           @for (type of locationTypes; track type) {
@@ -179,74 +154,74 @@
       </div>
 
       @if (isLoading) {
-        <div class="empty-state">
-          <span class="loader"></span>
-          <p>Loading postings...</p>
-        </div>
+      <div class="empty-state">
+        <span class="loader"></span>
+        <p>Loading postings...</p>
+      </div>
       } @else if (filteredPostings.length === 0) {
-        <div class="empty-state">
-          <p>No postings yet.</p>
-          <span>Your next role starts here.</span>
-        </div>
+      <div class="empty-state">
+        <p>No postings yet.</p>
+        <span>Your next role starts here.</span>
+      </div>
       } @else {
-        <div class="posting-list">
-          @for (posting of filteredPostings; track posting.id) {
-            <article class="posting-card">
-              <div class="posting-card-top">
-                <span class="posting-status {{ posting.status | lowercase }}">
-                  {{ posting.status }}
-                </span>
-                @if (posting.deadline) {
-                  <time>Due {{ posting.deadline | date: 'MMM d, y' }}</time>
-                }
-              </div>
+      <div class="posting-list">
+        @for (posting of filteredPostings; track posting.id) {
+        <article class="posting-card">
+          <div class="posting-card-top">
+            <span class="posting-status {{ posting.status | lowercase }}">
+              {{ posting.status }}
+            </span>
+            @if (posting.deadline) {
+            <time>Due {{ posting.deadline | date: 'MMM d, y' }}</time>
+            }
+          </div>
 
-              <h3>{{ posting.title }}</h3>
+          <h3>{{ posting.title }}</h3>
 
-              <div class="posting-meta">
-                @if (posting.company) {
-                  <span class="company-name">🏢 {{ posting.company }}</span>
-                }
-                <span>{{ formatLocationType(posting.locationType) }}</span>
-                @if (posting.location) {
-                  <span>{{ posting.location }}</span>
-                }
-                @if (posting.department) {
-                  <span>📁 {{ posting.department }}</span>
-                }
-                @if (posting.employmentType) {
-                  <span class="employment-badge">{{ posting.employmentType.replace('_', ' ') }}</span>
-                }
-              </div>
+          <div class="posting-meta">
+            @if (posting.company) {
+            <span class="company-name">🏢 {{ posting.company }}</span>
+            }
+            <span>{{ formatLocationType(posting.locationType) }}</span>
+            @if (posting.location) {
+            <span>{{ posting.location }}</span>
+            }
+            @if (posting.department) {
+            <span>📁 {{ posting.department }}</span>
+            }
+            @if (posting.employmentType) {
+            <span class="employment-badge">{{ posting.employmentType.replace('_', ' ') }}</span>
+            }
+          </div>
 
-              @if (posting.description) {
-                <p class="posting-description">{{ posting.description }}</p>
-              }
-
-              @if (posting.skillsRequired.length) {
-                <div class="skills">
-                  @for (skill of posting.skillsRequired; track skill) {
-                    <span>{{ skill }}</span>
-                  }
-                </div>
-              }
-
-              <div class="card-actions">
-                @if (posting.status === 'DRAFT') {
-                  <button type="button" class="card-btn" (click)="editDraft(posting)">Edit</button>
-                  <button type="button" class="card-btn danger" (click)="deleteDraft(posting)">
-                    Delete
-                  </button>
-                }
-                @if (posting.status === 'PUBLISHED') {
-                  <button type="button" class="card-btn danger" (click)="closePosting(posting)">
-                    Close
-                  </button>
-                }
-              </div>
-            </article>
+          @if (posting.description) {
+          <p class="posting-description">{{ posting.description }}</p>
           }
-        </div>
+
+          @if (posting.skillsRequired.length) {
+          <div class="skills">
+            @for (skill of posting.skillsRequired; track skill) {
+            <span>{{ skill }}</span>
+            }
+          </div>
+          }
+
+          <div class="card-actions">
+            @if (posting.status === 'DRAFT') {
+            <button type="button" class="card-btn" (click)="editDraft(posting)">Edit</button>
+            <button type="button" class="card-btn danger" (click)="deleteDraft(posting)">
+              Delete
+            </button>
+            }
+            @if (posting.status === 'PUBLISHED') {
+            <button type="button" class="card-btn danger" (click)="closePosting(posting)">
+              Close
+            </button>
+            }
+          </div>
+        </article>
+        }
+      </div>
       }
     </section>
   </div>

@@ -41,7 +41,7 @@ public class PostingController {
         return postingService.createPosting(request);
     }
 
-    @PreAuthorize("hasRole('HR_MANAGER')")
+    @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePosting(@PathVariable UUID id) {
         postingService.deletePosting(id);
@@ -53,7 +53,7 @@ public class PostingController {
         return postingService.getPostingById(id);
     }
 
-    @PreAuthorize("hasRole('HR_MANAGER')")
+    @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
     @PutMapping("/{id}")
     public PostingResponse updatePosting(@PathVariable UUID id, @RequestBody PostingRequest request) {
         return postingService.updatePosting(id, request);
@@ -64,7 +64,7 @@ public class PostingController {
     public PostingResponse getPublishedPostingById(@PathVariable UUID id) {
         return postingService.getPublishedPostingById(id);
     }
-    @PreAuthorize("hasRole('HR_MANAGER')")
+    @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
     @PostMapping("/drafts")
     public PostingResponse createDraft(@RequestBody PostingRequest request) {
         return postingService.createDraft(request);
@@ -75,12 +75,12 @@ public class PostingController {
     public PostingResponse updateDraft(@PathVariable UUID id, @RequestBody PostingRequest request) {
         return postingService.updateDraft(id, request);
     }
-    @PreAuthorize("hasRole('HR_MANAGER')")
+    @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
     @PatchMapping("/{id}/publish")
     public PostingResponse publish(@PathVariable UUID id) {
         return postingService.publish(id);
     }
-    @PreAuthorize("hasRole('HR_MANAGER')")
+    @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
     @PatchMapping("/{id}/close")
     public PostingResponse close(@PathVariable UUID id) {
         return postingService.close(id);
@@ -90,7 +90,7 @@ public class PostingController {
         return postingService.getPublishedPostings();
     }
 
-    @PreAuthorize("hasRole('HR_MANAGER')")
+    @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
     @GetMapping("/mine")
     public List<PostingResponse> getMyPostings() {
         return postingService.getMyPostings();
