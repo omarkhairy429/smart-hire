@@ -5,11 +5,13 @@ import orange.smart_hire.dto.ApplyRequest;
 import orange.smart_hire.dto.PipelineResponse;
 import orange.smart_hire.enums.ApplicationStage;
 import orange.smart_hire.enums.ApplicationStatus;
+import orange.smart_hire.enums.NotificationType;
 import orange.smart_hire.model.Application;
+import orange.smart_hire.model.Posting;
 import orange.smart_hire.repository.ApplicationRepository;
 import org.springframework.http.HttpStatus;
 import orange.smart_hire.repository.UserRepository;
-import org.springframework.http.HttpStatus;
+import orange.smart_hire.repository.PostingRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -24,11 +26,17 @@ import java.util.UUID;
 public class ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final UserRepository userRepository;
+    private final PostingRepository postingRepository;
+    private final NotificationService notificationService;
 
     public ApplicationService(ApplicationRepository applicationRepository,
-                              UserRepository userRepository) {
+                              UserRepository userRepository,
+                              PostingRepository postingRepository,
+                              NotificationService notificationService) {
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
+        this.postingRepository = postingRepository;
+        this.notificationService = notificationService;
     }
 
     public ApplicationResponse apply(ApplyRequest request, UUID candidateId) {
@@ -55,6 +63,22 @@ public class ApplicationService {
 
         Application savedApplication =
                 applicationRepository.save(application);
+
+        Posting posting = postingRepository.findById(request.getPostingId())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Posting not found"
+                ));
+
+        UUID hrManagerId = posting.getHrManager().getId();
+
+        notificationService.sendNotification(
+                hrManagerId,
+                NotificationType.APPLICATION_SUBMITTED,
+                "New Application",
+                "A new candidate has applied to your job posting.",
+                savedApplication.getId()
+        );
 
         return mapToResponse(savedApplication);
     }
@@ -140,12 +164,29 @@ public class ApplicationService {
     }
 
     public ApplicationResponse updateStage(UUID applicationId, ApplicationStage newStage) {
+
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new RuntimeException("Application not found"));
+
+        ApplicationStage oldStage = application.getStage();
+
+        if (oldStage == newStage) {
+            return mapToResponse(application);
+        }
+
         application.setStage(newStage);
         application.setUpdatedAt(LocalDateTime.now());
-        Application saved = applicationRepository.save(application);
-        return mapToResponse(saved);
 
+        Application saved = applicationRepository.save(application);
+
+        notificationService.sendNotification(
+                saved.getCandidateId(),
+                NotificationType.APPLICATION_STAGE_CHANGED,
+                "Application Stage Updated",
+                "Your application stage has been changed to " + newStage,
+                saved.getId()
+        );
+
+        return mapToResponse(saved);
     }
 }

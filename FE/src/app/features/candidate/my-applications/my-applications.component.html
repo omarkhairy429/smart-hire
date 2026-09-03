@@ -5,80 +5,80 @@
   </div>
 
   @if (isLoading) {
-    <div class="loading-state">Loading your applications...</div>
+  <div class="loading-state">Loading your applications...</div>
   } @else if (errorMessage) {
-    <div class="error-banner">{{ errorMessage }}</div>
+  <div class="error-banner">{{ errorMessage }}</div>
   } @else if (applications.length === 0) {
-    <div class="empty-card">
-      <div class="empty-icon">🔍</div>
-      <h3>No applications yet</h3>
-      <p>Start applying to jobs and track your progress here.</p>
-      <a routerLink="/jobs" class="btn-primary">Browse Jobs</a>
-    </div>
+  <div class="empty-card">
+    <div class="empty-icon">🔍</div>
+    <h3>No applications yet</h3>
+    <p>Start applying to jobs and track your progress here.</p>
+    <a routerLink="/jobs" class="btn-primary">Browse Jobs</a>
+  </div>
   } @else {
-    <div class="apps-grid">
-      @for (app of applications; track app.id) {
-        <div class="app-card">
-          <div class="app-card-top">
-            <span class="status-badge {{ statusClass(app.status) }}">{{ app.status }}</span>
-            <time class="app-date">{{ formatDate(app.createdAt) }}</time>
-          </div>
+  <div class="apps-grid">
+    @for (app of applications; track app.id) {
+    <div class="app-card">
+      <div class="app-card-top">
+        <span class="status-badge {{ statusClass(app.status) }}">{{ app.status }}</span>
+        <time class="app-date">{{ formatDate(app.createdAt) }}</time>
+      </div>
 
-          <div class="app-body">
-            <p class="app-label">Posting</p>
-            <a [routerLink]="['/jobs', app.postingId]" class="posting-link">View Job Posting &rarr;</a>
-          </div>
+      <div class="app-body">
+        <p class="app-label">Posting</p>
+        <a [routerLink]="['/jobs', app.postingId]" class="posting-link">View Job Posting &rarr;</a>
+      </div>
 
-          <div class="app-meta">
-            @if (app.stage) {
-              <span class="stage-pill">Stage: {{ app.stage }}</span>
-            }
-            @if (app.resumeUrl) {
-              <a [href]="app.resumeUrl" target="_blank" class="resume-chip">📎 Resume</a>
-            }
-          </div>
+      <div class="app-meta">
+        @if (app.stage) {
+        <span class="stage-pill">Stage: {{ app.stage }}</span>
+        }
+        @if (app.resumeUrl) {
+        <a [href]="app.resumeUrl" target="_blank" class="resume-chip">📎 Resume</a>
+        }
+      </div>
 
-          <!-- Interview details — shown only when stage is INTERVIEW and data is loaded -->
-          @if (app.stage === 'INTERVIEW' && interviewMap[app.id] !== undefined) {
-            @if (interviewMap[app.id]) {
-              <div class="interview-panel">
-                <div class="interview-panel-header">
-                  <span class="interview-badge">🎙️ Interview Scheduled</span>
-                </div>
-                <div class="interview-details">
-                  @if (interviewMap[app.id]!.interviewerName) {
-                    <div class="detail-row">
-                      <span class="detail-icon">👤</span>
-                      <span class="detail-label">Interviewer</span>
-                      <span class="detail-value">{{ interviewMap[app.id]!.interviewerName }}</span>
-                    </div>
-                  }
-                  <div class="detail-row">
-                    <span class="detail-icon">📅</span>
-                    <span class="detail-label">Date &amp; Time</span>
-                    <span class="detail-value">{{ formatDateTime(interviewMap[app.id]!.scheduledAt) }}</span>
-                  </div>
-                  @if (interviewMap[app.id]!.postingTitle) {
-                    <div class="detail-row">
-                      <span class="detail-icon">💼</span>
-                      <span class="detail-label">Position</span>
-                      <span class="detail-value">{{ interviewMap[app.id]!.postingTitle }}</span>
-                    </div>
-                  }
-                </div>
-                <a [href]="interviewMap[app.id]!.meetingLink" target="_blank" rel="noopener" class="btn-join-meeting">
-                  🔗 Join Meeting
-                </a>
-              </div>
-            } @else {
-              <div class="interview-panel interview-panel--pending">
-                <span class="detail-icon">⏳</span>
-                <span>Interview details will appear here once scheduled.</span>
-              </div>
-            }
+      <!-- Interview details — shown only when stage is INTERVIEW and data is loaded -->
+      @if (app.stage === 'INTERVIEW' && interviewMap[app.id] !== undefined) {
+      @if (interviewMap[app.id]) {
+      <div class="interview-panel">
+        <div class="interview-panel-header">
+          <span class="interview-badge">🎙️ Interview Scheduled</span>
+        </div>
+        <div class="interview-details">
+          @if (interviewMap[app.id]!.interviewerName) {
+          <div class="detail-row">
+            <span class="detail-icon">👤</span>
+            <span class="detail-label">Interviewer</span>
+            <span class="detail-value">{{ interviewMap[app.id]!.interviewerName }}</span>
+          </div>
+          }
+          <div class="detail-row">
+            <span class="detail-icon">📅</span>
+            <span class="detail-label">Date &amp; Time</span>
+            <span class="detail-value">{{ formatDateTime(interviewMap[app.id]!.scheduledAt) }}</span>
+          </div>
+          @if (interviewMap[app.id]!.postingTitle) {
+          <div class="detail-row">
+            <span class="detail-icon">💼</span>
+            <span class="detail-label">Position</span>
+            <span class="detail-value">{{ interviewMap[app.id]!.postingTitle }}</span>
+          </div>
           }
         </div>
+        <a [href]="interviewMap[app.id]!.meetingLink" target="_blank" rel="noopener" class="btn-join-meeting">
+          🔗 Join Meeting
+        </a>
+      </div>
+      } @else {
+      <div class="interview-panel interview-panel--pending">
+        <span class="detail-icon">⏳</span>
+        <span>Interview details will appear here once scheduled.</span>
+      </div>
+      }
       }
     </div>
+    }
+  </div>
   }
 </div>
