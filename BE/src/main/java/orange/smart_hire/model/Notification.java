@@ -1,7 +1,6 @@
 package orange.smart_hire.model;
 
 import jakarta.persistence.*;
-import lombok.Generated;
 import lombok.Getter;
 import lombok.Setter;
 import orange.smart_hire.enums.NotificationType;
