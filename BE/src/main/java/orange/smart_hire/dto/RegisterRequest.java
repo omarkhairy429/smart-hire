@@ -25,4 +25,10 @@ public class RegisterRequest {
 
     @NotNull
     private UserRole role;
-}
+
+    /**
+     * Company name for HR_MANAGER and INTERVIEWER accounts.
+     * Optional for CANDIDATE (self-register). SUPER_ADMIN never has a company.
+     */
+    private String companyName;
+}

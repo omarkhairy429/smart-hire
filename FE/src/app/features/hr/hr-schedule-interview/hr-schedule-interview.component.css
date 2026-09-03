@@ -72,3 +72,4 @@
 
 .loading-state { padding: 1.5rem 0; text-align: center; color: var(--text-muted); }
 .hint { margin: -0.75rem 0 1.25rem; font-size: 0.85rem; color: var(--text-muted); }
+.required-star { color: #dc2626; }

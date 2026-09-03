@@ -31,12 +31,18 @@ public class SuperAdminService {
             throw new IllegalArgumentException("User with this email already exists: " + request.getEmail());
         }
 
+        // HR Managers and Interviewers must belong to a company
+        if (request.getCompanyName() == null || request.getCompanyName().isBlank()) {
+            throw new IllegalArgumentException("A company name is required for HR Managers and Interviewers");
+        }
+
         User staffMember = new User();
         staffMember.setFirstName(request.getFirstName());
         staffMember.setLastName(request.getLastName());
         staffMember.setEmail(request.getEmail());
         staffMember.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         staffMember.setRole(request.getRole());
+        staffMember.setCompanyName(request.getCompanyName().trim());
         staffMember.setActive(true);
 
         emailService.sendEmail(

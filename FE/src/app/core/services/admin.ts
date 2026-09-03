@@ -4,17 +4,26 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { StaffResponse } from '../models/api.models';
 
+export interface CreateStaffRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role: string;
+  companyName: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AdminService {
-  private apiUrl = `${environment.apiUrl}/super-admin/staff`;
+  private apiUrl = `${environment.apiUrl}/super-admin`;
 
   constructor(private http: HttpClient) {}
 
   getStaff(): Observable<StaffResponse[]> {
-    return this.http.get<StaffResponse[]>(this.apiUrl);
+    return this.http.get<StaffResponse[]>(`${this.apiUrl}/staff`);
   }
 
-  createStaff(staffData: any): Observable<any> {
-    return this.http.post(this.apiUrl, staffData);
+  createStaff(staffData: CreateStaffRequest): Observable<StaffResponse> {
+    return this.http.post<StaffResponse>(`${this.apiUrl}/staff`, staffData);
   }
 }

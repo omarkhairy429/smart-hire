@@ -29,6 +29,7 @@ export class HrPostingsComponent implements OnInit {
   editingDraftId: string | null = null;
   readonly statusFilters = ['ALL', 'DRAFT', 'PUBLISHED', 'CLOSED'];
   readonly locationTypes = ['REMOTE', 'HYBRID', 'ON_SITE'];
+  readonly employmentTypes = ['FULL_TIME', 'PART_TIME', 'CONTRACT', 'INTERNSHIP', 'FREELANCE'];
 
   postingForm: FormGroup;
 
@@ -47,6 +48,8 @@ export class HrPostingsComponent implements OnInit {
       locationType: ['REMOTE', Validators.required],
       location: ['', Validators.maxLength(160)],
       deadline: ['', Validators.required],
+      department: ['', Validators.maxLength(120)],
+      employmentType: [''],
     });
   }
 
@@ -196,6 +199,8 @@ export class HrPostingsComponent implements OnInit {
       locationType: posting.locationType ?? 'REMOTE',
       location: posting.location ?? '',
       deadline: posting.deadline ?? '',
+      department: posting.department ?? '',
+      employmentType: posting.employmentType ?? '',
     });
 
     window.scrollTo({ top: 0, behavior: 'smooth' });

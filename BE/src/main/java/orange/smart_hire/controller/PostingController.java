@@ -29,6 +29,12 @@ public class PostingController {
         return postingService.getAllPostings();
     }
 
+    @GetMapping("/company")
+    public ResponseEntity<List<PostingResponse>> getPostingsByCompany() {
+        List<PostingResponse> postings = postingService.getPostingsByCompany();
+        return ResponseEntity.ok(postings);
+    }
+
     @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
     @PostMapping
     public PostingResponse createPosting(@RequestBody PostingRequest request) {

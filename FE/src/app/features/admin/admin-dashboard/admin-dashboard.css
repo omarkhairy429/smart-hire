@@ -50,6 +50,22 @@
   font-weight: 500;
 }
 
+.alert-error {
+  background-color: #fee2e2;
+  color: #991b1b;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.field-error {
+  color: #dc2626;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
 /* Table Styles */
 .staff-table {
   width: 100%;

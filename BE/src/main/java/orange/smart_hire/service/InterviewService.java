@@ -5,6 +5,7 @@ import orange.smart_hire.dto.InterviewResponse;
 import orange.smart_hire.dto.ScheduleInterviewRequest;
 import orange.smart_hire.dto.StaffResponse;
 import orange.smart_hire.enums.ApplicationStage;
+import orange.smart_hire.enums.InterviewFormat;
 import orange.smart_hire.enums.UserRole;
 import orange.smart_hire.model.Application;
 import orange.smart_hire.model.Interview;
@@ -14,6 +15,7 @@ import orange.smart_hire.repository.ApplicationRepository;
 import orange.smart_hire.repository.InterviewRepository;
 import orange.smart_hire.repository.PostingRepository;
 import orange.smart_hire.repository.UserRepository;
+import orange.smart_hire.utils.SecurityUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,22 +58,29 @@ public class InterviewService {
                     HttpStatus.BAD_REQUEST, "Selected user is not an interviewer");
         }
 
+        // Validate: VIDEO/PHONE require a meeting link
+        if (request.getFormat() != InterviewFormat.IN_PERSON
+                && (request.getMeetingLink() == null || request.getMeetingLink().isBlank())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Meeting link is required for VIDEO and PHONE interviews");
+        }
+
         Interview interview = new Interview();
         interview.setApplicationId(application.getId());
         interview.setInterviewerId(interviewer.getId());
         interview.setScheduledAt(request.getScheduledAt());
+        interview.setFormat(request.getFormat());
+        interview.setLocation(request.getLocation());
         interview.setMeetingLink(request.getMeetingLink());
-        interview.setCreatedAt(LocalDateTime.now());
-        interview.setUpdatedAt(LocalDateTime.now());
+        // createdAt / updatedAt are managed automatically by @CreationTimestamp / @UpdateTimestamp
 
         Interview saved = interviewRepository.save(interview);
 
-        // Booking an interview moves the candidate into the INTERVIEW stage, but
-        // never drags an already-decided application backwards.
+        // Scheduling an interview advances the candidate to INTERVIEW stage
+        // (only if they haven't already reached a later stage)
         if (application.getStage() == ApplicationStage.APPLIED
                 || application.getStage() == ApplicationStage.SCREENING) {
             application.setStage(ApplicationStage.INTERVIEW);
-            application.setUpdatedAt(LocalDateTime.now());
             applicationRepository.save(application);
         }
 
@@ -86,9 +95,30 @@ public class InterviewService {
         interviewRepository.delete(interview);
     }
 
+    /**
+     * Returns interviewers scoped to the calling HR manager's company.
+     * SUPER_ADMIN gets all interviewers (no company restriction).
+     */
     @Transactional(readOnly = true)
     public List<StaffResponse> getInterviewers() {
-        return userRepository.findByRoleIn(List.of(UserRole.INTERVIEWER))
+        User currentUser = SecurityUtils.getCurrentUser();
+
+        if (currentUser.getRole() == UserRole.SUPER_ADMIN) {
+            // Super admin sees all interviewers on the platform
+            return userRepository.findByRoleIn(List.of(UserRole.INTERVIEWER))
+                    .stream()
+                    .map(StaffResponse::fromEntity)
+                    .toList();
+        }
+
+        // HR Manager sees only interviewers in their own company
+        String companyName = currentUser.getCompanyName();
+        if (companyName == null || companyName.isBlank()) {
+            // HR without a company — return empty list (shouldn't happen in practice)
+            return List.of();
+        }
+
+        return userRepository.findByRoleInAndCompanyName(List.of(UserRole.INTERVIEWER), companyName)
                 .stream()
                 .map(StaffResponse::fromEntity)
                 .toList();
@@ -140,6 +170,8 @@ public class InterviewService {
         DossierResponse response = new DossierResponse();
         response.setInterviewId(interview.getId());
         response.setScheduledAt(interview.getScheduledAt());
+        response.setFormat(interview.getFormat());
+        response.setLocation(interview.getLocation());
         response.setMeetingLink(interview.getMeetingLink());
 
         response.setCandidateId(application.getCandidateId());
@@ -169,6 +201,8 @@ public class InterviewService {
         response.setApplicationId(interview.getApplicationId());
         response.setInterviewerId(interview.getInterviewerId());
         response.setScheduledAt(interview.getScheduledAt());
+        response.setFormat(interview.getFormat());
+        response.setLocation(interview.getLocation());
         response.setMeetingLink(interview.getMeetingLink());
         response.setCreatedAt(interview.getCreatedAt());
         response.setUpdatedAt(interview.getUpdatedAt());
