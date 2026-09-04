@@ -3,6 +3,7 @@ package orange.smart_hire.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import orange.smart_hire.dto.AuditLogResponse;
+import orange.smart_hire.dto.PlatformStatsResponse;
 import orange.smart_hire.dto.RegisterRequest;
 import orange.smart_hire.dto.StaffResponse;
 import orange.smart_hire.model.User;
@@ -56,5 +57,9 @@ public class SuperAdminController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return auditLogService.findAll(action, PageRequest.of(page, size));
+    }
+    @GetMapping("/stats")
+    public PlatformStatsResponse getPlatformStats() {
+        return superAdminService.getPlatformStats();
     }
 }

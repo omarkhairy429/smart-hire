@@ -1,10 +1,14 @@
 package orange.smart_hire.service;
 
 import lombok.RequiredArgsConstructor;
+import orange.smart_hire.dto.PlatformStatsResponse;
 import orange.smart_hire.dto.RegisterRequest;
 import orange.smart_hire.dto.StaffResponse;
+import orange.smart_hire.enums.PostingStatus;
 import orange.smart_hire.enums.UserRole;
 import orange.smart_hire.model.User;
+import orange.smart_hire.repository.ApplicationRepository;
+import orange.smart_hire.repository.PostingRepository;
 import orange.smart_hire.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +28,8 @@ public class SuperAdminService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final AuditLogService auditLogService;
+    private final PostingRepository postingRepository;
+    private final ApplicationRepository applicationRepository;
 
 
     @Transactional
@@ -123,5 +129,19 @@ public class SuperAdminService {
         }
 
         return user;
+    }
+    @Transactional(readOnly = true)
+    public PlatformStatsResponse getPlatformStats() {
+        List<UserRole> staffRoles = List.of(UserRole.HR_MANAGER, UserRole.INTERVIEWER);
+        List<User> staff = userRepository.findByRoleIn(staffRoles);
+
+        return PlatformStatsResponse.builder()
+                .totalUsers(userRepository.count())
+                .activeStaff(staff.stream().filter(User::isActive).count())
+                .inactiveStaff(staff.stream().filter(u -> !u.isActive()).count())
+                .totalPostings(postingRepository.count())
+                .publishedPostings(postingRepository.findByStatus(PostingStatus.PUBLISHED).size())
+                .totalApplications(applicationRepository.count())
+                .build();
     }
 }
