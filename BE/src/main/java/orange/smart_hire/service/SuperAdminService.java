@@ -6,11 +6,15 @@ import orange.smart_hire.dto.StaffResponse;
 import orange.smart_hire.enums.UserRole;
 import orange.smart_hire.model.User;
 import orange.smart_hire.repository.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +23,7 @@ public class SuperAdminService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final AuditLogService auditLogService;
 
 
     @Transactional
@@ -69,5 +74,54 @@ public class SuperAdminService {
                 .stream()
                 .map(StaffResponse::fromEntity)
                 .toList();
+    }
+
+    @Transactional
+    public StaffResponse deactivateStaff(UUID id) {
+        User staff = findStaffOrThrow(id);
+
+        if (!staff.isActive()) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT, "This account is already deactivated");
+        }
+
+        staff.setActive(false);
+        userRepository.save(staff);
+
+        auditLogService.log("STAFF_DEACTIVATED", "User", staff.getId(),
+                Map.of("email", staff.getEmail(), "role", staff.getRole().name()));
+
+        return StaffResponse.fromEntity(staff);
+    }
+
+    @Transactional
+    public StaffResponse reactivateStaff(UUID id) {
+        User staff = findStaffOrThrow(id);
+
+        if (staff.isActive()) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT, "This account is already active");
+        }
+
+        staff.setActive(true);
+        userRepository.save(staff);
+
+        auditLogService.log("STAFF_REACTIVATED", "User", staff.getId(),
+                Map.of("email", staff.getEmail(), "role", staff.getRole().name()));
+
+        return StaffResponse.fromEntity(staff);
+    }
+
+    private User findStaffOrThrow(UUID id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User not found"));
+
+        if (user.getRole() != UserRole.HR_MANAGER && user.getRole() != UserRole.INTERVIEWER) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Only HR Managers and Interviewers can be deactivated");
+        }
+
+        return user;
     }
 }
