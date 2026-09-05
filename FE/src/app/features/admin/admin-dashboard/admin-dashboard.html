@@ -5,6 +5,31 @@
   </div>
 
   <div class="dashboard-content">
+    <!-- PLATFORM STATS -->
+    @if (stats) {
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-value">{{ stats.totalUsers }}</span>
+        <span class="stat-label">Total Users</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">{{ stats.activeStaff }}</span>
+        <span class="stat-label">Active Staff</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">{{ stats.inactiveStaff }}</span>
+        <span class="stat-label">Inactive Staff</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">{{ stats.publishedPostings }}</span>
+        <span class="stat-label">Published Postings</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">{{ stats.totalApplications }}</span>
+        <span class="stat-label">Applications</span>
+      </div>
+    </div>
+    }
     <!-- CREATE STAFF FORM -->
     <div class="admin-card">
       <h3>Create New Staff Member</h3>
@@ -90,6 +115,7 @@
             <th>Role</th>
             <th>Company</th>
             <th>Status</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -100,18 +126,81 @@
               <td><span class="role-badge">{{ staff.role }}</span></td>
               <td>{{ staff.companyName ?? '—' }}</td>
               <td>
-                <span class="status-indicator" [class.active]="staff.isActive">
-                  {{ staff.isActive ? 'Active' : 'Inactive' }}
+                <span class="status-indicator" [class.active]="staff.active">
+                  {{ staff.active ? 'Active' : 'Inactive' }}
                 </span>
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="toggle-btn"
+                  [class.danger]="staff.active"
+                  (click)="toggleStaffStatus(staff)"
+                >
+                  {{ staff.active ? 'Deactivate' : 'Reactivate' }}
+                </button>
               </td>
             </tr>
           } @empty {
             <tr>
-              <td colspan="5" class="text-center">No staff found.</td>
+              <td colspan="6" class="text-center">No staff found.</td>
             </tr>
           }
+        </tbody>      </table>
+    </div>
+
+    <!-- AUDIT LOG -->
+    <div class="admin-card mt-2">
+      <h3>Audit Log</h3>
+
+      <table class="staff-table">
+        <thead>
+        <tr>
+          <th>When</th>
+          <th>Action</th>
+          <th>Actor</th>
+          <th>Entity</th>
+          <th>Details</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (log of auditLogs; track log.id) {
+        <tr>
+          <td>{{ log.createdAt | date: 'MMM d, y HH:mm' }}</td>
+          <td><span class="role-badge">{{ log.action }}</span></td>
+          <td>{{ log.actorName }}</td>
+          <td>{{ log.entityType ?? '—' }}</td>
+          <td class="details-cell">{{ formatDetails(log.details) }}</td>
+        </tr>
+        } @empty {
+        <tr>
+          <td colspan="5" class="text-center">No activity recorded yet.</td>
+        </tr>
+        }
         </tbody>
       </table>
+
+      @if (auditTotalPages > 1) {
+      <div class="pagination">
+        <button
+          type="button"
+          class="toggle-btn"
+          [disabled]="auditPage === 0"
+          (click)="loadAuditLogs(auditPage - 1)"
+        >
+          Previous
+        </button>
+        <span class="page-info">Page {{ auditPage + 1 }} of {{ auditTotalPages }}</span>
+        <button
+          type="button"
+          class="toggle-btn"
+          [disabled]="auditPage >= auditTotalPages - 1"
+          (click)="loadAuditLogs(auditPage + 1)"
+        >
+          Next
+        </button>
+      </div>
+      }
     </div>
   </div>
 </div>
