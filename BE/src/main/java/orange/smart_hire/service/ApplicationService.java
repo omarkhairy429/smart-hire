@@ -8,16 +8,22 @@ import orange.smart_hire.enums.ApplicationStatus;
 import orange.smart_hire.enums.NotificationType;
 import orange.smart_hire.model.Application;
 import orange.smart_hire.model.Posting;
+import orange.smart_hire.model.User;
 import orange.smart_hire.repository.ApplicationRepository;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.http.HttpStatus;
 import orange.smart_hire.repository.UserRepository;
 import orange.smart_hire.repository.PostingRepository;
+import orange.smart_hire.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -188,5 +194,74 @@ public class ApplicationService {
         );
 
         return mapToResponse(saved);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ApplicationResponse> getApplicationsForPosting(UUID postingId, ApplicationStage stage,
+                                                               String sort, String dir) {
+        Posting posting = assertHrCanAccessPosting(postingId);
+
+        List<ApplicationResponse> responses = applicationRepository
+                .findByPostingIdAndOptionalStage(postingId, stage)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+
+        return sortApplications(responses, sort, dir);
+    }
+
+    @Transactional(readOnly = true)
+    public String exportApplicationsAsCsv(UUID postingId, ApplicationStage stage, String sort, String dir) {
+        List<ApplicationResponse> responses = getApplicationsForPosting(postingId, stage, sort, dir);
+
+        StringWriter writer = new StringWriter();
+        try (CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.builder()
+                .setHeader("Name", "Email", "Stage", "Status", "AppliedAt", "ResumeUrl")
+                .build())) {
+            for (ApplicationResponse response : responses) {
+                printer.printRecord(
+                        response.getCandidateName(),
+                        response.getCandidateEmail(),
+                        response.getStage(),
+                        response.getStatus(),
+                        response.getCreatedAt(),
+                        response.getResumeUrl()
+                );
+            }
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to generate CSV export");
+        }
+
+        return writer.toString();
+    }
+
+    private Posting assertHrCanAccessPosting(UUID postingId) {
+        Posting posting = postingRepository.findById(postingId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Posting not found"));
+
+        User currentUser = SecurityUtils.getCurrentUser();
+        boolean sameCompany = currentUser.getCompanyName() != null
+                && currentUser.getCompanyName().equalsIgnoreCase(posting.getCompany());
+
+        if (!sameCompany) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "You are not authorized to view applications for this posting");
+        }
+
+        return posting;
+    }
+
+    private List<ApplicationResponse> sortApplications(List<ApplicationResponse> responses, String sort, String dir) {
+        Comparator<ApplicationResponse> comparator = "name".equalsIgnoreCase(sort)
+                ? Comparator.comparing(ApplicationResponse::getCandidateName,
+                Comparator.nullsLast(String::compareToIgnoreCase))
+                : Comparator.comparing(ApplicationResponse::getCreatedAt,
+                Comparator.nullsLast(Comparator.naturalOrder()));
+
+        if ("desc".equalsIgnoreCase(dir)) {
+            comparator = comparator.reversed();
+        }
+
+        return responses.stream().sorted(comparator).toList();
     }
 }
