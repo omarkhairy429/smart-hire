@@ -94,6 +94,7 @@ export class AdminDashboardComponent implements OnInit {
         },
       });
   }
+
   loadStats() {
     this.adminService.getStats().subscribe({
       next: (data) => {
@@ -120,18 +121,29 @@ export class AdminDashboardComponent implements OnInit {
     this.successMessage = '';
     this.errorMessage = '';
 
-    const call = staff.active
-      ? this.adminService.deactivateStaff(staff.id)
-      : this.adminService.reactivateStaff(staff.id);
+    const isCurrentlyActive = staff.active;
+    const staffId = staff.id;
+
+    const call = isCurrentlyActive
+      ? this.adminService.deactivateStaff(staffId)
+      : this.adminService.reactivateStaff(staffId);
 
     call.subscribe({
       next: () => {
-        this.successMessage = staff.active
+        this.successMessage = isCurrentlyActive
           ? `${staff.firstName} ${staff.lastName} has been deactivated.`
           : `${staff.firstName} ${staff.lastName} has been reactivated.`;
-        this.loadStaff();
+
+        // Update list in place to preserve reference and avoid duplicates
+        this.staffList = this.staffList.map((item) =>
+          (item.id && item.id === staffId) || item.email === staff.email
+            ? { ...item, active: !isCurrentlyActive }
+            : item,
+        );
+
         this.loadStats();
         this.loadAuditLogs(this.auditPage);
+        this.cdr.markForCheck();
       },
       error: (err: any) => {
         this.errorMessage = err?.error?.message ?? 'Failed to update account status.';
