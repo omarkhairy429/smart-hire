@@ -100,9 +100,14 @@
                 </td>
                 <td>{{ formatDate(app.createdAt) }}</td>
                 <td>
-                  <button type="button" class="schedule-btn" (click)="openSchedule(app)">
-                    Schedule Interview
-                  </button>
+                  <div class="interview-actions">
+                    <button type="button" class="schedule-btn" (click)="openSchedule(app)">
+                      Schedule Interview
+                    </button>
+                    <button type="button" class="schedule-btn" (click)="openFeedback(app)">
+                      Feedback
+                    </button>
+                  </div>
                 </td>
                 <td>
                   <button type="button" class="notes-btn" (click)="openNotesPanel(app)">📝 Notes</button>
@@ -184,4 +189,11 @@
       }
     </div>
   </aside>
+}
+
+@if (viewingFeedbackFor) {
+<app-hr-interview-feedback
+  [applicationId]="viewingFeedbackFor.id"
+  [candidateName]="viewingFeedbackFor.candidateName || ''"
+  (closed)="closeFeedback()" />
 }

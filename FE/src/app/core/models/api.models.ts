@@ -164,3 +164,31 @@ export interface PlatformStatsResponse {
   publishedPostings: number;
   totalApplications: number;
 }
+
+export enum FeedbackRecommendation {
+  PROCEED = 'PROCEED',
+  HOLD = 'HOLD',
+  REJECT = 'REJECT'
+}
+
+export interface SubmitFeedbackRequest {
+  rating: number;
+  technicalScore?: number | null;
+  communicationScore?: number | null;
+  recommendation: FeedbackRecommendation;
+  comments?: string;
+}
+
+export interface FeedbackResponse {
+  id: string;
+  interviewId: string;
+  interviewerId: string;
+  interviewerName?: string;
+  rating: number;
+  technicalScore?: number | null;
+  communicationScore?: number | null;
+  recommendation: FeedbackRecommendation;
+  comments?: string;
+  createdAt: string;
+  updatedAt: string;
+}
