@@ -29,6 +29,45 @@
       </select>
     </div>
 
+    @if (selectedPostingId) {
+      <div class="filters-bar">
+        <div class="filter-group">
+          <label for="stage-filter">Stage:</label>
+          <select id="stage-filter" [(ngModel)]="stageFilter" (change)="onFilterChange()">
+            <option value="">All Stages</option>
+            @for (stage of stages; track stage) {
+              <option [value]="stage">{{ stage }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="sort-by">Sort by:</label>
+          <select id="sort-by" [(ngModel)]="sortBy" (change)="onFilterChange()">
+            <option value="createdAt">Date Applied</option>
+            <option value="name">Candidate Name</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="sort-dir">Order:</label>
+          <select id="sort-dir" [(ngModel)]="sortDir" (change)="onFilterChange()">
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+          </select>
+        </div>
+
+        <button
+          type="button"
+          class="btn-export"
+          (click)="exportCsv()"
+          [disabled]="isExporting || applications.length === 0"
+        >
+          {{ isExporting ? 'Exporting...' : '⬇ Export CSV' }}
+        </button>
+      </div>
+    }
+
     <!-- Applications table -->
     @if (isLoadingApps) {
       <div class="loading-state">Loading applications...</div>
@@ -134,6 +173,14 @@
   />
 }
 
+@if (viewingFeedbackFor) {
+  <app-hr-interview-feedback
+    [applicationId]="viewingFeedbackFor.id"
+    [candidateName]="viewingFeedbackFor.candidateName || ''"
+    (closed)="closeFeedback()"
+  />
+}
+
 <!-- Notes overlay -->
 @if (notesPanelOpen) {
   <div class="notes-overlay" (click)="closeNotesPanel()"></div>
@@ -189,11 +236,4 @@
       }
     </div>
   </aside>
-}
-
-@if (viewingFeedbackFor) {
-<app-hr-interview-feedback
-  [applicationId]="viewingFeedbackFor.id"
-  [candidateName]="viewingFeedbackFor.candidateName || ''"
-  (closed)="closeFeedback()" />
 }
