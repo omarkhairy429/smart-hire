@@ -12,11 +12,12 @@ import {
   CandidateNoteResponse,
 } from '../../../core/models/api.models';
 import { HrScheduleInterviewComponent } from '../hr-schedule-interview/hr-schedule-interview.component';
+import { HrInterviewFeedbackComponent } from '../hr-interview-feedback/hr-interview-feedback.component';
 
 @Component({
   selector: 'app-hr-applications',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, HrScheduleInterviewComponent],
+  imports: [CommonModule, RouterLink, FormsModule, HrScheduleInterviewComponent, HrInterviewFeedbackComponent],
   templateUrl: './hr-applications.component.html',
   styleUrls: ['./hr-applications.component.css'],
 })
@@ -40,6 +41,7 @@ export class HrApplicationsComponent implements OnInit {
   isExporting = false;
 
   schedulingFor: ApplicationResponse | null = null;
+  viewingFeedbackFor: ApplicationResponse | null = null;
 
   isLoadingPostings = true;
   isLoadingApps = false;
@@ -237,6 +239,15 @@ loadPostings() {
 
   onScheduled(): void {
     this.loadApplications();
+  }
+
+  openFeedback(app: ApplicationResponse): void {
+    this.viewingFeedbackFor = app;
+  }
+
+  closeFeedback(): void {
+    this.viewingFeedbackFor = null;
+    this.cdr.markForCheck();
   }
 
   closeSchedule(): void {

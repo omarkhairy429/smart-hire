@@ -57,5 +57,73 @@
         </ul>
       }
     </section>
+
+    <section class="card">
+      <h3>Interview Feedback</h3>
+
+      @if (existingFeedback) {
+        <p class="muted feedback-meta">
+          You submitted feedback on {{ formatDateTime(existingFeedback.updatedAt) }}. You can update it below.
+        </p>
+      }
+
+      @if (feedbackError) {
+        <div class="error-banner">{{ feedbackError }}</div>
+      }
+      @if (feedbackSaved) {
+        <div class="success-banner">Feedback saved.</div>
+      }
+
+      <div class="form-group">
+        <label for="rating">Overall rating <span class="required-star">*</span></label>
+        <select id="rating" class="form-control" [(ngModel)]="rating" name="rating">
+          <option [ngValue]="null">Select a rating</option>
+          @for (s of scores; track s) {
+            <option [ngValue]="s">{{ s }} / 5</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="technicalScore">Technical skills</label>
+        <select id="technicalScore" class="form-control" [(ngModel)]="technicalScore" name="technicalScore">
+          <option [ngValue]="null">Not scored</option>
+          @for (s of scores; track s) {
+            <option [ngValue]="s">{{ s }} / 5</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="communicationScore">Communication</label>
+        <select id="communicationScore" class="form-control" [(ngModel)]="communicationScore" name="communicationScore">
+          <option [ngValue]="null">Not scored</option>
+          @for (s of scores; track s) {
+            <option [ngValue]="s">{{ s }} / 5</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="recommendation">Recommendation <span class="required-star">*</span></label>
+        <select id="recommendation" class="form-control" [(ngModel)]="recommendation" name="recommendation">
+          <option value="">Select a recommendation</option>
+          @for (r of recommendations; track r.value) {
+            <option [value]="r.value">{{ r.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="comments">Comments</label>
+        <textarea id="comments" class="form-control" rows="4"
+                  [(ngModel)]="comments" name="comments"
+                  placeholder="How did the candidate do?"></textarea>
+      </div>
+
+      <button type="button" class="btn-primary" (click)="submitFeedback()" [disabled]="isSavingFeedback">
+        {{ isSavingFeedback ? 'Saving...' : (existingFeedback ? 'Update feedback' : 'Submit feedback') }}
+      </button>
+    </section>
   }
 </div>

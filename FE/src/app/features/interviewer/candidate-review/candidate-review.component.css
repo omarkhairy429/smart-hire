@@ -54,3 +54,17 @@
   padding: 1rem 1.25rem;
   border-radius: 10px;
 }
+
+.required-star { color: #991b1b; }
+
+.feedback-meta { margin-bottom: 1rem; font-size: 0.9rem; }
+
+.success-banner {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  color: #15803d;
+  padding: 0.85rem 1.1rem;
+  border-radius: 10px;
+  margin-bottom: 1.25rem;
+  font-size: 0.9rem;
+}

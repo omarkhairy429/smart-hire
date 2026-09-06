@@ -24,51 +24,49 @@
       >
         <option value="">— Choose a posting —</option>
         @for (posting of postings; track posting.id) {
-        <option [value]="posting.id">{{ posting.title }} ({{ posting.status }})</option>
+          <option [value]="posting.id">{{ posting.title }} ({{ posting.status }})</option>
         }
       </select>
     </div>
 
-  @if (selectedPostingId) {
-  <div class="filters-bar">
-    <div class="filter-group">
-      <label for="stage-filter">Stage:</label>
-      <select id="stage-filter" [(ngModel)]="stageFilter" (change)="onFilterChange()">
-        <option value="">All Stages</option>
-        @for (stage of stages; track stage) {
-        <option [value]="stage">{{ stage }}</option>
-        }
-      </select>
-    </div>
+    @if (selectedPostingId) {
+      <div class="filters-bar">
+        <div class="filter-group">
+          <label for="stage-filter">Stage:</label>
+          <select id="stage-filter" [(ngModel)]="stageFilter" (change)="onFilterChange()">
+            <option value="">All Stages</option>
+            @for (stage of stages; track stage) {
+              <option [value]="stage">{{ stage }}</option>
+            }
+          </select>
+        </div>
 
-    <div class="filter-group">
-      <label for="sort-by">Sort by:</label>
-      <select id="sort-by" [(ngModel)]="sortBy" (change)="onFilterChange()">
-        <option value="createdAt">Date Applied</option>
-        <option value="name">Candidate Name</option>
-      </select>
-    </div>
+        <div class="filter-group">
+          <label for="sort-by">Sort by:</label>
+          <select id="sort-by" [(ngModel)]="sortBy" (change)="onFilterChange()">
+            <option value="createdAt">Date Applied</option>
+            <option value="name">Candidate Name</option>
+          </select>
+        </div>
 
-    <div class="filter-group">
-      <label for="sort-dir">Order:</label>
-      <select id="sort-dir" [(ngModel)]="sortDir" (change)="onFilterChange()">
-        <option value="asc">Ascending</option>
-        <option value="desc">Descending</option>
-      </select>
-    </div>
+        <div class="filter-group">
+          <label for="sort-dir">Order:</label>
+          <select id="sort-dir" [(ngModel)]="sortDir" (change)="onFilterChange()">
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+          </select>
+        </div>
 
-    <button
-      type="button"
-      class="btn-export"
-      (click)="exportCsv()"
-      [disabled]="isExporting || applications.length === 0"
-    >
-      {{ isExporting ? 'Exporting...' : '⬇ Export CSV' }}
-    </button>
-  </div>
-  }
-
-  <!-- Applications table -->
+        <button
+          type="button"
+          class="btn-export"
+          (click)="exportCsv()"
+          [disabled]="isExporting || applications.length === 0"
+        >
+          {{ isExporting ? 'Exporting...' : '⬇ Export CSV' }}
+        </button>
+      </div>
+    }
 
     <!-- Applications table -->
     @if (isLoadingApps) {
@@ -141,9 +139,14 @@
                 </td>
                 <td>{{ formatDate(app.createdAt) }}</td>
                 <td>
-                  <button type="button" class="schedule-btn" (click)="openSchedule(app)">
-                    Schedule Interview
-                  </button>
+                  <div class="interview-actions">
+                    <button type="button" class="schedule-btn" (click)="openSchedule(app)">
+                      Schedule Interview
+                    </button>
+                    <button type="button" class="schedule-btn" (click)="openFeedback(app)">
+                      Feedback
+                    </button>
+                  </div>
                 </td>
                 <td>
                   <button type="button" class="notes-btn" (click)="openNotesPanel(app)">📝 Notes</button>
@@ -167,6 +170,14 @@
     [candidateName]="schedulingFor.candidateName || ''"
     (scheduled)="onScheduled()"
     (closed)="closeSchedule()"
+  />
+}
+
+@if (viewingFeedbackFor) {
+  <app-hr-interview-feedback
+    [applicationId]="viewingFeedbackFor.id"
+    [candidateName]="viewingFeedbackFor.candidateName || ''"
+    (closed)="closeFeedback()"
   />
 }
 
