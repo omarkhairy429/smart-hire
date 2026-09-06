@@ -28,7 +28,7 @@ export interface StaffResponse {
   firstName: string;
   lastName: string;
   role: string;
-  isActive: boolean;
+  active: boolean;
   companyName?: string;
   createdAt: string;
 }
@@ -39,13 +39,13 @@ export enum ApplicationStage {
   INTERVIEW = 'INTERVIEW',
   OFFERED = 'OFFERED',
   HIRED = 'HIRED',
-  REJECTED = 'REJECTED'
+  REJECTED = 'REJECTED',
 }
 
 export enum InterviewFormat {
   IN_PERSON = 'IN_PERSON',
   VIDEO = 'VIDEO',
-  PHONE = 'PHONE'
+  PHONE = 'PHONE',
 }
 
 export enum EmploymentType {
@@ -53,7 +53,7 @@ export enum EmploymentType {
   PART_TIME = 'PART_TIME',
   CONTRACT = 'CONTRACT',
   INTERNSHIP = 'INTERNSHIP',
-  FREELANCE = 'FREELANCE'
+  FREELANCE = 'FREELANCE',
 }
 
 export interface ApplicationResponse {
@@ -134,4 +134,33 @@ export interface DossierResponse {
   postingTitle?: string;
   postingDescription?: string;
   skillsRequired?: string[];
+}
+export interface AuditLogResponse {
+  id: string;
+  actorId: string | null;
+  actorName: string;
+  action: string;
+  entityType: string;
+  entityId: string;
+  details: Record<string, unknown> | null;
+  createdAt: string;
+}
+
+export interface PageResponse<T> {
+  content: T[];
+  number: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  last: boolean;
+}
+
+export interface PlatformStatsResponse {
+  totalUsers: number;
+  activeStaff: number;
+  inactiveStaff: number;
+  totalPostings: number;
+  publishedPostings: number;
+  totalApplications: number;
 }
