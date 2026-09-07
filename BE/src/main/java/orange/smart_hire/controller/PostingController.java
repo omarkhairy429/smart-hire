@@ -1,8 +1,10 @@
 package orange.smart_hire.controller;
 
+import orange.smart_hire.dto.ApplicationResponse;
 import orange.smart_hire.dto.PipelineResponse;
 import orange.smart_hire.dto.PostingRequest;
 import orange.smart_hire.dto.PostingResponse;
+import orange.smart_hire.enums.ApplicationStage;
 import orange.smart_hire.service.ApplicationService;
 import orange.smart_hire.service.PostingService;
 import org.springframework.http.ResponseEntity;
@@ -101,6 +103,29 @@ public class PostingController {
     @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
     public ResponseEntity<List<PipelineResponse>> getPipeline (@PathVariable UUID postingId){
         return ResponseEntity.ok(applicationService.getPipeline(postingId));
+    }
+
+    @GetMapping("/{postingId}/applications")
+    @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
+    public ResponseEntity<List<ApplicationResponse>> getApplicationsForPosting(
+            @PathVariable UUID postingId,
+            @RequestParam(required = false) ApplicationStage stage,
+            @RequestParam(defaultValue = "createdAt") String sort,
+            @RequestParam(defaultValue = "asc") String dir) {
+        return ResponseEntity.ok(applicationService.getApplicationsForPosting(postingId, stage, sort, dir));
+    }
+
+    @GetMapping(value = "/{postingId}/applications/export", produces = "text/csv")
+    @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
+    public ResponseEntity<String> exportApplications(
+            @PathVariable UUID postingId,
+            @RequestParam(required = false) ApplicationStage stage,
+            @RequestParam(defaultValue = "createdAt") String sort,
+            @RequestParam(defaultValue = "asc") String dir) {
+        String csv = applicationService.exportApplicationsAsCsv(postingId, stage, sort, dir);
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=applications.csv")
+                .body(csv);
     }
 
 }

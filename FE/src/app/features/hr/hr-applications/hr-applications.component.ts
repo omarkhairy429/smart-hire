@@ -12,11 +12,12 @@ import {
   CandidateNoteResponse,
 } from '../../../core/models/api.models';
 import { HrScheduleInterviewComponent } from '../hr-schedule-interview/hr-schedule-interview.component';
+import { HrInterviewFeedbackComponent } from '../hr-interview-feedback/hr-interview-feedback.component';
 
 @Component({
   selector: 'app-hr-applications',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, HrScheduleInterviewComponent],
+  imports: [CommonModule, RouterLink, FormsModule, HrScheduleInterviewComponent, HrInterviewFeedbackComponent],
   templateUrl: './hr-applications.component.html',
   styleUrls: ['./hr-applications.component.css'],
 })
@@ -34,7 +35,13 @@ export class HrApplicationsComponent implements OnInit {
     ApplicationStage.REJECTED,
   ];
 
+  stageFilter: ApplicationStage | '' = '';
+  sortBy: string = 'createdAt';
+  sortDir: string = 'asc';
+  isExporting = false;
+
   schedulingFor: ApplicationResponse | null = null;
+  viewingFeedbackFor: ApplicationResponse | null = null;
 
   isLoadingPostings = true;
   isLoadingApps = false;
@@ -83,22 +90,69 @@ loadPostings() {
     }
     const posting = this.postings.find((p) => p.id === this.selectedPostingId);
     this.selectedPostingTitle = posting?.title ?? '';
+    this.stageFilter = '';
+    this.sortBy = 'createdAt';
+    this.sortDir = 'asc';
+    this.loadApplications();
+  }
+
+  loadApplications() {
+    if (!this.selectedPostingId) return;
+
     this.isLoadingApps = true;
-    this.applications = [];
     this.errorMessage = '';
 
-    this.applicationService.getApplicationsByPosting(this.selectedPostingId).subscribe({
-      next: (apps) => {
-        this.applications = apps;
-        this.isLoadingApps = false;
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.errorMessage = 'Could not load applications for this posting.';
-        this.isLoadingApps = false;
-        this.cdr.markForCheck();
-      },
-    });
+    this.applicationService
+      .getApplicationsForPosting(this.selectedPostingId, {
+        stage: this.stageFilter,
+        sort: this.sortBy,
+        dir: this.sortDir,
+      })
+      .subscribe({
+        next: (apps) => {
+          this.applications = apps;
+          this.isLoadingApps = false;
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.errorMessage = 'Could not load applications for this posting.';
+          this.isLoadingApps = false;
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  onFilterChange() {
+    this.loadApplications();
+  }
+
+  exportCsv() {
+    if (!this.selectedPostingId || this.isExporting) return;
+
+    this.isExporting = true;
+    this.applicationService
+      .exportApplicationsCsv(this.selectedPostingId, {
+        stage: this.stageFilter,
+        sort: this.sortBy,
+        dir: this.sortDir,
+      })
+      .subscribe({
+        next: (blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `${this.selectedPostingTitle || 'applications'}.csv`;
+          link.click();
+          window.URL.revokeObjectURL(url);
+          this.isExporting = false;
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.errorMessage = 'Could not export applications.';
+          this.isExporting = false;
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   // --- Notes panel methods ---
@@ -184,8 +238,16 @@ loadPostings() {
   }
 
   onScheduled(): void {
-    // Reload so the Stage column reflects the move to INTERVIEW
-    this.onPostingSelect();
+    this.loadApplications();
+  }
+
+  openFeedback(app: ApplicationResponse): void {
+    this.viewingFeedbackFor = app;
+  }
+
+  closeFeedback(): void {
+    this.viewingFeedbackFor = null;
+    this.cdr.markForCheck();
   }
 
   closeSchedule(): void {
