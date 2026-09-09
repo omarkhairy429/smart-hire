@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      # Database configuration for CI
       POSTGRES_DB: smarthire
       POSTGRES_USER: smarthire
       POSTGRES_PASSWORD: smart123
@@ -27,6 +28,10 @@ jobs:
       DB_NAME: smarthire
       DB_USER: smarthire
       DB_PASSWORD: smart123
+
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
 
     steps:
       - name: Checkout code
@@ -49,6 +54,7 @@ jobs:
               echo "PostgreSQL is ready!"
               exit 0
             fi
+
             echo "Waiting for PostgreSQL..."
             sleep 2
           done
@@ -60,3 +66,7 @@ jobs:
       - name: Run BDD tests
         working-directory: BE
         run: mvn clean verify
+
+      - name: Stop PostgreSQL
+        if: always()
+        run: docker compose down -v
