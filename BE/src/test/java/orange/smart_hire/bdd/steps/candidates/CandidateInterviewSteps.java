@@ -1,4 +1,4 @@
-package orange.smart_hire.bdd.steps;
+package orange.smart_hire.bdd.steps.candidates;
 
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
