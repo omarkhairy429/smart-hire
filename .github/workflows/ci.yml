@@ -13,8 +13,8 @@ on:
       - main
 
 jobs:
-  bdd-tests:
-    name: Run BDD Tests
+  docker-tests:
+    name: Build and Test Docker Application
     runs-on: ubuntu-latest
 
     env:
@@ -23,12 +23,10 @@ jobs:
       POSTGRES_USER: smarthire
       POSTGRES_PASSWORD: smart123
       DB_PORT: 5433
-
       DB_HOST: localhost
       DB_NAME: smarthire
       DB_USER: smarthire
       DB_PASSWORD: smart123
-
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
       MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
@@ -44,8 +42,11 @@ jobs:
           java-version: '21'
           cache: maven
 
-      - name: Start PostgreSQL
-        run: docker compose up -d db
+      - name: Build Docker images
+        run: docker compose build
+
+      - name: Start application
+        run: docker compose up -d
 
       - name: Wait for PostgreSQL
         run: |
@@ -63,10 +64,17 @@ jobs:
           docker compose logs db
           exit 1
 
+      - name: Check running containers
+        run: docker compose ps
+
       - name: Run BDD tests
         working-directory: BE
         run: mvn clean verify
 
-      - name: Stop PostgreSQL
+      - name: Show logs if tests fail
+        if: failure()
+        run: docker compose logs
+
+      - name: Stop application
         if: always()
         run: docker compose down -v
