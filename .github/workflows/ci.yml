@@ -1,0 +1,72 @@
+name: SmartHire CI
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - dev
+      - main
+
+  pull_request:
+    branches:
+      - dev
+      - main
+
+jobs:
+  bdd-tests:
+    name: Run BDD Tests
+    runs-on: ubuntu-latest
+
+    env:
+      # Database configuration for CI
+      POSTGRES_DB: smarthire
+      POSTGRES_USER: smarthire
+      POSTGRES_PASSWORD: smart123
+      DB_PORT: 5433
+
+      DB_HOST: localhost
+      DB_NAME: smarthire
+      DB_USER: smarthire
+      DB_PASSWORD: smart123
+
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Start PostgreSQL
+        run: docker compose up -d db
+
+      - name: Wait for PostgreSQL
+        run: |
+          for i in {1..30}; do
+            if docker compose exec -T db pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"; then
+              echo "PostgreSQL is ready!"
+              exit 0
+            fi
+
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
+
+          echo "PostgreSQL did not become ready"
+          docker compose logs db
+          exit 1
+
+      - name: Run BDD tests
+        working-directory: BE
+        run: mvn clean verify
+
+      - name: Stop PostgreSQL
+        if: always()
+        run: docker compose down -v
