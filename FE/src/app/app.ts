@@ -55,6 +55,7 @@ export class AppComponent implements OnInit, OnDestroy {
   unreadCount = 0;
 
   showNotifications = false;
+  showUserMenu = false;
 
 
   private notificationPolling?: Subscription;
@@ -86,6 +87,7 @@ export class AppComponent implements OnInit, OnDestroy {
       .subscribe(() => {
 
         this.syncAuthState();
+        this.showUserMenu = false;
 
         if (this.isLoggedIn) {
           this.loadNotifications();
@@ -199,7 +201,15 @@ export class AppComponent implements OnInit, OnDestroy {
       !this.showNotifications;
 
     if (this.showNotifications) {
+      this.showUserMenu = false;
       this.loadNotifications();
+    }
+  }
+
+  toggleUserMenu(): void {
+    this.showUserMenu = !this.showUserMenu;
+    if (this.showUserMenu) {
+      this.showNotifications = false;
     }
   }
 
@@ -415,6 +425,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.unreadCount = 0;
 
     this.showNotifications = false;
+    this.showUserMenu = false;
 
     this.notificationService
       .updateUnreadCount(0);

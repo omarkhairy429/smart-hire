@@ -110,8 +110,25 @@
 
     </div>
 
-    <span class="nav-greeting">Hi, {{ firstName }} 👋</span>
-    <button class="btn-logout" (click)="logout()">Logout</button>
+    <div class="user-menu-container">
+      <button class="user-menu-btn" type="button" (click)="toggleUserMenu()" aria-label="User menu">
+        <span class="user-avatar">{{ firstName?.charAt(0) }}</span>
+        <span class="user-menu-name">{{ firstName }}</span>
+        <i class="user-menu-chevron" [class.open]="showUserMenu">▾</i>
+      </button>
+
+      @if (showUserMenu) {
+        <div class="user-menu-dropdown">
+          <a routerLink="/forgot-password" class="user-menu-item" (click)="showUserMenu = false">
+            🔑 Change Password
+          </a>
+          <div class="user-menu-divider"></div>
+          <button type="button" class="user-menu-item user-menu-logout" (click)="logout()">
+            🚪 Logout
+          </button>
+        </div>
+      }
+    </div>
     } @else {
     <a routerLink="/login">Log In</a>
     <a routerLink="/register" class="btn-primary">Sign Up</a>
