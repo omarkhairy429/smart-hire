@@ -32,6 +32,7 @@ export class HrApplicationsComponent implements OnInit {
     ApplicationStage.SCREENING,
     ApplicationStage.INTERVIEW,
     ApplicationStage.OFFERED,
+    ApplicationStage.HIRED,
     ApplicationStage.REJECTED,
   ];
 
