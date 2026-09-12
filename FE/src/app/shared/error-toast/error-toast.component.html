@@ -1,0 +1,52 @@
+<div
+  *ngIf="message"
+  style="
+    position: fixed;
+    top: 1.25rem;
+    right: 1.25rem;
+    z-index: 9999;
+    max-width: 28rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: 0.5rem;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    font-family: inherit;
+  "
+  role="alert"
+>
+  <svg
+    style="width:1.25rem;height:1.25rem;flex-shrink:0;margin-top:0.05rem;color:#dc2626;"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    stroke-width="2"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="8" x2="12" y2="12" />
+    <line x1="12" y1="16" x2="12.01" y2="16" />
+  </svg>
+
+  <span style="flex:1;font-size:0.875rem;color:#991b1b;line-height:1.4;">
+    {{ message }}
+  </span>
+
+  <button
+    (click)="dismiss()"
+    style="
+      background:none;
+      border:none;
+      cursor:pointer;
+      padding:0;
+      line-height:1;
+      color:#dc2626;
+      font-size:1.1rem;
+    "
+    aria-label="Dismiss"
+  >
+    &times;
+  </button>
+</div>

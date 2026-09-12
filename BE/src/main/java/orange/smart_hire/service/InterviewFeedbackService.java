@@ -3,6 +3,8 @@ package orange.smart_hire.service;
 import orange.smart_hire.dto.FeedbackResponse;
 import orange.smart_hire.dto.SubmitFeedbackRequest;
 import orange.smart_hire.enums.NotificationType;
+import orange.smart_hire.exception.ForbiddenException;
+import orange.smart_hire.exception.ResourceNotFoundException;
 import orange.smart_hire.model.Application;
 import orange.smart_hire.model.Interview;
 import orange.smart_hire.model.InterviewFeedback;
@@ -12,10 +14,8 @@ import orange.smart_hire.repository.InterviewFeedbackRepository;
 import orange.smart_hire.repository.InterviewRepository;
 import orange.smart_hire.repository.PostingRepository;
 import orange.smart_hire.repository.UserRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -48,7 +48,6 @@ public class InterviewFeedbackService {
     public FeedbackResponse submit(UUID interviewId, UUID interviewerId, SubmitFeedbackRequest request) {
         requireOwnInterview(interviewId, interviewerId);
 
-        // One feedback per interviewer per interview: a second submit edits the first
         InterviewFeedback feedback = feedbackRepository
                 .findByInterviewIdAndInterviewerId(interviewId, interviewerId)
                 .orElseGet(() -> {
@@ -70,7 +69,6 @@ public class InterviewFeedbackService {
         return mapToResponse(saved);
     }
 
-    /** Feedback is for the hiring side only — the candidate is never notified. */
     private void notifyHiringManager(UUID interviewId, UUID interviewerId, UUID feedbackId) {
         interviewRepository.findById(interviewId)
                 .flatMap(interview -> applicationRepository.findById(interview.getApplicationId()))
@@ -98,14 +96,14 @@ public class InterviewFeedbackService {
 
         return feedbackRepository.findByInterviewIdAndInterviewerId(interviewId, interviewerId)
                 .map(this::mapToResponse)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "No feedback submitted for this interview yet"));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No feedback submitted for this interview yet"));
     }
 
     @Transactional(readOnly = true)
     public List<FeedbackResponse> getFeedbackForInterview(UUID interviewId) {
         if (!interviewRepository.existsById(interviewId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Interview not found");
+            throw new ResourceNotFoundException("Interview not found");
         }
 
         return feedbackRepository.findByInterviewId(interviewId)
@@ -114,15 +112,12 @@ public class InterviewFeedbackService {
                 .toList();
     }
 
-    /** An interviewer may only touch feedback for an interview assigned to them. */
     private void requireOwnInterview(UUID interviewId, UUID interviewerId) {
         Interview interview = interviewRepository.findById(interviewId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Interview not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Interview not found"));
 
         if (!interview.getInterviewerId().equals(interviewerId)) {
-            throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN, "This interview is not assigned to you");
+            throw new ForbiddenException("This interview is not assigned to you");
         }
     }
 

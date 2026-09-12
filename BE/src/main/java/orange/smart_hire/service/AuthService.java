@@ -4,6 +4,9 @@ import orange.smart_hire.dto.AuthResponse;
 import orange.smart_hire.dto.LoginRequest;
 import orange.smart_hire.dto.RegisterRequest;
 import orange.smart_hire.enums.UserRole;
+import orange.smart_hire.exception.DuplicateResourceException;
+import orange.smart_hire.exception.ResourceNotFoundException;
+import orange.smart_hire.exception.TokenException;
 import orange.smart_hire.model.User;
 import orange.smart_hire.repository.UserRepository;
 import orange.smart_hire.model.CustomUserDetails;
@@ -49,7 +52,7 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email is already in use");
+            throw new DuplicateResourceException("Email is already in use");
         }
 
         User user = new User();
@@ -62,8 +65,6 @@ public class AuthService {
 
         User savedUser = userRepository.save(user);
         String token = jwtService.generateToken(savedUser.getId());
-
-
 
         return new AuthResponse(
                 token,
@@ -92,10 +93,10 @@ public class AuthService {
                 user.getFirstName()
         );
     }
-    public void forgotPassword(ForgotPasswordRequest request) {
 
+    public void forgotPassword(ForgotPasswordRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         String token = UUID.randomUUID().toString();
 
@@ -123,18 +124,18 @@ public class AuthService {
                         "SmartHire Team"
         );
     }
-    public void resetPassword(ResetPasswordRequest request) {
 
+    public void resetPassword(ResetPasswordRequest request) {
         PasswordResetToken resetToken = passwordResetTokenRepository
                 .findByToken(request.getToken())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid reset token"));
+                .orElseThrow(() -> new TokenException("Invalid reset token"));
 
         if (resetToken.isUsed()) {
-            throw new IllegalArgumentException("Reset token has already been used");
+            throw new TokenException("Reset token has already been used");
         }
 
         if (resetToken.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Reset token has expired");
+            throw new TokenException("Reset token has expired");
         }
 
         User user = resetToken.getUser();

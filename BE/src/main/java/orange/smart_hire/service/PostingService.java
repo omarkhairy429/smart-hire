@@ -4,14 +4,15 @@ import orange.smart_hire.dto.PostingRequest;
 import orange.smart_hire.dto.PostingResponse;
 import orange.smart_hire.enums.LocationType;
 import orange.smart_hire.enums.PostingStatus;
+import orange.smart_hire.exception.ForbiddenException;
+import orange.smart_hire.exception.InvalidOperationException;
+import orange.smart_hire.exception.ResourceNotFoundException;
 import orange.smart_hire.model.Posting;
 import orange.smart_hire.model.User;
 import orange.smart_hire.repository.PostingRepository;
 import orange.smart_hire.repository.UserRepository;
 import orange.smart_hire.utils.SecurityUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -73,6 +74,7 @@ public class PostingService {
 
         return response;
     }
+
     public PostingResponse getPostingById(UUID id) {
         Posting posting = findPostingOrThrow(id);
         return mapToResponse(posting);
@@ -102,23 +104,21 @@ public class PostingService {
 
     private Posting findPostingOrThrow(UUID id) {
         return postingRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Posting WAS not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Posting not found"));
     }
 
     private void assertOwnedByCurrentUser(Posting posting) {
         User currentUser = SecurityUtils.getCurrentUser();
         if (!posting.getHrManager().getId().equals(currentUser.getId())) {
-            throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN, "you cannot modify this posting");
+            throw new ForbiddenException("You are not authorized to modify this posting");
         }
     }
+
     public PostingResponse getPublishedPostingById(UUID id) {
         Posting posting = findPostingOrThrow(id);
 
         if (posting.getStatus() != PostingStatus.PUBLISHED) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Posting was not found");
+            throw new ResourceNotFoundException("Posting not found");
         }
 
         return mapToResponse(posting);
@@ -148,8 +148,7 @@ public class PostingService {
         assertOwnedByCurrentUser(posting);
 
         if (posting.getStatus() != PostingStatus.DRAFT) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "Only a draft posting can be edited as a draft");
+            throw new InvalidOperationException("Only a draft posting can be edited as a draft");
         }
 
         posting.setTitle(request.getTitle());
@@ -164,13 +163,13 @@ public class PostingService {
 
         return mapToResponse(postingRepository.save(posting));
     }
+
     public PostingResponse publish(UUID id) {
         Posting posting = findPostingOrThrow(id);
         assertOwnedByCurrentUser(posting);
 
         if (posting.getStatus() != PostingStatus.DRAFT) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "Only a draft posting can be published");
+            throw new InvalidOperationException("Only a draft posting can be published");
         }
 
         assertReadyToPublish(posting);
@@ -181,34 +180,31 @@ public class PostingService {
 
     private void assertReadyToPublish(Posting posting) {
         if (posting.getCompany() == null || posting.getCompany().isBlank()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "A published posting must have a company");
+            throw new InvalidOperationException("A published posting must have a company");
         }
         if (posting.getDescription() == null || posting.getDescription().isBlank()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "A published posting must have a description");
+            throw new InvalidOperationException("A published posting must have a description");
         }
         if (posting.getSkillsRequired() == null || posting.getSkillsRequired().isEmpty()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "A published posting must list required skills");
+            throw new InvalidOperationException("A published posting must list required skills");
         }
         if (posting.getLocationType() == null) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "A published posting must have a location type");
+            throw new InvalidOperationException("A published posting must have a location type");
         }
     }
+
     public PostingResponse close(UUID id) {
         Posting posting = findPostingOrThrow(id);
         assertOwnedByCurrentUser(posting);
 
         if (posting.getStatus() != PostingStatus.PUBLISHED) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "Only a published posting can be closed");
+            throw new InvalidOperationException("Only a published posting can be closed");
         }
 
         posting.setStatus(PostingStatus.CLOSED);
         return mapToResponse(postingRepository.save(posting));
     }
+
     public List<PostingResponse> getPublishedPostings() {
         return postingRepository.findByStatus(PostingStatus.PUBLISHED)
                 .stream()
