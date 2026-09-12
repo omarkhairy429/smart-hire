@@ -1,7 +1,13 @@
 package orange.smart_hire.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
+
+@Getter
+@Setter
 public class ErrorResponse {
 
     private int status;
@@ -16,8 +22,4 @@ public class ErrorResponse {
         this.timestamp = LocalDateTime.now();
     }
 
-    public int getStatus() { return status; }
-    public String getError() { return error; }
-    public String getMessage() { return message; }
-    public LocalDateTime getTimestamp() { return timestamp; }
 }

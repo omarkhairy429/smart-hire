@@ -9,7 +9,6 @@ import orange.smart_hire.dto.StaffResponse;
 import orange.smart_hire.model.User;
 import orange.smart_hire.service.AuditLogService;
 import orange.smart_hire.service.SuperAdminService;
-import orange.smart_hire.utils.SecurityUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;

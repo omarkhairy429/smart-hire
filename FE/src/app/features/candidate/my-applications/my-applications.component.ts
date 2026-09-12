@@ -39,11 +39,11 @@ export class MyApplicationsComponent implements OnInit {
     }).subscribe({
       next: ({ applications, interviews }) => {
         this.applications = applications;
-        // Build a map of applicationId → interview for O(1) lookup in the template
+        
         interviews.forEach(iv => {
           this.interviewMap[iv.applicationId] = iv;
         });
-        // Mark applications with INTERVIEW stage that have no loaded interview as null (not undefined)
+        
         applications
           .filter(a => a.stage === ApplicationStage.INTERVIEW)
           .forEach(a => {
