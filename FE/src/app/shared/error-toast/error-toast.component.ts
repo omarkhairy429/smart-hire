@@ -1,30 +1,19 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Subscription } from 'rxjs';
+import { Component } from '@angular/core';
+import { AsyncPipe, NgIf } from '@angular/common';
+import { Observable } from 'rxjs';
 import { ErrorService } from '../../core/services/error.service';
 
 @Component({
   selector: 'app-error-toast',
   standalone: true,
-  imports: [CommonModule],
+  imports: [AsyncPipe, NgIf],
   templateUrl: './error-toast.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ErrorToastComponent implements OnInit, OnDestroy {
-  message: string | null = null;
-  private sub!: Subscription;
+export class ErrorToastComponent {
+  error$: Observable<string | null>;
 
-  constructor(private errorService: ErrorService, private cdr: ChangeDetectorRef) {}
-
-  ngOnInit(): void {
-    this.sub = this.errorService.error$.subscribe(msg => {
-      this.message = msg;
-      this.cdr.markForCheck();
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.sub.unsubscribe();
+  constructor(private errorService: ErrorService) {
+    this.error$ = errorService.error$;
   }
 
   dismiss(): void {
