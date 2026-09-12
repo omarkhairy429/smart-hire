@@ -61,7 +61,7 @@ public class AuthService {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setRole(UserRole.CANDIDATE);
-        user.setActive(true);
+        user.setActive(true)
 
         User savedUser = userRepository.save(user);
         String token = jwtService.generateToken(savedUser.getId());

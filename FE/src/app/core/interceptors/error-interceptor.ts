@@ -9,27 +9,41 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((httpError: HttpErrorResponse) => {
-      let message = 'An unexpected error occurred. Please try again.';
-
-      if (httpError.error && typeof httpError.error === 'object') {
-        const apiError = httpError.error as ApiError;
-        if (apiError.message) {
-          message = apiError.message;
-        }
-      } else if (httpError.status === 0) {
-        message = 'Cannot reach the server. Please check your connection.';
-      } else if (httpError.status === 401) {
-        message = 'Session expired. Please log in again.';
-      } else if (httpError.status === 403) {
-        message = 'You do not have permission to perform this action.';
-      } else if (httpError.status === 404) {
-        message = 'The requested resource was not found.';
-      } else if (httpError.status >= 500) {
-        message = 'A server error occurred. Please try again later.';
-      }
-
+      const message = extractMessage(httpError);
       errorService.show(message);
-      return throwError(() => new Error(message));
+      return throwError(() => httpError);
     })
   );
 };
+
+function extractMessage(httpError: HttpErrorResponse): string {
+  if (httpError.status === 0) {
+    return 'Cannot reach the server. Please check your connection.';
+  }
+
+  const body = httpError.error;
+
+  if (body) {
+    if (typeof body === 'object' && body.message) {
+      return (body as ApiError).message;
+    }
+    if (typeof body === 'string') {
+      try {
+        const parsed: ApiError = JSON.parse(body);
+        if (parsed?.message) return parsed.message;
+      } catch {
+      }
+    }
+  }
+
+  switch (httpError.status) {
+    case 400: return 'Invalid request. Please check your input.';
+    case 401: return 'Session expired. Please log in again.';
+    case 403: return 'You do not have permission to perform this action.';
+    case 404: return 'The requested resource was not found.';
+    case 409: return 'This resource already exists.';
+    default:  return httpError.status >= 500
+      ? 'A server error occurred. Please try again later.'
+      : 'An unexpected error occurred. Please try again.';
+  }
+}
