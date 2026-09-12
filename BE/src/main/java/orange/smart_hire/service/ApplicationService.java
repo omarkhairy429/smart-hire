@@ -6,19 +6,21 @@ import orange.smart_hire.dto.PipelineResponse;
 import orange.smart_hire.enums.ApplicationStage;
 import orange.smart_hire.enums.ApplicationStatus;
 import orange.smart_hire.enums.NotificationType;
+import orange.smart_hire.exception.CsvExportException;
+import orange.smart_hire.exception.DuplicateResourceException;
+import orange.smart_hire.exception.ForbiddenException;
+import orange.smart_hire.exception.ResourceNotFoundException;
 import orange.smart_hire.model.Application;
 import orange.smart_hire.model.Posting;
 import orange.smart_hire.model.User;
 import orange.smart_hire.repository.ApplicationRepository;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import org.springframework.http.HttpStatus;
 import orange.smart_hire.repository.UserRepository;
 import orange.smart_hire.repository.PostingRepository;
 import orange.smart_hire.utils.SecurityUtils;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.StringWriter;
 import java.time.LocalDateTime;
@@ -49,7 +51,7 @@ public class ApplicationService {
         if (applicationRepository.existsByPostingIdAndCandidateId(
                 request.getPostingId(), candidateId
         )) {
-            throw new IllegalStateException(
+            throw new DuplicateResourceException(
                     "Candidate has already applied to this posting"
             );
         }
@@ -71,10 +73,7 @@ public class ApplicationService {
                 applicationRepository.save(application);
 
         Posting posting = postingRepository.findById(request.getPostingId())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Posting not found"
-                ));
+                .orElseThrow(() -> new ResourceNotFoundException("Posting not found"));
 
         UUID hrManagerId = posting.getHrManager().getId();
 
@@ -99,6 +98,7 @@ public class ApplicationService {
                 .map(this::mapToResponse)
                 .toList();
     }
+
     @Transactional(readOnly = true)
     public List<ApplicationResponse> getApplicationsByPosting(UUID postingId) {
         return applicationRepository.findByPostingId(postingId)
@@ -110,12 +110,10 @@ public class ApplicationService {
     @Transactional(readOnly = true)
     public ApplicationResponse getApplicationById(UUID id) {
         Application application = applicationRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Application not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
 
         return mapToResponse(application);
     }
-
 
     private ApplicationResponse mapToResponse(Application application) {
         ApplicationResponse response = new ApplicationResponse();
@@ -130,7 +128,6 @@ public class ApplicationService {
         response.setStatus(application.getStatus());
         response.setCreatedAt(application.getCreatedAt());
         response.setUpdatedAt(application.getUpdatedAt());
-
 
         if (application.getCandidateId() != null) {
             userRepository.findById(application.getCandidateId()).ifPresent(user -> {
@@ -172,7 +169,7 @@ public class ApplicationService {
     public ApplicationResponse updateStage(UUID applicationId, ApplicationStage newStage) {
 
         Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new RuntimeException("Application not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
 
         ApplicationStage oldStage = application.getStage();
 
@@ -199,7 +196,7 @@ public class ApplicationService {
     @Transactional(readOnly = true)
     public List<ApplicationResponse> getApplicationsForPosting(UUID postingId, ApplicationStage stage,
                                                                String sort, String dir) {
-        Posting posting = assertHrCanAccessPosting(postingId);
+        assertHrCanAccessPosting(postingId);
 
         List<ApplicationResponse> responses = applicationRepository
                 .findByPostingIdAndOptionalStage(postingId, stage)
@@ -229,7 +226,7 @@ public class ApplicationService {
                 );
             }
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to generate CSV export");
+            throw new CsvExportException("Failed to generate CSV export", e);
         }
 
         return writer.toString();
@@ -237,14 +234,14 @@ public class ApplicationService {
 
     private Posting assertHrCanAccessPosting(UUID postingId) {
         Posting posting = postingRepository.findById(postingId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Posting not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Posting not found"));
 
         User currentUser = SecurityUtils.getCurrentUser();
         boolean sameCompany = currentUser.getCompanyName() != null
                 && currentUser.getCompanyName().equalsIgnoreCase(posting.getCompany());
 
         if (!sameCompany) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+            throw new ForbiddenException(
                     "You are not authorized to view applications for this posting");
         }
 

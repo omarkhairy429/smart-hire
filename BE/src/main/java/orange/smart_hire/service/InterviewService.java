@@ -8,6 +8,9 @@ import orange.smart_hire.enums.ApplicationStage;
 import orange.smart_hire.enums.InterviewFormat;
 import orange.smart_hire.enums.NotificationType;
 import orange.smart_hire.enums.UserRole;
+import orange.smart_hire.exception.ForbiddenException;
+import orange.smart_hire.exception.InvalidOperationException;
+import orange.smart_hire.exception.ResourceNotFoundException;
 import orange.smart_hire.model.Application;
 import orange.smart_hire.model.Interview;
 import orange.smart_hire.model.Posting;
@@ -17,10 +20,8 @@ import orange.smart_hire.repository.InterviewRepository;
 import orange.smart_hire.repository.PostingRepository;
 import orange.smart_hire.repository.UserRepository;
 import orange.smart_hire.utils.SecurityUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,23 +51,19 @@ public class InterviewService {
 
     public InterviewResponse schedule(UUID applicationId, ScheduleInterviewRequest request) {
         Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Application not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
 
         User interviewer = userRepository.findById(request.getInterviewerId())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Interviewer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Interviewer not found"));
 
         if (interviewer.getRole() != UserRole.INTERVIEWER) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Selected user is not an interviewer");
+            throw new InvalidOperationException("Selected user is not an interviewer");
         }
 
-        // Validate: VIDEO/PHONE require a meeting link
         if (request.getFormat() != InterviewFormat.IN_PERSON
                 && (request.getMeetingLink() == null || request.getMeetingLink().isBlank())) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Meeting link is required for VIDEO and PHONE interviews");
+            throw new InvalidOperationException(
+                    "Meeting link is required for VIDEO and PHONE interviews");
         }
 
         Interview interview = new Interview();
@@ -76,7 +73,6 @@ public class InterviewService {
         interview.setFormat(request.getFormat());
         interview.setLocation(request.getLocation());
         interview.setMeetingLink(request.getMeetingLink());
-        // createdAt / updatedAt are managed automatically by @CreationTimestamp / @UpdateTimestamp
 
         Interview saved = interviewRepository.save(interview);
 
@@ -96,10 +92,6 @@ public class InterviewService {
                 saved.getId()
         );
 
-// Scheduling an interview advances the candidate to INTERVIEW stage
-
-        // Scheduling an interview advances the candidate to INTERVIEW stage
-        // (only if they haven't already reached a later stage)
         if (application.getStage() == ApplicationStage.APPLIED
                 || application.getStage() == ApplicationStage.SCREENING) {
             application.setStage(ApplicationStage.INTERVIEW);
@@ -111,14 +103,11 @@ public class InterviewService {
 
     public void cancel(UUID interviewId) {
         Interview interview = interviewRepository.findById(interviewId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Interview not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Interview not found"));
 
         Application application = applicationRepository.findById(
                 interview.getApplicationId()
-        ).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Application not found"
-        ));
+        ).orElseThrow(() -> new ResourceNotFoundException("Application not found"));
 
         notificationService.sendNotification(
                 application.getCandidateId(),
@@ -139,26 +128,19 @@ public class InterviewService {
         interviewRepository.delete(interview);
     }
 
-    /**
-     * Returns interviewers scoped to the calling HR manager's company.
-     * SUPER_ADMIN gets all interviewers (no company restriction).
-     */
     @Transactional(readOnly = true)
     public List<StaffResponse> getInterviewers() {
         User currentUser = SecurityUtils.getCurrentUser();
 
         if (currentUser.getRole() == UserRole.SUPER_ADMIN) {
-            // Super admin sees all interviewers on the platform
             return userRepository.findByRoleIn(List.of(UserRole.INTERVIEWER))
                     .stream()
                     .map(StaffResponse::fromEntity)
                     .toList();
         }
 
-        // HR Manager sees only interviewers in their own company
         String companyName = currentUser.getCompanyName();
         if (companyName == null || companyName.isBlank()) {
-            // HR without a company — return empty list (shouldn't happen in practice)
             return List.of();
         }
 
@@ -198,18 +180,14 @@ public class InterviewService {
     @Transactional(readOnly = true)
     public DossierResponse getDossier(UUID interviewId, UUID interviewerId) {
         Interview interview = interviewRepository.findById(interviewId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Interview not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Interview not found"));
 
-        // US2.7: an interviewer may only open a dossier for their own interview
         if (!interview.getInterviewerId().equals(interviewerId)) {
-            throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN, "This interview is not assigned to you");
+            throw new ForbiddenException("This interview is not assigned to you");
         }
 
         Application application = applicationRepository.findById(interview.getApplicationId())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Application not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
 
         DossierResponse response = new DossierResponse();
         response.setInterviewId(interview.getId());
