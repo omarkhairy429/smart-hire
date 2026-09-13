@@ -41,7 +41,7 @@ public class HrJobPostingsSteps {
     private PostingResponse postingResponse;
     private ResponseStatusException thrownException;
 
-    @Before
+    @Before("@postings")
     public void setUp() {
         Mockito.reset(postingRepository, userRepository);
         postingResponse = null;
@@ -49,7 +49,7 @@ public class HrJobPostingsSteps {
         mockedSecurityUtils = Mockito.mockStatic(SecurityUtils.class);
     }
 
-    @After
+    @After("@postings")
     public void tearDown() {
         if (mockedSecurityUtils != null && !mockedSecurityUtils.isClosed()) {
             mockedSecurityUtils.close();
