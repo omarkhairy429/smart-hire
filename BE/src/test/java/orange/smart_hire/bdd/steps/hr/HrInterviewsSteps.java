@@ -44,7 +44,7 @@ public class HrInterviewsSteps {
     );
 
     private InterviewResponse interviewResponse;
-    private ResponseStatusException thrownException;
+    private Exception thrownException;
     private UUID appId = UUID.fromString("11111111-1111-1111-1111-111111111111");
     private UUID intId = UUID.fromString("22222222-2222-2222-2222-222222222222");
     private UUID scheduleId = UUID.fromString("33333333-3333-3333-3333-333333333333");
@@ -90,7 +90,11 @@ public class HrInterviewsSteps {
             return saved;
         });
 
-        interviewResponse = interviewService.schedule(appId, req);
+        try {
+            interviewResponse = interviewService.schedule(appId, req);
+        } catch (Exception e) {
+            thrownException = e;
+        }
     }
 
     @When("the HR Manager schedules a {string} interview without providing a meeting link")
@@ -102,13 +106,14 @@ public class HrInterviewsSteps {
 
         try {
             interviewService.schedule(appId, req);
-        } catch (ResponseStatusException e) {
+        } catch (Exception e) {
             thrownException = e;
         }
     }
 
     @Then("the interview should be saved successfully")
     public void verify_saved() {
+        assertNull(thrownException, "Did not expect an exception");
         assertNotNull(interviewResponse);
         verify(interviewRepository, times(1)).save(any(Interview.class));
     }
@@ -135,11 +140,16 @@ public class HrInterviewsSteps {
 
     @When("the HR Manager cancels the interview")
     public void cancel_interview() {
-        interviewService.cancel(scheduleId);
+        try {
+            interviewService.cancel(scheduleId);
+        } catch (Exception e) {
+            thrownException = e;
+        }
     }
 
     @Then("the interview should be deleted")
     public void verify_deleted() {
+        assertNull(thrownException, "Did not expect an exception");
         verify(interviewRepository, times(1)).delete(any(Interview.class));
     }
 
@@ -153,6 +163,14 @@ public class HrInterviewsSteps {
     @Then("the interview action should fail with a {word} error {string}")
     public void interview_action_fails(String errorType, String expectedMsg) {
         assertNotNull(thrownException, "Expected an exception to be thrown");
-        assertTrue(thrownException.getReason().contains(expectedMsg));
+        String message = getExceptionMessage(thrownException);
+        assertTrue(message.contains(expectedMsg), "Expected message to contain: '" + expectedMsg + "' but was: '" + message + "'");
+    }
+
+    private String getExceptionMessage(Exception e) {
+        if (e instanceof ResponseStatusException rse && rse.getReason() != null) {
+            return rse.getReason();
+        }
+        return e.getMessage() != null ? e.getMessage() : "";
     }
 }

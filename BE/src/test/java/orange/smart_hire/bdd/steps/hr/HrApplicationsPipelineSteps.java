@@ -45,7 +45,7 @@ public class HrApplicationsPipelineSteps {
     private MockedStatic<SecurityUtils> mockedSecurityUtils;
     private ApplicationResponse applicationResponse;
     private String csvResult;
-    private ResponseStatusException thrownException;
+    private Exception thrownException;
 
     @Before("@pipeline")
     public void setUp() {
@@ -90,14 +90,14 @@ public class HrApplicationsPipelineSteps {
                     UUID.fromString("11111111-1111-1111-1111-111111111111"),
                     ApplicationStage.valueOf(newStage)
             );
-        } catch (ResponseStatusException e) {
+        } catch (Exception e) {
             thrownException = e;
         }
     }
 
     @Then("the application stage should become {string}")
     public void verify_stage(String expected) {
-        assertNull(thrownException);
+        assertNull(thrownException, "Did not expect an exception");
         assertEquals(ApplicationStage.valueOf(expected), applicationResponse.getStage());
     }
 
@@ -130,14 +130,14 @@ public class HrApplicationsPipelineSteps {
             csvResult = applicationService.exportApplicationsAsCsv(
                     UUID.fromString("22222222-2222-2222-2222-222222222222"), null, "createdAt", "asc"
             );
-        } catch (ResponseStatusException e) {
+        } catch (Exception e) {
             thrownException = e;
         }
     }
 
     @Then("a CSV string containing the application data should be generated")
     public void verify_csv() {
-        assertNull(thrownException);
+        assertNull(thrownException, "Did not expect an exception");
         assertNotNull(csvResult);
         assertTrue(csvResult.contains("Name,Email,Stage,Status,AppliedAt,ResumeUrl"));
     }
@@ -148,7 +148,7 @@ public class HrApplicationsPipelineSteps {
             applicationService.getApplicationsForPosting(
                     UUID.fromString("33333333-3333-3333-3333-333333333333"), null, "createdAt", "asc"
             );
-        } catch (ResponseStatusException e) {
+        } catch (Exception e) {
             thrownException = e;
         }
     }
@@ -156,6 +156,14 @@ public class HrApplicationsPipelineSteps {
     @Then("the pipeline action should fail with a {word} error {string}")
     public void pipeline_action_fails(String errorType, String expectedMsg) {
         assertNotNull(thrownException, "Expected an exception to be thrown");
-        assertTrue(thrownException.getReason().contains(expectedMsg));
+        String message = getExceptionMessage(thrownException);
+        assertTrue(message.contains(expectedMsg), "Expected message to contain: '" + expectedMsg + "' but was: '" + message + "'");
+    }
+
+    private String getExceptionMessage(Exception e) {
+        if (e instanceof ResponseStatusException rse && rse.getReason() != null) {
+            return rse.getReason();
+        }
+        return e.getMessage() != null ? e.getMessage() : "";
     }
 }

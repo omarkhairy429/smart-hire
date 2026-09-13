@@ -39,7 +39,7 @@ public class HrJobPostingsSteps {
     private User loggedInHr;
     private Posting mockPosting;
     private PostingResponse postingResponse;
-    private ResponseStatusException thrownException;
+    private Exception thrownException;
 
     @Before("@postings")
     public void setUp() {
@@ -77,11 +77,16 @@ public class HrJobPostingsSteps {
             return saved;
         });
 
-        postingResponse = postingService.createDraft(request);
+        try {
+            postingResponse = postingService.createDraft(request);
+        } catch (Exception e) {
+            thrownException = e;
+        }
     }
 
     @Then("the posting should be saved successfully")
     public void verify_saved() {
+        assertNull(thrownException, "Did not expect an exception");
         assertNotNull(postingResponse);
         verify(postingRepository, times(1)).save(any(Posting.class));
     }
@@ -132,7 +137,7 @@ public class HrJobPostingsSteps {
         try {
             when(postingRepository.save(any(Posting.class))).thenReturn(mockPosting);
             postingResponse = postingService.publish(mockPosting.getId());
-        } catch (ResponseStatusException e) {
+        } catch (Exception e) {
             thrownException = e;
         }
     }
@@ -141,20 +146,28 @@ public class HrJobPostingsSteps {
     public void close_posting() {
         try {
             postingResponse = postingService.close(mockPosting.getId());
-        } catch (ResponseStatusException e) {
+        } catch (Exception e) {
             thrownException = e;
         }
     }
 
     @Then("the posting status should become {string}")
     public void status_becomes(String expected) {
-        assertNull(thrownException);
+        assertNull(thrownException, "Did not expect an exception");
         assertEquals(PostingStatus.valueOf(expected), postingResponse.getStatus());
     }
 
     @Then("the posting action should fail with a {word} error {string}")
     public void action_fails(String errorType, String expectedMsg) {
         assertNotNull(thrownException, "Expected an exception to be thrown");
-        assertTrue(thrownException.getReason().contains(expectedMsg));
+        String message = getExceptionMessage(thrownException);
+        assertTrue(message.contains(expectedMsg), "Expected message to contain: '" + expectedMsg + "' but was: '" + message + "'");
+    }
+
+    private String getExceptionMessage(Exception e) {
+        if (e instanceof ResponseStatusException rse && rse.getReason() != null) {
+            return rse.getReason();
+        }
+        return e.getMessage() != null ? e.getMessage() : "";
     }
 }

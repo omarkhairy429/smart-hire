@@ -28,6 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import org.springframework.web.server.ResponseStatusException;
 
 public class SuperAdminUserManagementSteps {
 
@@ -103,9 +104,16 @@ public class SuperAdminUserManagementSteps {
     @Then("the user creation should fail with message {string}")
     public void creation_failed(String msg) {
         assertNotNull(thrownException, "Expected an exception to be thrown for validation failure, but it was null.");
-        assertNotNull(thrownException.getMessage(), "Exception thrown, but message is null.");
-        assertTrue(thrownException.getMessage().contains(msg),
-                "Expected error message containing: '" + msg + "' but got: '" + thrownException.getMessage() + "'");
+        String message = getExceptionMessage(thrownException);
+        assertTrue(message.contains(msg),
+                "Expected error message containing: '" + msg + "' but got: '" + message + "'");
+    }
+
+    private String getExceptionMessage(Exception e) {
+        if (e instanceof ResponseStatusException rse && rse.getReason() != null) {
+            return rse.getReason();
+        }
+        return e.getMessage() != null ? e.getMessage() : "";
     }
 
     @Given("the system contains {int} {string} and {int} {string} accounts")

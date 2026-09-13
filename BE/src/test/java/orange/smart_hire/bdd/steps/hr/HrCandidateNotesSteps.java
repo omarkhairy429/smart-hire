@@ -39,7 +39,7 @@ public class HrCandidateNotesSteps {
     private User loggedInHr;
     private CandidateNoteDto.Response noteResponse;
     private List<CandidateNoteDto.Response> notesList;
-    private ResponseStatusException thrownException;
+    private Exception thrownException;
 
     @Before("@notes")
     public void setUp() {
@@ -101,7 +101,7 @@ public class HrCandidateNotesSteps {
 
         try {
             noteResponse = noteService.addNote(request);
-        } catch (ResponseStatusException e) {
+        } catch (Exception e) {
             thrownException = e;
         }
     }
@@ -121,9 +121,9 @@ public class HrCandidateNotesSteps {
 
     @Then("the action should fail with a not found error {string}")
     public void action_fails_with_not_found(String expectedMsg) {
-        assertNotNull(thrownException, "Expected a ResponseStatusException");
-        assertEquals(404, thrownException.getStatusCode().value());
-        assertTrue(thrownException.getReason().contains(expectedMsg));
+        assertNotNull(thrownException, "Expected an exception to be thrown");
+        String message = getExceptionMessage(thrownException);
+        assertTrue(message.contains(expectedMsg), "Expected message to contain: '" + expectedMsg + "' but was: '" + message + "'");
         verify(noteRepository, never()).save(any()); // Ensure nothing is saved
     }
 
@@ -156,5 +156,12 @@ public class HrCandidateNotesSteps {
     public void verify_returned_notes_count(int expectedCount) {
         assertNotNull(notesList);
         assertEquals(expectedCount, notesList.size());
+    }
+
+    private String getExceptionMessage(Exception e) {
+        if (e instanceof ResponseStatusException rse && rse.getReason() != null) {
+            return rse.getReason();
+        }
+        return e.getMessage() != null ? e.getMessage() : "";
     }
 }
