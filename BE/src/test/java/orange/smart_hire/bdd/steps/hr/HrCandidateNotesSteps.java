@@ -41,7 +41,7 @@ public class HrCandidateNotesSteps {
     private List<CandidateNoteDto.Response> notesList;
     private ResponseStatusException thrownException;
 
-    @Before
+    @Before("@notes")
     public void setUp() {
         Mockito.reset(noteRepository, userRepository);
         noteResponse = null;
@@ -51,9 +51,9 @@ public class HrCandidateNotesSteps {
         mockedSecurityUtils = Mockito.mockStatic(SecurityUtils.class);
     }
 
-    @After
+    @After("@notes")
     public void tearDown() {
-        if (mockedSecurityUtils != null) {
+        if (mockedSecurityUtils != null && !mockedSecurityUtils.isClosed()) {
             mockedSecurityUtils.close();
         }
     }
@@ -70,7 +70,7 @@ public class HrCandidateNotesSteps {
         mockedSecurityUtils.when(SecurityUtils::getCurrentUser).thenReturn(loggedInHr);
     }
 
-    @Given("a candidate exists with id {string}")
+    @Given("a candidate profile exists with id {string}")
     public void candidate_exists(String idStr) {
         UUID id = UUID.fromString(idStr);
         User candidate = new User();
@@ -80,7 +80,7 @@ public class HrCandidateNotesSteps {
         when(userRepository.findById(id)).thenReturn(Optional.of(candidate));
     }
 
-    @Given("a candidate with id {string} does not exist")
+    @Given("a candidate profile with id {string} does not exist")
     public void candidate_does_not_exist(String idStr) {
         UUID id = UUID.fromString(idStr);
         when(userRepository.findById(id)).thenReturn(Optional.empty());
