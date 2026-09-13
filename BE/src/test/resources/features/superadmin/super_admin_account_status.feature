@@ -28,4 +28,4 @@ Feature: Super Admin Account Status Management
   Scenario: Super Admin cannot change status of Candidates
     Given a user exists with id "33333333-3333-3333-3333-333333333333" and role "CANDIDATE"
     When the Super Admin requests to deactivate the staff member
-    Then the action should fail with a bad request error "Only HR Managers and Interviewers can be deactivated"
+    Then the action should fail with a bad request error "Only HR Managers and Interviewers can be managed"

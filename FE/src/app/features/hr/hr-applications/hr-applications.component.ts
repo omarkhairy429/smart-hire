@@ -13,7 +13,6 @@ import {
 } from '../../../core/models/api.models';
 import { HrScheduleInterviewComponent } from '../hr-schedule-interview/hr-schedule-interview.component';
 import { HrInterviewFeedbackComponent } from '../hr-interview-feedback/hr-interview-feedback.component';
-
 @Component({
   selector: 'app-hr-applications',
   standalone: true,
@@ -32,6 +31,7 @@ export class HrApplicationsComponent implements OnInit {
     ApplicationStage.SCREENING,
     ApplicationStage.INTERVIEW,
     ApplicationStage.OFFERED,
+    ApplicationStage.HIRED,
     ApplicationStage.REJECTED,
   ];
 
@@ -248,6 +248,7 @@ loadPostings() {
   closeFeedback(): void {
     this.viewingFeedbackFor = null;
     this.cdr.markForCheck();
+    this.loadApplications();
   }
 
   closeSchedule(): void {

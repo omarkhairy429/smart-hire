@@ -4,6 +4,8 @@ import { JobListComponent } from './features/public/job-list/job-list';
 import { JobDetailComponent } from './features/public/job-detail/job-detail';
 import { LoginComponent } from './features/auth/login/login';
 import { RegisterComponent } from './features/auth/register/register';
+import { ForgotPasswordComponent } from './features/auth/forgot-password/forgot-password';
+import { ResetPasswordComponent } from './features/auth/reset-password/reset-password';
 import { AdminDashboardComponent } from './features/admin/admin-dashboard/admin-dashboard';
 import { HrPostingsComponent } from './features/hr/hr-postings/hr-postings.component';
 import { HrApplicationsComponent } from './features/hr/hr-applications/hr-applications.component';
@@ -26,6 +28,8 @@ export const routes: Routes = [
   // Auth
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
 
   // Super Admin only
   { path: 'admin', component: AdminDashboardComponent, canActivate: [adminGuard] },

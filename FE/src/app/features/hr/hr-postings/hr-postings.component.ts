@@ -23,10 +23,12 @@ export class HrPostingsComponent implements OnInit {
   errorMessage = '';
   hrManagerId: string = '';
   hasAutoId = false;
-  statusFilter: string = 'ALL';
-  keywordFilter: string = '';
-  locationTypeFilter: string = '';
-  editingDraftId: string | null = null;
+    statusFilter: string = 'ALL';
+    keywordFilter: string = '';
+    locationTypeFilter: string = '';
+    departmentFilter: string = '';
+    employmentTypeFilter: string = '';
+    editingDraftId: string | null = null;
   readonly statusFilters = ['ALL', 'DRAFT', 'PUBLISHED', 'CLOSED'];
   readonly locationTypes = ['REMOTE', 'HYBRID', 'ON_SITE'];
   readonly employmentTypes = ['FULL_TIME', 'PART_TIME', 'CONTRACT', 'INTERNSHIP', 'FREELANCE'];
@@ -261,32 +263,43 @@ export class HrPostingsComponent implements OnInit {
     }
     return type === 'ON_SITE' ? 'On-site' : type.charAt(0) + type.slice(1).toLowerCase();
   }
-  get filteredPostings(): PostingResponse[] {
-    let result = this.postings;
+ get filteredPostings(): PostingResponse[] {
+      let result = this.postings;
 
-    if (this.statusFilter !== 'ALL') {
-      result = result.filter((p) => p.status === this.statusFilter);
+      if (this.statusFilter !== 'ALL') {
+        result = result.filter((p) => p.status === this.statusFilter);
+      }
+
+      if (this.locationTypeFilter) {
+        result = result.filter((p) => p.locationType === this.locationTypeFilter);
+      }
+
+      if (this.employmentTypeFilter) {
+        result = result.filter((p) => p.employmentType === this.employmentTypeFilter);
+      }
+
+      if (this.departmentFilter.trim()) {
+        const department = this.departmentFilter.trim().toLowerCase();
+        result = result.filter((p) => (p.department ?? '').toLowerCase().includes(department));
+      }
+
+      if (this.keywordFilter.trim()) {
+        const keyword = this.keywordFilter.trim().toLowerCase();
+        result = result.filter(
+          (p) =>
+            p.title.toLowerCase().includes(keyword) ||
+            (p.description ?? '').toLowerCase().includes(keyword),
+        );
+      }
+
+      return result;
     }
 
-    if (this.locationTypeFilter) {
-      result = result.filter((p) => p.locationType === this.locationTypeFilter);
+    clearFilters() {
+      this.statusFilter = 'ALL';
+      this.keywordFilter = '';
+      this.locationTypeFilter = '';
+      this.departmentFilter = '';
+      this.employmentTypeFilter = '';
     }
-
-    if (this.keywordFilter.trim()) {
-      const keyword = this.keywordFilter.trim().toLowerCase();
-      result = result.filter(
-        (p) =>
-          p.title.toLowerCase().includes(keyword) ||
-          (p.description ?? '').toLowerCase().includes(keyword),
-      );
-    }
-
-    return result;
   }
-
-  clearFilters() {
-    this.statusFilter = 'ALL';
-    this.keywordFilter = '';
-    this.locationTypeFilter = '';
-  }
-}

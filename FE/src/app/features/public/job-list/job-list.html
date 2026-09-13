@@ -23,6 +23,17 @@
       <option value="">All Location Types</option>
       <option *ngFor="let type of locationTypes" [value]="type">{{ type }}</option>
     </select>
+    <input
+      type="text"
+      class="search-input"
+      placeholder="Department..."
+      [(ngModel)]="department"
+      (keyup.enter)="search()"
+    />
+    <select class="search-select" [(ngModel)]="employmentType">
+      <option value="">All Employment Types</option>
+      <option *ngFor="let type of employmentTypes" [value]="type">{{ type }}</option>
+    </select>
     <button class="btn-search" (click)="search()">Search</button>
     <button class="btn-clear" (click)="clearFilters()">Clear</button>
   </div>

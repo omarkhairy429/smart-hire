@@ -31,4 +31,4 @@ Feature: HR Job Postings Management
   Scenario: HR Manager cannot close a posting owned by someone else
     Given a published posting exists with ID "44444444-4444-4444-4444-444444444444" owned by another HR Manager
     When the HR Manager closes the posting
-    Then the posting action should fail with a forbidden error "you cannot modify this posting"
+    Then the posting action should fail with a forbidden error "You are not authorized to modify this posting"
