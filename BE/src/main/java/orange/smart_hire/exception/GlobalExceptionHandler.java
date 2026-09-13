@@ -47,6 +47,11 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 
+    @ExceptionHandler(FileStorageException.class)
+    public ResponseEntity<ErrorResponse> handleFileStorage(FileStorageException ex) {
+        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getFieldErrors()

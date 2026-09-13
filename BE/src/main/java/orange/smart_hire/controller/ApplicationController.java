@@ -4,13 +4,16 @@ import orange.smart_hire.dto.ApplicationResponse;
 import orange.smart_hire.dto.ApplyRequest;
 import orange.smart_hire.dto.UpdateStageRequest;
 import orange.smart_hire.service.ApplicationService;
+import orange.smart_hire.service.FileStorageService;
 import orange.smart_hire.utils.SecurityUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -18,9 +21,20 @@ import java.util.UUID;
 public class ApplicationController {
 
     private final ApplicationService applicationService;
+    private final FileStorageService fileStorageService;
 
-    public ApplicationController(ApplicationService applicationService) {
+    public ApplicationController(ApplicationService applicationService, FileStorageService fileStorageService) {
         this.applicationService = applicationService;
+        this.fileStorageService = fileStorageService;
+    }
+
+    @PreAuthorize("hasRole('CANDIDATE')")
+    @PostMapping("/upload-resume")
+    public ResponseEntity<Map<String, String>> uploadResume(
+            @RequestParam("file") MultipartFile file
+    ) {
+        String resumeUrl = fileStorageService.storeResume(file);
+        return ResponseEntity.ok(Map.of("resumeUrl", resumeUrl));
     }
 
     @PreAuthorize("hasRole('CANDIDATE')")

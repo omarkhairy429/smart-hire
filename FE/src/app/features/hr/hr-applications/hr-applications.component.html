@@ -24,7 +24,7 @@
       >
         <option value="">— Choose a posting —</option>
         @for (posting of postings; track posting.id) {
-          <option [value]="posting.id">{{ posting.title }} ({{ posting.status }})</option>
+        <option [value]="posting.id">{{ posting.title }} ({{ posting.status }})</option>
         }
       </select>
     </div>

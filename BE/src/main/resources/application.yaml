@@ -1,10 +1,10 @@
 spring:
   config:
-    import: "optional:file:.env[.properties]"
+    import: "optional:file:../.env[.properties]"
   application:
     name: smart-hire
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/${DB_NAME:smarthire}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:smarthire}
     username: ${DB_USER:smarthire}
     password: ${DB_PASSWORD:smart123}
     driver-class-name: org.postgresql.Driver
@@ -28,6 +28,14 @@ spring:
           auth: true
           starttls:
             enable: true
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 
+app:
+  upload:
+    dir: uploads
+    base-url: http://localhost:8080/uploads
 jwt:
   secret: ${JWT_SECRET:X7v3k9Qp2N8mZ6wJ4tR1yB5cV0sD3fH8gK7lM2nO9pQ6rT4uW1xY5zA3bC0eG7hJ}

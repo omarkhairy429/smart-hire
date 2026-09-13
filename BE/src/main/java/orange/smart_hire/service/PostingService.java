@@ -13,7 +13,8 @@ import orange.smart_hire.repository.PostingRepository;
 import orange.smart_hire.repository.UserRepository;
 import orange.smart_hire.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
-
+import orange.smart_hire.enums.EmploymentType;
+import orange.smart_hire.enums.LocationType;
 import java.util.List;
 import java.util.UUID;
 
@@ -230,12 +231,14 @@ public class PostingService {
                 .toList();
     }
 
-    public List<PostingResponse> searchPublishedPostings(String keyword, String location, LocationType locationType, String company) {
+    public List<PostingResponse> searchPublishedPostings(String keyword, String location, LocationType locationType, String company, String department, EmploymentType employmentType) {
         return postingRepository.searchPublishedPostings(
                         keyword == null ? "" : keyword,
                         location == null ? "" : location,
                         locationType,
-                        company == null ? "" : company)
+                        company == null ? "" : company,
+                        department == null ? "" : department,
+                        employmentType)
                 .stream()
                 .map(this::mapToResponse)
                 .toList();

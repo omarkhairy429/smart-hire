@@ -1,6 +1,7 @@
 package orange.smart_hire.controller;
 
 import orange.smart_hire.dto.PostingResponse;
+import orange.smart_hire.enums.EmploymentType;
 import orange.smart_hire.enums.LocationType;
 import orange.smart_hire.service.PostingService;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,9 @@ public class PublicPostingController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String location,
             @RequestParam(required = false) LocationType locationType,
-            @RequestParam(required = false) String company) {
-        return postingService.searchPublishedPostings(keyword, location, locationType, company);
+            @RequestParam(required = false) String company,
+            @RequestParam(required = false) String department,
+            @RequestParam(required = false) EmploymentType employmentType) {
+        return postingService.searchPublishedPostings(keyword, location, locationType, company, department, employmentType);
     }
 }

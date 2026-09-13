@@ -76,4 +76,12 @@ export class ApplicationService {
       { stage }
     )
   }
+   uploadResume(file: File): Observable<string> {
+     const formData = new FormData();
+     formData.append('file', file);
+
+     return this.http
+       .post<{ resumeUrl: string }>(`${this.apiUrl}/upload-resume`, formData)
+       .pipe(map((res) => res.resumeUrl));
+   }
 }
