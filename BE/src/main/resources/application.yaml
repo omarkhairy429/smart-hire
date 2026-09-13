@@ -28,6 +28,14 @@ spring:
           auth: true
           starttls:
             enable: true
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 
+app:
+  upload:
+    dir: uploads
+    base-url: http://localhost:8080/uploads
 jwt:
   secret: ${JWT_SECRET:X7v3k9Qp2N8mZ6wJ4tR1yB5cV0sD3fH8gK7lM2nO9pQ6rT4uW1xY5zA3bC0eG7hJ}

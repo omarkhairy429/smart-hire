@@ -17,9 +17,11 @@ export class ApplyComponent implements OnInit {
   job: PostingResponse | null = null;
   isLoadingJob = true;
   isSubmitting = false;
+  isUploadingResume = false;
   successMessage = '';
   errorMessage = '';
   postingId = '';
+  selectedFile: File | null = null;
 
   applyForm: FormGroup;
 
@@ -33,8 +35,7 @@ export class ApplyComponent implements OnInit {
   ) {
     this.applyForm = this.fb.group({
       coverLetter: [''],
-      experienceSummary: [''],
-      resumeUrl: ['', Validators.required]
+      experienceSummary: ['']
     });
   }
 
@@ -56,32 +57,61 @@ export class ApplyComponent implements OnInit {
     }
   }
 
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+
+    if (file && file.type !== 'application/pdf') {
+      this.errorMessage = 'Resume must be a PDF file.';
+      this.selectedFile = null;
+      return;
+    }
+
+    this.errorMessage = '';
+    this.selectedFile = file;
+  }
+
   onSubmit() {
-    if (this.applyForm.invalid) {
+    if (this.applyForm.invalid || !this.selectedFile) {
       this.applyForm.markAllAsTouched();
+      if (!this.selectedFile) {
+        this.errorMessage = 'Please attach your resume as a PDF.';
+      }
       return;
     }
 
     this.isSubmitting = true;
+    this.isUploadingResume = true;
     this.errorMessage = '';
 
-    const { coverLetter, experienceSummary, resumeUrl } = this.applyForm.value;
+    this.applicationService.uploadResume(this.selectedFile).subscribe({
+      next: (resumeUrl) => {
+        this.isUploadingResume = false;
+        const { coverLetter, experienceSummary } = this.applyForm.value;
 
-    this.applicationService.applyToPosting({
-      postingId: this.postingId,
-      coverLetter,
-      experienceSummary,
-      resumeUrl
-    }).subscribe({
-      next: () => {
-        this.successMessage = 'Application submitted successfully! Redirecting...';
-        this.isSubmitting = false;
-        this.cdr.markForCheck();
-        setTimeout(() => this.router.navigate(['/my-applications']), 1800);
+        this.applicationService.applyToPosting({
+          postingId: this.postingId,
+          coverLetter,
+          experienceSummary,
+          resumeUrl
+        }).subscribe({
+          next: () => {
+            this.successMessage = 'Application submitted successfully! Redirecting...';
+            this.isSubmitting = false;
+            this.cdr.markForCheck();
+            setTimeout(() => this.router.navigate(['/my-applications']), 1800);
+          },
+          error: (err) => {
+            this.errorMessage = err?.error?.message ?? 'Failed to submit application. Please try again.';
+            this.isSubmitting = false;
+            this.cdr.markForCheck();
+          }
+        });
       },
       error: (err) => {
-        this.errorMessage = err?.error?.message ?? 'Failed to submit application. Please try again.';
+        this.errorMessage = err?.error?.message ?? 'Failed to upload resume. Please try again.';
         this.isSubmitting = false;
+        this.isUploadingResume = false;
         this.cdr.markForCheck();
       }
     });

@@ -17,7 +17,10 @@ export class JobListComponent implements OnInit {
   keyword = '';
   location = '';
   locationType = '';
+  department = '';
+  employmentType = '';
   readonly locationTypes = ['REMOTE', 'HYBRID', 'ON_SITE'];
+  readonly employmentTypes = ['FULL_TIME', 'PART_TIME', 'CONTRACT', 'INTERNSHIP', 'FREELANCE'];
 
   constructor(private postingService: PostingService, private cdr: ChangeDetectorRef) {}
 
@@ -31,6 +34,8 @@ export class JobListComponent implements OnInit {
         keyword: this.keyword,
         location: this.location,
         locationType: this.locationType,
+        department: this.department,
+        employmentType: this.employmentType,
       })
       .subscribe({
         next: (data: PostingResponse[]) => {
@@ -48,6 +53,8 @@ export class JobListComponent implements OnInit {
     this.keyword = '';
     this.location = '';
     this.locationType = '';
+    this.department = '';
+    this.employmentType = '';
     this.search();
   }
 }

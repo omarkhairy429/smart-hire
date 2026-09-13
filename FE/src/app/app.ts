@@ -25,7 +25,7 @@ import { Notification } from './core/models/notification.model';
 import { NotificationType } from './core/models/notification-type';
 
 import { NotificationService } from './core/services/notification.service';
-
+import { ErrorToastComponent } from './shared/error-toast/error-toast.component';
 
 @Component({
   selector: 'app-root',
@@ -34,7 +34,8 @@ import { NotificationService } from './core/services/notification.service';
   imports: [
     RouterOutlet,
     RouterLink,
-    CommonModule
+    CommonModule,
+    ErrorToastComponent
   ],
 
   templateUrl: './app.html',

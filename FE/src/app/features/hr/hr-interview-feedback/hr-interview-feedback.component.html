@@ -1,0 +1,63 @@
+<div class="modal-backdrop" (click)="close()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h3>Interview Feedback</h3>
+      <button type="button" class="btn-close" (click)="close()">&times;</button>
+    </div>
+
+    @if (candidateName) {
+      <p class="modal-subtitle">Candidate: <strong>{{ candidateName }}</strong></p>
+    }
+
+    @if (isLoading) {
+      <div class="loading-state">Loading feedback...</div>
+    } @else if (errorMessage) {
+      <div class="error-banner">{{ errorMessage }}</div>
+    } @else if (rows.length === 0) {
+      <p class="muted">No interviews have been scheduled for this application yet.</p>
+    } @else {
+      @for (row of rows; track row.interview.id) {
+        <div class="interview-block">
+          <div class="interview-head">
+            <strong>{{ formatDateTime(row.interview.scheduledAt) }}</strong>
+            <span class="muted">{{ row.interview.interviewerName }}</span>
+          </div>
+
+          @if (row.feedback.length === 0) {
+            <p class="muted no-feedback">No feedback submitted yet.</p>
+          } @else {
+            @for (f of row.feedback; track f.id) {
+              <div class="feedback-item">
+                <div class="feedback-top">
+                  <span class="rec-badge {{ recommendationClass(f.recommendation) }}">
+                    {{ f.recommendation }}
+                  </span>
+                  <span class="muted">by {{ f.interviewerName }}</span>
+                </div>
+
+                <ul class="scores">
+                  <li>Overall <strong>{{ f.rating }}/5</strong></li>
+                  @if (f.technicalScore) {
+                    <li>Technical <strong>{{ f.technicalScore }}/5</strong></li>
+                  }
+                  @if (f.communicationScore) {
+                    <li>Communication <strong>{{ f.communicationScore }}/5</strong></li>
+                  }
+                </ul>
+
+                @if (f.comments) {
+                  <p class="pre-wrap">{{ f.comments }}</p>
+                }
+              </div>
+            }
+          }
+        </div>
+      }
+    }
+
+    <div class="modal-actions">
+      <button type="button" class="btn-secondary" (click)="close()">Close</button>
+    </div>
+  </div>
+</div>

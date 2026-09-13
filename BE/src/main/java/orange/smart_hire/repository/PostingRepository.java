@@ -1,5 +1,6 @@
 package orange.smart_hire.repository;
 
+import orange.smart_hire.enums.EmploymentType;
 import orange.smart_hire.enums.LocationType;
 import orange.smart_hire.enums.PostingStatus;
 import orange.smart_hire.model.Posting;
@@ -22,9 +23,13 @@ public interface PostingRepository extends JpaRepository<Posting, UUID> {
             "AND (:keyword = '' OR LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
             "AND (:location = '' OR LOWER(p.location) LIKE LOWER(CONCAT('%', :location, '%'))) " +
             "AND (:locationType IS NULL OR p.locationType = :locationType) " +
-            "AND (:company = '' OR LOWER(p.company) LIKE LOWER(CONCAT('%', :company, '%')))")
+            "AND (:company = '' OR LOWER(p.company) LIKE LOWER(CONCAT('%', :company, '%'))) " +
+            "AND (:department = '' OR LOWER(p.department) LIKE LOWER(CONCAT('%', :department, '%'))) " +
+            "AND (:employmentType IS NULL OR p.employmentType = :employmentType)")
     List<Posting> searchPublishedPostings(@Param("keyword") String keyword,
                                           @Param("location") String location,
                                           @Param("locationType") LocationType locationType,
-                                          @Param("company") String company);
+                                          @Param("company") String company,
+                                          @Param("department") String department,
+                                          @Param("employmentType") EmploymentType employmentType);
 }

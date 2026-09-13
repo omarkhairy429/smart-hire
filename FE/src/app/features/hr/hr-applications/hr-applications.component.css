@@ -337,6 +337,8 @@
 /* =====================
    Interview button (table)
    ===================== */
+.interview-actions { display: flex; gap: 0.4rem; }
+
 .schedule-btn {
   padding: 0.4rem 0.7rem;
   border: 1px solid var(--border-color);

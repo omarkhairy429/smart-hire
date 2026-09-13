@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {
+  FeedbackResponse,
+  SubmitFeedbackRequest,
   DossierResponse,
   InterviewResponse,
   ScheduleInterviewRequest,
@@ -63,5 +65,25 @@ export class InterviewService {
   /** Candidate: get all interviews for the currently logged-in candidate. */
   getMyInterviewsAsCandidate(): Observable<InterviewResponse[]> {
     return this.http.get<InterviewResponse[]>(`${this.apiUrl}/candidate/my-interviews`);
+  }
+
+  submitFeedback(interviewId: string, req: SubmitFeedbackRequest): Observable<FeedbackResponse> {
+    return this.http.post<FeedbackResponse>(
+      `${this.apiUrl}/interviewer/interviews/${interviewId}/feedback`,
+      req
+    );
+  }
+
+  getMyFeedback(interviewId: string): Observable<FeedbackResponse> {
+    return this.http.get<FeedbackResponse>(
+      `${this.apiUrl}/interviewer/interviews/${interviewId}/feedback`
+    );
+  }
+
+  /** HR / Super Admin: all feedback left on one interview. */
+  getFeedbackForInterview(interviewId: string): Observable<FeedbackResponse[]> {
+    return this.http.get<FeedbackResponse[]>(
+      `${this.apiUrl}/interviews/${interviewId}/feedback`
+    );
   }
 }
