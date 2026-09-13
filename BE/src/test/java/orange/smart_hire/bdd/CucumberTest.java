@@ -8,8 +8,6 @@ import static io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("features")
-@SelectClasspathResource("features.hr")
-@SelectClasspathResource("features.superAdmin")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "orange.smart_hire.bdd")
 @ConfigurationParameter(
         key = PLUGIN_PROPERTY_NAME,
