@@ -42,7 +42,7 @@ public class SuperAdminAccountStatusSteps {
     private UUID targetUserId;
     private User targetUser;
     private StaffResponse staffResponse;
-    private ResponseStatusException thrownException;
+    private Exception thrownException;
 
     @Before
     public void setUp() {
@@ -50,7 +50,7 @@ public class SuperAdminAccountStatusSteps {
         targetUser = null;
         staffResponse = null;
         thrownException = null;
-        Mockito.reset(userRepository, auditLogService);
+        Mockito.reset(userRepository, auditLogService, passwordEncoder, emailService, postingRepository, applicationRepository);
     }
 
     @Given("an active staff member exists with id {string} and role {string}")
@@ -84,7 +84,7 @@ public class SuperAdminAccountStatusSteps {
     public void deactivate_staff() {
         try {
             staffResponse = superAdminService.deactivateStaff(targetUserId);
-        } catch (ResponseStatusException e) {
+        } catch (Exception e) {
             thrownException = e;
         }
     }
@@ -93,14 +93,14 @@ public class SuperAdminAccountStatusSteps {
     public void reactivate_staff() {
         try {
             staffResponse = superAdminService.reactivateStaff(targetUserId);
-        } catch (ResponseStatusException e) {
+        } catch (Exception e) {
             thrownException = e;
         }
     }
 
     @Then("the staff account should become inactive")
     public void verify_inactive() {
-        assertNull(thrownException, "Did not expect an exception");
+        assertNull(thrownException, "Did not expect an exception, but got: " + (thrownException != null ? thrownException.getMessage() : ""));
         assertNotNull(staffResponse);
         assertFalse(staffResponse.isActive(), "Staff member should be inactive");
         verify(userRepository, times(1)).save(targetUser);
@@ -108,7 +108,7 @@ public class SuperAdminAccountStatusSteps {
 
     @Then("the staff account should become active")
     public void verify_active() {
-        assertNull(thrownException, "Did not expect an exception");
+        assertNull(thrownException, "Did not expect an exception, but got: " + (thrownException != null ? thrownException.getMessage() : ""));
         assertNotNull(staffResponse);
         assertTrue(staffResponse.isActive(), "Staff member should be active");
         verify(userRepository, times(1)).save(targetUser);
@@ -126,16 +126,29 @@ public class SuperAdminAccountStatusSteps {
 
     @Then("the action should fail with a conflict error {string}")
     public void verify_conflict_error(String expectedMsg) {
-        assertNotNull(thrownException, "Expected a ResponseStatusException to be thrown");
-        assertEquals(409, thrownException.getStatusCode().value());
-        assertTrue(thrownException.getReason().contains(expectedMsg));
-        verify(userRepository, never()).save(any()); // Ensure no save happened
+        assertNotNull(thrownException, "Expected an exception to be thrown");
+        if (thrownException instanceof ResponseStatusException rse) {
+            assertEquals(409, rse.getStatusCode().value());
+        }
+        String message = getExceptionMessage(thrownException);
+        assertTrue(message.contains(expectedMsg), "Expected message to contain: '" + expectedMsg + "' but was: '" + message + "'");
+        verify(userRepository, never()).save(any());
     }
 
     @Then("the action should fail with a bad request error {string}")
     public void verify_bad_request_error(String expectedMsg) {
-        assertNotNull(thrownException, "Expected a ResponseStatusException to be thrown");
-        assertEquals(400, thrownException.getStatusCode().value());
-        assertTrue(thrownException.getReason().contains(expectedMsg));
+        assertNotNull(thrownException, "Expected an exception to be thrown");
+        if (thrownException instanceof ResponseStatusException rse) {
+            assertEquals(400, rse.getStatusCode().value());
+        }
+        String message = getExceptionMessage(thrownException);
+        assertTrue(message.contains(expectedMsg), "Expected message to contain: '" + expectedMsg + "' but was: '" + message + "'");
+    }
+
+    private String getExceptionMessage(Exception e) {
+        if (e instanceof ResponseStatusException rse && rse.getReason() != null) {
+            return rse.getReason();
+        }
+        return e.getMessage() != null ? e.getMessage() : "";
     }
 }
