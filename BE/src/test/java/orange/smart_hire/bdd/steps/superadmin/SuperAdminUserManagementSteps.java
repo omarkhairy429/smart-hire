@@ -1,4 +1,4 @@
-package orange.smart_hire.bdd.steps.superAdmin;
+package orange.smart_hire.bdd.steps.superadmin;
 
 
 import io.cucumber.java.Before;
