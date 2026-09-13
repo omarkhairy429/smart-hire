@@ -217,14 +217,13 @@ public class ApplicationService {
 
         StringWriter writer = new StringWriter();
         try (CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.builder()
-                .setHeader("Name", "Email", "Stage", "Status", "AppliedAt", "ResumeUrl")
+                .setHeader("Name", "Email", "Stage", "AppliedAt", "ResumeUrl")
                 .build())) {
             for (ApplicationResponse response : responses) {
                 printer.printRecord(
                         response.getCandidateName(),
                         response.getCandidateEmail(),
                         response.getStage(),
-                        response.getStatus(),
                         response.getCreatedAt(),
                         response.getResumeUrl()
                 );
