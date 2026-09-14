@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PostingService } from '../../../core/services/postings.service';
 import { ApplicationService } from '../../../core/services/application.service';
@@ -56,31 +56,119 @@ export class HrApplicationsComponent implements OnInit {
   isLoadingNotes = false;
   isSavingNote = false;
   notesError = '';
+  selectedApplicationId: string | null = null;
 
   constructor(
     private postingService: PostingService,
     private applicationService: ApplicationService,
     private notesService: CandidateNotesService,
     private cdr: ChangeDetectorRef,
-  ) {}
+    private route: ActivatedRoute,
+  ) { }
 
   ngOnInit() {
-    this.loadPostings();
+
+    this.route.queryParams.subscribe(params => {
+
+      const applicationId = params['applicationId'];
+
+      const openFeedback =
+        params['openFeedback'] === 'true';
+
+      this.loadPostings(
+        applicationId,
+        openFeedback
+      );
+
+    });
+
   }
 
-loadPostings() {
+  loadPostings(
+    applicationId?: string,
+    openFeedback: boolean = false
+  ) {
+
     this.postingService.getPostingsByCompany().subscribe({
+
       next: (data) => {
+
         this.postings = data;
         this.isLoadingPostings = false;
+
+        if (applicationId) {
+
+          this.openApplicationFromNotification(
+            applicationId,
+            openFeedback
+          );
+
+        }
+
         this.cdr.markForCheck();
       },
+
       error: () => {
-        this.errorMessage = 'Could not load postings.';
+
+        this.errorMessage =
+          'Could not load postings.';
+
         this.isLoadingPostings = false;
+
         this.cdr.markForCheck();
       },
+
     });
+
+  }
+
+  private openApplicationFromNotification(
+    applicationId: string,
+    openFeedback: boolean = false
+  ): void {
+
+    this.applicationService
+      .getApplicationById(applicationId)
+      .subscribe({
+
+        next: (app) => {
+
+          const posting = this.postings.find(
+            posting => posting.id === app.postingId
+          );
+
+          if (!posting) {
+
+            console.error(
+              'Posting not found for application:',
+              applicationId
+            );
+
+            return;
+          }
+
+          this.selectedPostingId = posting.id;
+
+          this.selectedPostingTitle = posting.title;
+
+          this.loadApplications(
+            applicationId,
+            openFeedback
+          );
+
+        },
+
+        error: (err) => {
+
+          console.error(
+            'Failed to open application from notification:',
+            err
+          );
+
+        }
+
+      });
+
   }
 
   onPostingSelect() {
@@ -96,30 +184,72 @@ loadPostings() {
     this.loadApplications();
   }
 
-  loadApplications() {
-    if (!this.selectedPostingId) return;
+  loadApplications(
+    applicationId?: string,
+    openFeedbackModal: boolean = false
+  ) {
+
+    if (!this.selectedPostingId) {
+      return;
+    }
 
     this.isLoadingApps = true;
     this.errorMessage = '';
 
     this.applicationService
-      .getApplicationsForPosting(this.selectedPostingId, {
-        stage: this.stageFilter,
-        sort: this.sortBy,
-        dir: this.sortDir,
-      })
+      .getApplicationsForPosting(
+        this.selectedPostingId,
+        {
+          stage: this.stageFilter,
+          sort: this.sortBy,
+          dir: this.sortDir,
+        }
+      )
       .subscribe({
+
         next: (apps) => {
+
           this.applications = apps;
+
           this.isLoadingApps = false;
+
+          if (applicationId) {
+
+            const app = apps.find(
+              a => a.id === applicationId
+            );
+
+            if (app) {
+
+              this.selectedApplicationId = app.id;
+
+              if (openFeedbackModal) {
+
+                this.openFeedback(app);
+
+              }
+
+            }
+
+          }
+
           this.cdr.markForCheck();
+
         },
+
         error: () => {
-          this.errorMessage = 'Could not load applications for this posting.';
+
+          this.errorMessage =
+            'Could not load applications for this posting.';
+
           this.isLoadingApps = false;
+
           this.cdr.markForCheck();
+
         },
+
       });
+
   }
 
   onFilterChange() {

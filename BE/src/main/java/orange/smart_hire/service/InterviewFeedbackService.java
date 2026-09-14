@@ -64,30 +64,35 @@ public class InterviewFeedbackService {
         feedback.setComments(request.getComments());
 
         InterviewFeedback saved = feedbackRepository.save(feedback);
-        notifyHiringManager(interviewId, interviewerId, saved.getId());
+        notifyHiringManager(interviewId, interviewerId);
 
         return mapToResponse(saved);
     }
 
-    private void notifyHiringManager(UUID interviewId, UUID interviewerId, UUID feedbackId) {
-        interviewRepository.findById(interviewId)
-                .flatMap(interview -> applicationRepository.findById(interview.getApplicationId()))
-                .map(Application::getPostingId)
-                .flatMap(postingRepository::findById)
-                .map(Posting::getHrManager)
-                .ifPresent(hrManager -> {
-                    String interviewerName = userRepository.findById(interviewerId)
-                            .map(u -> u.getFirstName() + " " + u.getLastName())
-                            .orElse("An interviewer");
+    private void notifyHiringManager(UUID interviewId, UUID interviewerId) {
+    interviewRepository.findById(interviewId)
+            .flatMap(interview ->
+                    applicationRepository.findById(interview.getApplicationId())
+            )
+            .ifPresent(application -> {
 
-                    notificationService.sendNotification(
-                            hrManager.getId(),
-                            NotificationType.FEEDBACK_SUBMITTED,
-                            "Interview Feedback Submitted",
-                            interviewerName + " submitted feedback for an interview.",
-                            feedbackId
-                    );
-                });
+                postingRepository.findById(application.getPostingId())
+                        .map(Posting::getHrManager)
+                        .ifPresent(hrManager -> {
+
+                            String interviewerName = userRepository.findById(interviewerId)
+                                    .map(u -> u.getFirstName() + " " + u.getLastName())
+                                    .orElse("An interviewer");
+
+                            notificationService.sendNotification(
+                                    hrManager.getId(),
+                                    NotificationType.FEEDBACK_SUBMITTED,
+                                    "Interview Feedback Submitted",
+                                    interviewerName + " submitted feedback for an interview.",
+                                    application.getId()
+                            );
+                        });
+            });
     }
 
     @Transactional(readOnly = true)
@@ -96,8 +101,7 @@ public class InterviewFeedbackService {
 
         return feedbackRepository.findByInterviewIdAndInterviewerId(interviewId, interviewerId)
                 .map(this::mapToResponse)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "No feedback submitted for this interview yet"));
+                .orElse(null);
     }
 
     @Transactional(readOnly = true)

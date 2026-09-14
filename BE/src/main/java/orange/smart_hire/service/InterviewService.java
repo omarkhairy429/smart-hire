@@ -13,7 +13,6 @@ import orange.smart_hire.exception.InvalidOperationException;
 import orange.smart_hire.exception.ResourceNotFoundException;
 import orange.smart_hire.model.Application;
 import orange.smart_hire.model.Interview;
-import orange.smart_hire.model.Posting;
 import orange.smart_hire.model.User;
 import orange.smart_hire.repository.ApplicationRepository;
 import orange.smart_hire.repository.InterviewRepository;
@@ -60,20 +59,21 @@ public class InterviewService {
             throw new InvalidOperationException("Selected user is not an interviewer");
         }
 
-        if (request.getFormat() != InterviewFormat.IN_PERSON
+        if (request.getFormat() == InterviewFormat.VIDEO
                 && (request.getMeetingLink() == null || request.getMeetingLink().isBlank())) {
+
             throw new InvalidOperationException(
-                    "Meeting link is required for VIDEO and PHONE interviews");
+                    "Meeting link is required for VIDEO interviews");
         }
 
-        Interview interview = new Interview();
-        interview.setApplicationId(application.getId());
-        interview.setInterviewerId(interviewer.getId());
-        interview.setScheduledAt(request.getScheduledAt());
-        interview.setFormat(request.getFormat());
-        interview.setLocation(request.getLocation());
-        interview.setMeetingLink(request.getMeetingLink());
+        if (request.getFormat() == InterviewFormat.IN_PERSON
+                && (request.getLocation() == null || request.getLocation().isBlank())) {
 
+            throw new InvalidOperationException(
+                    "Location is required for IN_PERSON interviews");
+        }
+
+        Interview interview = getInterview(request, application, interviewer);
         Interview saved = interviewRepository.save(interview);
 
         notificationService.sendNotification(
@@ -100,6 +100,29 @@ public class InterviewService {
 
         return mapToResponse(saved);
     }
+
+    private static Interview getInterview(ScheduleInterviewRequest request, Application application, User interviewer) {
+        Interview interview = new Interview();
+
+        interview.setApplicationId(application.getId());
+        interview.setInterviewerId(interviewer.getId());
+        interview.setScheduledAt(request.getScheduledAt());
+        interview.setFormat(request.getFormat());
+
+        interview.setLocation(
+                request.getFormat() == InterviewFormat.IN_PERSON
+                        ? request.getLocation().trim()
+                        : null
+        );
+
+        interview.setMeetingLink(
+                request.getFormat() == InterviewFormat.VIDEO
+                        ? request.getMeetingLink().trim()
+                        : null
+        );
+        return interview;
+    }
+
 
     public void cancel(UUID interviewId) {
         Interview interview = interviewRepository.findById(interviewId)

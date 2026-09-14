@@ -34,6 +34,12 @@ export class ApplicationService {
     );
   }
 
+  getApplicationById(id: string): Observable<ApplicationResponse> {
+    return this.http.get<ApplicationResponse>(
+      `${this.apiUrl}/${id}`
+    );
+  }
+
 
   getApplicationsForPosting(
     postingId: string,
@@ -76,12 +82,12 @@ export class ApplicationService {
       { stage }
     )
   }
-   uploadResume(file: File): Observable<string> {
-     const formData = new FormData();
-     formData.append('file', file);
+  uploadResume(file: File): Observable<string> {
+    const formData = new FormData();
+    formData.append('file', file);
 
-     return this.http
-       .post<{ resumeUrl: string }>(`${this.apiUrl}/upload-resume`, formData)
-       .pipe(map((res) => res.resumeUrl));
-   }
+    return this.http
+      .post<{ resumeUrl: string }>(`${this.apiUrl}/upload-resume`, formData)
+      .pipe(map((res) => res.resumeUrl));
+  }
 }

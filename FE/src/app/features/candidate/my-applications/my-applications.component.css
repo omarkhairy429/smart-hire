@@ -85,6 +85,17 @@
   transform: translateY(-2px);
 }
 
+/* Highlighted application from notification */
+.selected-application {
+  border: 2px solid var(--primary-blue);
+  box-shadow: 0 0 0 4px var(--accent-blue), var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.selected-application:hover {
+  transform: translateY(-3px);
+}
+
 .app-card-top {
   display: flex;
   justify-content: space-between;
@@ -100,9 +111,20 @@
   letter-spacing: 0.05em;
 }
 
-.status-accepted { background: #d1fae5; color: #065f46; }
-.status-rejected { background: #fee2e2; color: #991b1b; }
-.status-pending  { background: #fef9c3; color: #854d0e; }
+.status-accepted {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status-pending {
+  background: #fef9c3;
+  color: #854d0e;
+}
 
 .app-date {
   font-size: 0.8rem;
@@ -131,7 +153,9 @@
   transition: color 0.2s;
 }
 
-.posting-link:hover { color: var(--primary-hover); }
+.posting-link:hover {
+  color: var(--primary-hover);
+}
 
 .app-meta {
   display: flex;
@@ -161,7 +185,9 @@
   transition: background 0.2s;
 }
 
-.resume-chip:hover { background: #dcfce7; }
+.resume-chip:hover {
+  background: #dcfce7;
+}
 
 /* Interview Panel */
 .interview-panel {

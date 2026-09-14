@@ -229,76 +229,91 @@ export class AppComponent implements OnInit, OnDestroy {
 
       case NotificationType.APPLICATION_SUBMITTED:
 
-        this.router.navigate([
-          '/hr/applications'
-        ]);
+        if (notification.relatedEntityId) {
+
+          this.router.navigate(
+            ['/hr/applications'],
+            {
+              queryParams: {
+                applicationId: notification.relatedEntityId
+              }
+            }
+          );
+
+        } else {
+
+          this.router.navigate(['/hr/applications']);
+
+        }
 
         break;
 
 
       case NotificationType.APPLICATION_STAGE_CHANGED:
 
-        this.router.navigate([
-          '/my-applications'
-        ]);
+        if (this.userRole === 'CANDIDATE') {
+          this.router.navigate(
+            ['/my-applications'],
+            {
+              queryParams: {
+                applicationId: notification.relatedEntityId
+              }
+            }
+          );
+        }
 
         break;
 
 
       case NotificationType.INTERVIEW_SCHEDULED:
 
-        if (this.userRole === 'INTERVIEWER') {
+        if (
+          this.userRole === 'INTERVIEWER' &&
+          notification.relatedEntityId
+        ) {
 
           this.router.navigate([
-            '/interviewer/my-interviews'
-          ]);
-
-        } else if (this.userRole === 'CANDIDATE') {
-
-          this.router.navigate([
-            '/my-applications'
-          ]);
-        }
-
-        break;
-
-
-      case NotificationType.INTERVIEW_UPDATED:
-
-        if (this.userRole === 'INTERVIEWER') {
-
-          this.router.navigate([
-            '/interviewer/my-interviews'
-          ]);
-
-        } else if (this.userRole === 'CANDIDATE') {
-
-          this.router.navigate([
-            '/my-applications'
-          ]);
-        }
-
-        break;
-
-
-      case NotificationType.JOB_POSTING_CREATED:
-
-        if (notification.relatedEntityId) {
-
-          this.router.navigate([
-            '/jobs',
+            '/interviewer/interviews',
             notification.relatedEntityId
           ]);
 
-        } else {
+        } else if (this.userRole === 'INTERVIEWER') {
 
           this.router.navigate([
-            '/jobs'
+            '/interviewer/my-interviews'
+          ]);
+
+        } else if (this.userRole === 'CANDIDATE') {
+
+          this.router.navigate([
+            '/my-applications'
           ]);
         }
 
         break;
 
+
+      case NotificationType.FEEDBACK_SUBMITTED:
+
+        if (notification.relatedEntityId) {
+
+          this.router.navigate(
+            ['/hr/applications'],
+            {
+              queryParams: {
+                applicationId: notification.relatedEntityId,
+                openFeedback: true
+              }
+            }
+          );
+
+        } else {
+
+          this.router.navigate(['/hr/applications']);
+
+        }
+
+        break;
 
       case NotificationType.SYSTEM:
 

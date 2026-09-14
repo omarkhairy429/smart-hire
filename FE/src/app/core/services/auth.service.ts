@@ -35,7 +35,7 @@ export interface CurrentUser {
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) { }
 
   login(credentials: LoginCredentials): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
@@ -55,8 +55,27 @@ export class AuthService {
     );
   }
 
-  register(userData: RegisterData): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, userData);
+  register(userData: RegisterData): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(
+      `${this.apiUrl}/register`,
+      userData
+    ).pipe(
+      tap((res) => {
+        localStorage.setItem('token', res.token);
+
+        const decoded = this.decodeToken(res.token);
+
+        const user: CurrentUser = {
+          token: res.token,
+          role: res.role,
+          email: res.email,
+          firstName: res.firstName,
+          sub: decoded?.sub,
+        };
+
+        localStorage.setItem('user', JSON.stringify(user));
+      })
+    );
   }
 
   forgotPassword(email: string): Observable<string> {

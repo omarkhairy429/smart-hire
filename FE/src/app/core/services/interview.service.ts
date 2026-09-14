@@ -33,6 +33,23 @@ export class InterviewService {
     );
   }
 
+  updateInterview(
+    interviewId: string,
+    data: {
+      interviewerId: string;
+      scheduledAt: string;
+      format: string;
+      location?: string;
+      meetingLink?: string;
+    }
+  ): Observable<InterviewResponse> {
+
+    return this.http.put<InterviewResponse>(
+      `/api/interviews/${interviewId}`,
+      data
+    );
+  }
+
   getInterviewsByApplication(applicationId: string): Observable<InterviewResponse[]> {
     return this.http.get<InterviewResponse[]>(
       `${this.apiUrl}/applications/${applicationId}/interviews`
@@ -74,7 +91,7 @@ export class InterviewService {
     );
   }
 
-  getMyFeedback(interviewId: string): Observable<FeedbackResponse> {
+  getMyFeedback(interviewId: string): Observable<FeedbackResponse | null> {
     return this.http.get<FeedbackResponse>(
       `${this.apiUrl}/interviewer/interviews/${interviewId}/feedback`
     );

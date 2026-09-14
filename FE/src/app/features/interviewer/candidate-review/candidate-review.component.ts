@@ -45,7 +45,7 @@ export class CandidateReviewComponent implements OnInit {
     private route: ActivatedRoute,
     private interviewService: InterviewService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -74,19 +74,30 @@ export class CandidateReviewComponent implements OnInit {
     });
   }
 
-  /** A 404 here just means no feedback has been left yet. */
   private loadFeedback(interviewId: string) {
     this.interviewService.getMyFeedback(interviewId).subscribe({
       next: (feedback) => {
-        this.existingFeedback = feedback;
+        this.existingFeedback = feedback ?? undefined;
+
+        if (!feedback) {
+          this.rating = null;
+          this.technicalScore = null;
+          this.communicationScore = null;
+          this.recommendation = '';
+          this.comments = '';
+          this.cdr.markForCheck();
+          return;
+        }
+
         this.rating = feedback.rating;
         this.technicalScore = feedback.technicalScore ?? null;
         this.communicationScore = feedback.communicationScore ?? null;
         this.recommendation = feedback.recommendation;
         this.comments = feedback.comments ?? '';
+
         this.cdr.markForCheck();
       },
-      error: () => {}
+      error: () => { }
     });
   }
 

@@ -25,10 +25,11 @@ export class HrScheduleInterviewComponent implements OnInit {
   format: string = InterviewFormat.VIDEO;
   location = '';
   meetingLink = '';
+  readonly InterviewFormat = InterviewFormat;
 
   readonly formats = [
-    { value: InterviewFormat.VIDEO,     label: '📹 Video Call' },
-    { value: InterviewFormat.PHONE,     label: '📞 Phone Call' },
+    { value: InterviewFormat.VIDEO, label: '📹 Video Call' },
+    { value: InterviewFormat.PHONE, label: '📞 Phone Call' },
     { value: InterviewFormat.IN_PERSON, label: '🏢 In Person' },
   ];
 
@@ -39,7 +40,7 @@ export class HrScheduleInterviewComponent implements OnInit {
   constructor(
     private interviewService: InterviewService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.interviewService.getInterviewers().subscribe({
@@ -62,13 +63,28 @@ export class HrScheduleInterviewComponent implements OnInit {
 
   submit() {
     if (!this.interviewerId || !this.scheduledAt || !this.format) {
-      this.errorMessage = 'Please fill in the interviewer, date, and interview format.';
+      this.errorMessage =
+        'Please fill in the interviewer, date, and interview format.';
       return;
     }
 
-    // Meeting link is required for VIDEO and PHONE
-    if (!this.isInPerson && !this.meetingLink.trim()) {
-      this.errorMessage = 'Please provide a meeting link for video or phone interviews.';
+    // VIDEO → meeting link is required
+    if (
+      this.format === InterviewFormat.VIDEO &&
+      !this.meetingLink.trim()
+    ) {
+      this.errorMessage =
+        'Please provide a meeting link for video interviews.';
+      return;
+    }
+
+    // IN_PERSON → location is required
+    if (
+      this.format === InterviewFormat.IN_PERSON &&
+      !this.location.trim()
+    ) {
+      this.errorMessage =
+        'Please provide a location for in-person interviews.';
       return;
     }
 
@@ -79,16 +95,29 @@ export class HrScheduleInterviewComponent implements OnInit {
       interviewerId: this.interviewerId,
       scheduledAt: this.scheduledAt,
       format: this.format,
-      location: this.location.trim() || undefined,
-      meetingLink: this.isInPerson ? undefined : this.meetingLink.trim(),
+
+      location:
+        this.format === InterviewFormat.IN_PERSON
+          ? this.location.trim()
+          : undefined,
+
+      meetingLink:
+        this.format === InterviewFormat.VIDEO
+          ? this.meetingLink.trim()
+          : undefined,
+
     }).subscribe({
       next: (interview) => {
         this.isSaving = false;
         this.scheduled.emit(interview);
         this.closed.emit();
       },
+
       error: (err) => {
-        this.errorMessage = err?.error?.message ?? 'Could not schedule the interview.';
+        this.errorMessage =
+          err?.error?.message ??
+          'Could not schedule the interview.';
+
         this.isSaving = false;
         this.cdr.markForCheck();
       }
