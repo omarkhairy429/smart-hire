@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
 
+    private final String fromEmail;
     @Autowired
     private JavaMailSender mailSender;
-    private final String fromEmail;
 
     public EmailService(
             JavaMailSender mailSender,
@@ -19,7 +19,6 @@ public class EmailService {
         this.mailSender = mailSender;
         this.fromEmail = fromEmail;
     }
-
 
 
     public void sendEmail(String to, String subject, String body) {

@@ -11,7 +11,7 @@ import { PostingResponse } from '../../../core/models/api.models';
   standalone: true,
   imports: [CommonModule, RouterLink, ReactiveFormsModule],
   templateUrl: './apply.component.html',
-  styleUrls: ['./apply.component.css']
+  styleUrls: ['./apply.component.css'],
 })
 export class ApplyComponent implements OnInit {
   job: PostingResponse | null = null;
@@ -31,11 +31,11 @@ export class ApplyComponent implements OnInit {
     private fb: FormBuilder,
     private postingService: PostingService,
     private applicationService: ApplicationService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {
     this.applyForm = this.fb.group({
       coverLetter: [''],
-      experienceSummary: ['']
+      experienceSummary: [''],
     });
   }
 
@@ -52,7 +52,7 @@ export class ApplyComponent implements OnInit {
           this.errorMessage = 'Could not load job details.';
           this.isLoadingJob = false;
           this.cdr.markForCheck();
-        }
+        },
       });
     }
   }
@@ -89,31 +89,34 @@ export class ApplyComponent implements OnInit {
         this.isUploadingResume = false;
         const { coverLetter, experienceSummary } = this.applyForm.value;
 
-        this.applicationService.applyToPosting({
-          postingId: this.postingId,
-          coverLetter,
-          experienceSummary,
-          resumeUrl
-        }).subscribe({
-          next: () => {
-            this.successMessage = 'Application submitted successfully! Redirecting...';
-            this.isSubmitting = false;
-            this.cdr.markForCheck();
-            setTimeout(() => this.router.navigate(['/my-applications']), 1800);
-          },
-          error: (err) => {
-            this.errorMessage = err?.error?.message ?? 'Failed to submit application. Please try again.';
-            this.isSubmitting = false;
-            this.cdr.markForCheck();
-          }
-        });
+        this.applicationService
+          .applyToPosting({
+            postingId: this.postingId,
+            coverLetter,
+            experienceSummary,
+            resumeUrl,
+          })
+          .subscribe({
+            next: () => {
+              this.successMessage = 'Application submitted successfully! Redirecting...';
+              this.isSubmitting = false;
+              this.cdr.markForCheck();
+              setTimeout(() => this.router.navigate(['/my-applications']), 1800);
+            },
+            error: (err) => {
+              this.errorMessage =
+                err?.error?.message ?? 'Failed to submit application. Please try again.';
+              this.isSubmitting = false;
+              this.cdr.markForCheck();
+            },
+          });
       },
       error: (err) => {
         this.errorMessage = err?.error?.message ?? 'Failed to upload resume. Please try again.';
         this.isSubmitting = false;
         this.isUploadingResume = false;
         this.cdr.markForCheck();
-      }
+      },
     });
   }
 }

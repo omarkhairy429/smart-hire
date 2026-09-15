@@ -5,15 +5,10 @@ import orange.smart_hire.dto.SubmitFeedbackRequest;
 import orange.smart_hire.enums.NotificationType;
 import orange.smart_hire.exception.ForbiddenException;
 import orange.smart_hire.exception.ResourceNotFoundException;
-import orange.smart_hire.model.Application;
 import orange.smart_hire.model.Interview;
 import orange.smart_hire.model.InterviewFeedback;
 import orange.smart_hire.model.Posting;
-import orange.smart_hire.repository.ApplicationRepository;
-import orange.smart_hire.repository.InterviewFeedbackRepository;
-import orange.smart_hire.repository.InterviewRepository;
-import orange.smart_hire.repository.PostingRepository;
-import orange.smart_hire.repository.UserRepository;
+import orange.smart_hire.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,29 +59,34 @@ public class InterviewFeedbackService {
         feedback.setComments(request.getComments());
 
         InterviewFeedback saved = feedbackRepository.save(feedback);
-        notifyHiringManager(interviewId, interviewerId, saved.getId());
+        notifyHiringManager(interviewId, interviewerId);
 
         return mapToResponse(saved);
     }
 
-    private void notifyHiringManager(UUID interviewId, UUID interviewerId, UUID feedbackId) {
+    private void notifyHiringManager(UUID interviewId, UUID interviewerId) {
         interviewRepository.findById(interviewId)
-                .flatMap(interview -> applicationRepository.findById(interview.getApplicationId()))
-                .map(Application::getPostingId)
-                .flatMap(postingRepository::findById)
-                .map(Posting::getHrManager)
-                .ifPresent(hrManager -> {
-                    String interviewerName = userRepository.findById(interviewerId)
-                            .map(u -> u.getFirstName() + " " + u.getLastName())
-                            .orElse("An interviewer");
+                .flatMap(interview ->
+                        applicationRepository.findById(interview.getApplicationId())
+                )
+                .ifPresent(application -> {
 
-                    notificationService.sendNotification(
-                            hrManager.getId(),
-                            NotificationType.FEEDBACK_SUBMITTED,
-                            "Interview Feedback Submitted",
-                            interviewerName + " submitted feedback for an interview.",
-                            feedbackId
-                    );
+                    postingRepository.findById(application.getPostingId())
+                            .map(Posting::getHrManager)
+                            .ifPresent(hrManager -> {
+
+                                String interviewerName = userRepository.findById(interviewerId)
+                                        .map(u -> u.getFirstName() + " " + u.getLastName())
+                                        .orElse("An interviewer");
+
+                                notificationService.sendNotification(
+                                        hrManager.getId(),
+                                        NotificationType.FEEDBACK_SUBMITTED,
+                                        "Interview Feedback Submitted",
+                                        interviewerName + " submitted feedback for an interview.",
+                                        application.getId()
+                                );
+                            });
                 });
     }
 
@@ -96,8 +96,7 @@ public class InterviewFeedbackService {
 
         return feedbackRepository.findByInterviewIdAndInterviewerId(interviewId, interviewerId)
                 .map(this::mapToResponse)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "No feedback submitted for this interview yet"));
+                .orElse(null);
     }
 
     @Transactional(readOnly = true)

@@ -1,6 +1,13 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { RouterLink, Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 
 function passwordsMatch(group: AbstractControl): ValidationErrors | null {
@@ -14,7 +21,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   standalone: true,
   imports: [RouterLink, ReactiveFormsModule],
   templateUrl: './reset-password.html',
-  styleUrls: ['./reset-password.css']
+  styleUrls: ['./reset-password.css'],
 })
 export class ResetPasswordComponent implements OnInit {
   resetForm: FormGroup;
@@ -28,14 +35,14 @@ export class ResetPasswordComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
   ) {
     this.resetForm = this.fb.group(
       {
         newPassword: ['', [Validators.required, Validators.minLength(8)]],
-        confirmPassword: ['', Validators.required]
+        confirmPassword: ['', Validators.required],
       },
-      { validators: passwordsMatch }
+      { validators: passwordsMatch },
     );
   }
 
@@ -57,7 +64,8 @@ export class ResetPasswordComponent implements OnInit {
     this.authService.resetPassword(this.token, newPassword).subscribe({
       next: () => {
         this.loading = false;
-        this.successMessage = 'Your password has been updated. You can now sign in with your new password.';
+        this.successMessage =
+          'Your password has been updated. You can now sign in with your new password.';
         this.resetForm.reset();
         setTimeout(() => this.router.navigate(['/login']), 3000);
       },
@@ -73,7 +81,7 @@ export class ResetPasswordComponent implements OnInit {
         } else {
           this.errorMessage = 'Something went wrong. Please try again.';
         }
-      }
+      },
     });
   }
 }

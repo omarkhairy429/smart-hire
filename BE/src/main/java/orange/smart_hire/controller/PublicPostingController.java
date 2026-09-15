@@ -5,6 +5,7 @@ import orange.smart_hire.enums.EmploymentType;
 import orange.smart_hire.enums.LocationType;
 import orange.smart_hire.service.PostingService;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController

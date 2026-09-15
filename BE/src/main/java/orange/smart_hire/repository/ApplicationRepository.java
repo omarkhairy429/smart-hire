@@ -1,8 +1,8 @@
 package orange.smart_hire.repository;
 
+import orange.smart_hire.enums.ApplicationStage;
 import orange.smart_hire.model.Application;
 import org.springframework.data.jpa.repository.JpaRepository;
-import orange.smart_hire.enums.ApplicationStage;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -17,7 +17,9 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     );
 
     List<Application> findByCandidateId(UUID candidateId);
+
     List<Application> findByPostingId(UUID postingId);
+
     @Query("SELECT a FROM Application a WHERE a.postingId = :postingId " +
             "AND (:stage IS NULL OR a.stage = :stage)")
     List<Application> findByPostingIdAndOptionalStage(@Param("postingId") UUID postingId,

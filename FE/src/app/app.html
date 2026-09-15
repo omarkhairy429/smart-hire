@@ -1,137 +1,121 @@
 <nav class="main-nav">
   <div class="nav-brand"><a routerLink="/">SmartHire</a></div>
 
-
-
   <div class="nav-links">
     <a routerLink="/jobs">Browse Jobs</a>
 
     @if (isLoggedIn) {
-    <!-- SUPER_ADMIN exclusive -->
-    @if (userRole === 'SUPER_ADMIN') {
-    <a routerLink="/admin" class="nav-role-link">⚙️ Admin Panel</a>
-    }
+      <!-- SUPER_ADMIN exclusive -->
+      @if (userRole === 'SUPER_ADMIN') {
+        <a routerLink="/admin" class="nav-role-link">⚙️ Admin Panel</a>
+      }
 
-    <!-- HR_MANAGER and SUPER_ADMIN -->
-    @if (userRole === 'HR_MANAGER' || userRole === 'SUPER_ADMIN') {
-    <a routerLink="/hr/postings" class="nav-role-link">📋 My Postings</a>
-    <a routerLink="/hr/applications" class="nav-role-link">📂 Applications</a>
-    }
+      <!-- HR_MANAGER and SUPER_ADMIN -->
+      @if (userRole === 'HR_MANAGER' || userRole === 'SUPER_ADMIN') {
+        <a routerLink="/hr/postings" class="nav-role-link">📋 My Postings</a>
+        <a routerLink="/hr/applications" class="nav-role-link">📂 Applications</a>
+      }
 
-    <!-- CANDIDATE only -->
-    @if (userRole === 'CANDIDATE') {
-    <a routerLink="/my-applications" class="nav-role-link">📄 My Applications</a>
-    }
+      <!-- CANDIDATE only -->
+      @if (userRole === 'CANDIDATE') {
+        <a routerLink="/my-applications" class="nav-role-link">📄 My Applications</a>
+      }
 
-    <!-- INTERVIEWER only -->
-    @if (userRole === 'INTERVIEWER') {
-    <a routerLink="/interviewer/my-interviews" class="nav-role-link">🗓️ My Interviews</a>
-    }
+      <!-- INTERVIEWER only -->
+      @if (userRole === 'INTERVIEWER') {
+        <a routerLink="/interviewer/my-interviews" class="nav-role-link">🗓️ My Interviews</a>
+      }
 
-    <div class="notification-container">
-
-      <button class="notification-btn" type="button" (click)="toggleNotifications()" aria-label="Notifications">
-        <i class="fa-regular fa-bell"></i>
-
-        @if (unreadCount > 0) {
-        <span class="notification-badge">
-          {{ unreadCount > 99 ? '99+' : unreadCount }}
-        </span>
-        }
-      </button>
-
-
-      @if (showNotifications) {
-
-      <div class="notification-dropdown">
-
-        <div class="notification-header">
-
-          <h3>Notifications</h3>
+      <div class="notification-container">
+        <button
+          class="notification-btn"
+          type="button"
+          (click)="toggleNotifications()"
+          aria-label="Notifications"
+        >
+          <i class="fa-regular fa-bell"></i>
 
           @if (unreadCount > 0) {
-
-          <button type="button" class="mark-all-btn" (click)="markAllAsRead()">
-            Mark all as read
-          </button>
-
+            <span class="notification-badge">
+              {{ unreadCount > 99 ? '99+' : unreadCount }}
+            </span>
           }
+        </button>
 
-        </div>
+        @if (showNotifications) {
+          <div class="notification-dropdown">
+            <div class="notification-header">
+              <h3>Notifications</h3>
 
-
-        <div class="notification-list">
-
-          @if (notifications.length === 0) {
-
-          <div class="notification-empty">
-            No notifications
-          </div>
-
-          }
-
-
-          @for (
-          notification of notifications;
-          track notification.id
-          ) {
-
-          <div class="notification-item" [class.unread]="!notification.read" (click)="openNotification(notification)">
-
-            <div class="notification-content">
-
-              <h4>
-                {{ notification.title }}
-              </h4>
-
-              <p>
-                {{ notification.message }}
-              </p>
-
-              <span class="notification-time">
-                {{ getNotificationTime(notification.createdAt) }}
-              </span>
-
+              @if (unreadCount > 0) {
+                <button type="button" class="mark-all-btn" (click)="markAllAsRead()">
+                  Mark all as read
+                </button>
+              }
             </div>
 
-            @if (!notification.read) {
-            <span class="unread-dot"></span>
-            }
+            <div class="notification-list">
+              @if (notifications.length === 0) {
+                <div class="notification-empty">No notifications</div>
+              }
 
+              @for (notification of notifications; track notification.id) {
+                <div
+                  class="notification-item"
+                  [class.unread]="!notification.read"
+                  (click)="openNotification(notification)"
+                >
+                  <div class="notification-content">
+                    <h4>
+                      {{ notification.title }}
+                    </h4>
+
+                    <p>
+                      {{ notification.message }}
+                    </p>
+
+                    <span class="notification-time">
+                      {{ getNotificationTime(notification.createdAt) }}
+                    </span>
+                  </div>
+
+                  @if (!notification.read) {
+                    <span class="unread-dot"></span>
+                  }
+                </div>
+              }
+            </div>
           </div>
-
-          }
-
-        </div>
-
+        }
       </div>
 
-      }
+      <div class="user-menu-container">
+        <button
+          class="user-menu-btn"
+          type="button"
+          (click)="toggleUserMenu()"
+          aria-label="User menu"
+        >
+          <span class="user-avatar">{{ firstName?.charAt(0) }}</span>
+          <span class="user-menu-name">{{ firstName }}</span>
+          <i class="user-menu-chevron" [class.open]="showUserMenu">▾</i>
+        </button>
 
-    </div>
-
-    <div class="user-menu-container">
-      <button class="user-menu-btn" type="button" (click)="toggleUserMenu()" aria-label="User menu">
-        <span class="user-avatar">{{ firstName?.charAt(0) }}</span>
-        <span class="user-menu-name">{{ firstName }}</span>
-        <i class="user-menu-chevron" [class.open]="showUserMenu">▾</i>
-      </button>
-
-      @if (showUserMenu) {
-        <div class="user-menu-dropdown">
-          <a routerLink="/forgot-password" class="user-menu-item" (click)="showUserMenu = false">
-            🔑 Change Password
-          </a>
-          <div class="user-menu-divider"></div>
-          <button type="button" class="user-menu-item user-menu-logout" (click)="logout()">
-            🚪 Logout
-          </button>
-        </div>
-      }
-    </div>
+        @if (showUserMenu) {
+          <div class="user-menu-dropdown">
+            <a routerLink="/forgot-password" class="user-menu-item" (click)="showUserMenu = false">
+              🔑 Change Password
+            </a>
+            <div class="user-menu-divider"></div>
+            <button type="button" class="user-menu-item user-menu-logout" (click)="logout()">
+              🚪 Logout
+            </button>
+          </div>
+        }
+      </div>
     } @else {
-    <a routerLink="/login">Log In</a>
-    <a routerLink="/register" class="btn-primary">Sign Up</a>
+      <a routerLink="/login">Log In</a>
+      <a routerLink="/register" class="btn-primary">Sign Up</a>
     }
   </div>
 </nav>

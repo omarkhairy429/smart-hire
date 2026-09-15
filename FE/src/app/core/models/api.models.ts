@@ -168,7 +168,7 @@ export interface PlatformStatsResponse {
 export enum FeedbackRecommendation {
   PROCEED = 'PROCEED',
   HOLD = 'HOLD',
-  REJECT = 'REJECT'
+  REJECT = 'REJECT',
 }
 
 export interface SubmitFeedbackRequest {

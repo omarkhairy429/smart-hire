@@ -1,13 +1,14 @@
 <div class="modal-backdrop" (click)="close()">
   <div class="modal-card" (click)="$event.stopPropagation()">
-
     <div class="modal-header">
       <h3>Interview Feedback</h3>
       <button type="button" class="btn-close" (click)="close()">&times;</button>
     </div>
 
     @if (candidateName) {
-      <p class="modal-subtitle">Candidate: <strong>{{ candidateName }}</strong></p>
+      <p class="modal-subtitle">
+        Candidate: <strong>{{ candidateName }}</strong>
+      </p>
     }
 
     @if (isLoading) {
@@ -37,12 +38,18 @@
                 </div>
 
                 <ul class="scores">
-                  <li>Overall <strong>{{ f.rating }}/5</strong></li>
+                  <li>
+                    Overall <strong>{{ f.rating }}/5</strong>
+                  </li>
                   @if (f.technicalScore) {
-                    <li>Technical <strong>{{ f.technicalScore }}/5</strong></li>
+                    <li>
+                      Technical <strong>{{ f.technicalScore }}/5</strong>
+                    </li>
                   }
                   @if (f.communicationScore) {
-                    <li>Communication <strong>{{ f.communicationScore }}/5</strong></li>
+                    <li>
+                      Communication <strong>{{ f.communicationScore }}/5</strong>
+                    </li>
                   }
                 </ul>
 

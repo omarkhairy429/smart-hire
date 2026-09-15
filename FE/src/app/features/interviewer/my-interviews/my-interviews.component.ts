@@ -9,7 +9,7 @@ import { InterviewResponse } from '../../../core/models/api.models';
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './my-interviews.component.html',
-  styleUrls: ['./my-interviews.component.css']
+  styleUrls: ['./my-interviews.component.css'],
 })
 export class MyInterviewsComponent implements OnInit {
   interviews: InterviewResponse[] = [];
@@ -18,7 +18,7 @@ export class MyInterviewsComponent implements OnInit {
 
   constructor(
     private interviewService: InterviewService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -32,15 +32,18 @@ export class MyInterviewsComponent implements OnInit {
         this.errorMessage = 'Could not load your interviews.';
         this.isLoading = false;
         this.cdr.markForCheck();
-      }
+      },
     });
   }
 
   formatDateTime(value: string): string {
     if (!value) return '—';
     return new Date(value).toLocaleString('en-US', {
-      year: 'numeric', month: 'short', day: 'numeric',
-      hour: '2-digit', minute: '2-digit'
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   }
 }

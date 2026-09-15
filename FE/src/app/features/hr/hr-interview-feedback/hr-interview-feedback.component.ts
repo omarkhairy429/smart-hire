@@ -15,7 +15,7 @@ interface InterviewWithFeedback {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './hr-interview-feedback.component.html',
-  styleUrls: ['./hr-interview-feedback.component.css']
+  styleUrls: ['./hr-interview-feedback.component.css'],
 })
 export class HrInterviewFeedbackComponent implements OnInit {
   @Input({ required: true }) applicationId!: string;
@@ -29,7 +29,7 @@ export class HrInterviewFeedbackComponent implements OnInit {
 
   constructor(
     private interviewService: InterviewService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -46,9 +46,9 @@ export class HrInterviewFeedbackComponent implements OnInit {
           interviews.map((interview) =>
             this.interviewService.getFeedbackForInterview(interview.id).pipe(
               catchError(() => of([] as FeedbackResponse[])),
-              map((feedback) => ({ interview, feedback }))
-            )
-          )
+              map((feedback) => ({ interview, feedback })),
+            ),
+          ),
         ).subscribe({
           next: (rows) => {
             this.rows = rows;
@@ -59,14 +59,14 @@ export class HrInterviewFeedbackComponent implements OnInit {
             this.errorMessage = 'Could not load feedback.';
             this.isLoading = false;
             this.cdr.markForCheck();
-          }
+          },
         });
       },
       error: () => {
         this.errorMessage = 'Could not load interviews for this application.';
         this.isLoading = false;
         this.cdr.markForCheck();
-      }
+      },
     });
   }
 
@@ -77,16 +77,22 @@ export class HrInterviewFeedbackComponent implements OnInit {
   formatDateTime(value: string): string {
     if (!value) return '—';
     return new Date(value).toLocaleString('en-US', {
-      year: 'numeric', month: 'short', day: 'numeric',
-      hour: '2-digit', minute: '2-digit'
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   }
 
   recommendationClass(recommendation: string): string {
     switch (recommendation) {
-      case 'PROCEED': return 'rec-proceed';
-      case 'REJECT': return 'rec-reject';
-      default: return 'rec-hold';
+      case 'PROCEED':
+        return 'rec-proceed';
+      case 'REJECT':
+        return 'rec-reject';
+      default:
+        return 'rec-hold';
     }
   }
 }

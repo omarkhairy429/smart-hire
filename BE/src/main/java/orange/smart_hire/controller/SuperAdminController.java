@@ -57,6 +57,7 @@ public class SuperAdminController {
             @RequestParam(defaultValue = "20") int size) {
         return auditLogService.findAll(action, PageRequest.of(page, size));
     }
+
     @GetMapping("/stats")
     public PlatformStatsResponse getPlatformStats() {
         return superAdminService.getPlatformStats();

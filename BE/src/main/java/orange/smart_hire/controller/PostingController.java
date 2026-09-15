@@ -10,6 +10,7 @@ import orange.smart_hire.service.PostingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -66,6 +67,7 @@ public class PostingController {
     public PostingResponse getPublishedPostingById(@PathVariable UUID id) {
         return postingService.getPublishedPostingById(id);
     }
+
     @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
     @PostMapping("/drafts")
     public PostingResponse createDraft(@RequestBody PostingRequest request) {
@@ -77,16 +79,19 @@ public class PostingController {
     public PostingResponse updateDraft(@PathVariable UUID id, @RequestBody PostingRequest request) {
         return postingService.updateDraft(id, request);
     }
+
     @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
     @PatchMapping("/{id}/publish")
     public PostingResponse publish(@PathVariable UUID id) {
         return postingService.publish(id);
     }
+
     @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
     @PatchMapping("/{id}/close")
     public PostingResponse close(@PathVariable UUID id) {
         return postingService.close(id);
     }
+
     @GetMapping("/published")
     public List<PostingResponse> getPublishedPostings() {
         return postingService.getPublishedPostings();
@@ -101,7 +106,7 @@ public class PostingController {
 
     @GetMapping("/{postingId}/pipeline")
     @PreAuthorize("hasAnyRole('HR_MANAGER', 'SUPER_ADMIN')")
-    public ResponseEntity<List<PipelineResponse>> getPipeline (@PathVariable UUID postingId){
+    public ResponseEntity<List<PipelineResponse>> getPipeline(@PathVariable UUID postingId) {
         return ResponseEntity.ok(applicationService.getPipeline(postingId));
     }
 

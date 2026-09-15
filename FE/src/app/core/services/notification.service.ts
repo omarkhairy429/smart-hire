@@ -6,75 +6,46 @@ import { switchMap } from 'rxjs/operators';
 import { Notification } from '../models/notification.model';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root',
 })
 export class NotificationService {
+  private readonly apiUrl = '/api/notifications';
 
-    private readonly apiUrl = '/api/notifications';
+  private unreadCountSubject = new BehaviorSubject<number>(0);
 
-    private unreadCountSubject =
-        new BehaviorSubject<number>(0);
+  unreadCount$ = this.unreadCountSubject.asObservable();
 
-    unreadCount$ =
-        this.unreadCountSubject.asObservable();
+  constructor(private http: HttpClient) {}
 
-    constructor(private http: HttpClient) { }
+  getNotifications(): Observable<Notification[]> {
+    return this.http.get<Notification[]>(this.apiUrl);
+  }
 
+  getUnreadCount(): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/unread-count`);
+  }
 
-    getNotifications(): Observable<Notification[]> {
+  markAsRead(id: string): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/${id}/read`, {});
+  }
 
-        return this.http.get<Notification[]>(
-            this.apiUrl
-        );
-    }
+  markAllAsRead(): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/read-all`, {});
+  }
 
+  startPolling(): Observable<number> {
+    return timer(0, 30000).pipe(switchMap(() => this.getUnreadCount()));
+  }
 
-    getUnreadCount(): Observable<number> {
+  updateUnreadCount(count: number): void {
+    this.unreadCountSubject.next(count);
+  }
 
-        return this.http.get<number>(
-            `${this.apiUrl}/unread-count`
-        );
-    }
-
-
-    markAsRead(id: string): Observable<void> {
-
-        return this.http.patch<void>(
-            `${this.apiUrl}/${id}/read`,
-            {}
-        );
-    }
-
-
-    markAllAsRead(): Observable<void> {
-
-        return this.http.patch<void>(
-            `${this.apiUrl}/read-all`,
-            {}
-        );
-    }
-
-
-    startPolling(): Observable<number> {
-
-        return timer(0, 30000).pipe(
-            switchMap(() => this.getUnreadCount())
-        );
-    }
-
-
-    updateUnreadCount(count: number): void {
-
-        this.unreadCountSubject.next(count);
-    }
-
-
-    refreshUnreadCount(): void {
-
-        this.getUnreadCount().subscribe({
-            next: count => {
-                this.updateUnreadCount(count);
-            }
-        });
-    }
+  refreshUnreadCount(): void {
+    this.getUnreadCount().subscribe({
+      next: (count) => {
+        this.updateUnreadCount(count);
+      },
+    });
+  }
 }

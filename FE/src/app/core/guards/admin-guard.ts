@@ -8,10 +8,10 @@ export const adminGuard: CanActivateFn = (route, state) => {
   if (userStr) {
     const user = JSON.parse(userStr);
     if (user.role === 'SUPER_ADMIN') {
-      return true; 
+      return true;
     }
   }
 
   router.navigate(['/']);
-  return false; 
+  return false;
 };

@@ -20,7 +20,7 @@ Feature: HR Interview Scheduling
     Given an application exists with ID "11111111-1111-1111-1111-111111111111"
     And an interviewer exists with ID "22222222-2222-2222-2222-222222222222"
     When the HR Manager schedules a "VIDEO" interview without providing a meeting link
-    Then the interview action should fail with a bad-request error "Meeting link is required for VIDEO and PHONE interviews"
+    Then the interview action should fail with a bad-request error "Meeting link is required for VIDEO interviews"
 
   @hr @interviews
   Scenario: HR Manager cancels an interview

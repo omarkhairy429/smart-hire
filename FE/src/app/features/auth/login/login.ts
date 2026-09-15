@@ -8,7 +8,7 @@ import { AuthService } from '../../../core/services/auth.service';
   standalone: true,
   imports: [RouterLink, ReactiveFormsModule],
   templateUrl: './login.html',
-  styleUrls: ['./login.css']
+  styleUrls: ['./login.css'],
 })
 export class LoginComponent {
   loginForm: FormGroup;
@@ -19,11 +19,11 @@ export class LoginComponent {
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
     });
   }
 
@@ -49,7 +49,7 @@ export class LoginComponent {
         error: (err) => {
           this.errorMessage = err?.error?.message || 'Invalid email or password.';
           this.cdr.markForCheck();
-        }
+        },
       });
     }
   }

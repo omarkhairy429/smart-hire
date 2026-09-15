@@ -52,6 +52,7 @@ public class HrInterviewsSteps {
     @Before("@interviews")
     public void setUp() {
         Mockito.reset(interviewRepository, applicationRepository, userRepository, notificationService);
+        interviewResponse = null;
         thrownException = null;
     }
 
