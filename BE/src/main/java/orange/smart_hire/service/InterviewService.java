@@ -48,6 +48,28 @@ public class InterviewService {
         this.notificationService = notificationService;
     }
 
+    private static Interview getInterview(ScheduleInterviewRequest request, Application application, User interviewer) {
+        Interview interview = new Interview();
+
+        interview.setApplicationId(application.getId());
+        interview.setInterviewerId(interviewer.getId());
+        interview.setScheduledAt(request.getScheduledAt());
+        interview.setFormat(request.getFormat());
+
+        interview.setLocation(
+                request.getFormat() == InterviewFormat.IN_PERSON
+                        ? request.getLocation().trim()
+                        : null
+        );
+
+        interview.setMeetingLink(
+                request.getFormat() == InterviewFormat.VIDEO
+                        ? request.getMeetingLink().trim()
+                        : null
+        );
+        return interview;
+    }
+
     public InterviewResponse schedule(UUID applicationId, ScheduleInterviewRequest request) {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
@@ -100,29 +122,6 @@ public class InterviewService {
 
         return mapToResponse(saved);
     }
-
-    private static Interview getInterview(ScheduleInterviewRequest request, Application application, User interviewer) {
-        Interview interview = new Interview();
-
-        interview.setApplicationId(application.getId());
-        interview.setInterviewerId(interviewer.getId());
-        interview.setScheduledAt(request.getScheduledAt());
-        interview.setFormat(request.getFormat());
-
-        interview.setLocation(
-                request.getFormat() == InterviewFormat.IN_PERSON
-                        ? request.getLocation().trim()
-                        : null
-        );
-
-        interview.setMeetingLink(
-                request.getFormat() == InterviewFormat.VIDEO
-                        ? request.getMeetingLink().trim()
-                        : null
-        );
-        return interview;
-    }
-
 
     public void cancel(UUID interviewId) {
         Interview interview = interviewRepository.findById(interviewId)

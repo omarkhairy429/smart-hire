@@ -44,7 +44,9 @@
   margin-bottom: 0.3rem;
 }
 
-.intro { color: var(--text-muted); }
+.intro {
+  color: var(--text-muted);
+}
 
 .btn-secondary-outline {
   display: inline-flex;
@@ -72,7 +74,9 @@
 }
 
 @media (max-width: 900px) {
-  .workspace-grid { grid-template-columns: 1fr; }
+  .workspace-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* CREATE PANEL */
@@ -144,7 +148,9 @@ form select {
   font-size: 0.95rem;
   font-family: 'Inter', sans-serif;
   background: var(--bg-main);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
   width: 100%;
 }
 
@@ -208,7 +214,9 @@ form small {
   gap: 1rem;
 }
 
-.list-heading { margin-bottom: 0.25rem; }
+.list-heading {
+  margin-bottom: 0.25rem;
+}
 
 .count-badge {
   background: var(--accent-blue);
@@ -242,9 +250,17 @@ form small {
   animation: spin 0.7s linear infinite;
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
-.posting-list { display: flex; flex-direction: column; gap: 1rem; }
+.posting-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 
 .posting-card {
   background: var(--white);
@@ -252,7 +268,9 @@ form small {
   padding: 1.25rem 1.5rem;
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-color);
-  transition: box-shadow 0.2s, transform 0.2s;
+  transition:
+    box-shadow 0.2s,
+    transform 0.2s;
 }
 
 .posting-card:hover {
@@ -278,9 +296,18 @@ form small {
   letter-spacing: 0.05em;
 }
 
-.posting-status.published { background: #d1fae5; color: #065f46; }
-.posting-status.draft { background: #fef9c3; color: #854d0e; }
-.posting-status.closed { background: #fee2e2; color: #991b1b; }
+.posting-status.published {
+  background: #d1fae5;
+  color: #065f46;
+}
+.posting-status.draft {
+  background: #fef9c3;
+  color: #854d0e;
+}
+.posting-status.closed {
+  background: #fee2e2;
+  color: #991b1b;
+}
 
 .posting-card h3 {
   font-size: 1rem;

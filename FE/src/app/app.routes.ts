@@ -43,10 +43,17 @@ export const routes: Routes = [
   { path: 'my-applications', component: MyApplicationsComponent, canActivate: [authGuard] },
 
   // Interviewer only
-  { path: 'interviewer/my-interviews', component: MyInterviewsComponent, canActivate: [interviewerGuard] },
-  { path: 'interviewer/interviews/:id', component: CandidateReviewComponent, canActivate: [interviewerGuard] },
+  {
+    path: 'interviewer/my-interviews',
+    component: MyInterviewsComponent,
+    canActivate: [interviewerGuard],
+  },
+  {
+    path: 'interviewer/interviews/:id',
+    component: CandidateReviewComponent,
+    canActivate: [interviewerGuard],
+  },
 
   // Fallback
-  { path: '**', redirectTo: '' }
-
+  { path: '**', redirectTo: '' },
 ];

@@ -16,7 +16,13 @@ import { HrInterviewFeedbackComponent } from '../hr-interview-feedback/hr-interv
 @Component({
   selector: 'app-hr-applications',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, HrScheduleInterviewComponent, HrInterviewFeedbackComponent],
+  imports: [
+    CommonModule,
+    RouterLink,
+    FormsModule,
+    HrScheduleInterviewComponent,
+    HrInterviewFeedbackComponent,
+  ],
   templateUrl: './hr-applications.component.html',
   styleUrls: ['./hr-applications.component.css'],
 })
@@ -64,111 +70,66 @@ export class HrApplicationsComponent implements OnInit {
     private notesService: CandidateNotesService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
-  ) { }
+  ) {}
 
   ngOnInit() {
-
-    this.route.queryParams.subscribe(params => {
-
+    this.route.queryParams.subscribe((params) => {
       const applicationId = params['applicationId'];
 
-      const openFeedback =
-        params['openFeedback'] === 'true';
+      const openFeedback = params['openFeedback'] === 'true';
 
-      this.loadPostings(
-        applicationId,
-        openFeedback
-      );
-
+      this.loadPostings(applicationId, openFeedback);
     });
-
   }
 
-  loadPostings(
-    applicationId?: string,
-    openFeedback: boolean = false
-  ) {
-
+  loadPostings(applicationId?: string, openFeedback: boolean = false) {
     this.postingService.getPostingsByCompany().subscribe({
-
       next: (data) => {
-
         this.postings = data;
         this.isLoadingPostings = false;
 
         if (applicationId) {
-
-          this.openApplicationFromNotification(
-            applicationId,
-            openFeedback
-          );
-
+          this.openApplicationFromNotification(applicationId, openFeedback);
         }
 
         this.cdr.markForCheck();
       },
 
       error: () => {
-
-        this.errorMessage =
-          'Could not load postings.';
+        this.errorMessage = 'Could not load postings.';
 
         this.isLoadingPostings = false;
 
         this.cdr.markForCheck();
       },
-
     });
-
   }
 
   private openApplicationFromNotification(
     applicationId: string,
-    openFeedback: boolean = false
+    openFeedback: boolean = false,
   ): void {
+    this.applicationService.getApplicationById(applicationId).subscribe({
+      next: (app) => {
+        const posting = this.postings.find((posting) => posting.id === app.postingId);
 
-    this.applicationService
-      .getApplicationById(applicationId)
-      .subscribe({
+        if (!posting) {
+          console.error('Posting not found for application:', applicationId);
 
-        next: (app) => {
-
-          const posting = this.postings.find(
-            posting => posting.id === app.postingId
-          );
-
-          if (!posting) {
-
-            console.error(
-              'Posting not found for application:',
-              applicationId
-            );
-
-            return;
-          }
-
-          this.selectedPostingId = posting.id;
-
-          this.selectedPostingTitle = posting.title;
-
-          this.loadApplications(
-            applicationId,
-            openFeedback
-          );
-
-        },
-
-        error: (err) => {
-
-          console.error(
-            'Failed to open application from notification:',
-            err
-          );
-
+          return;
         }
 
-      });
+        this.selectedPostingId = posting.id;
 
+        this.selectedPostingTitle = posting.title;
+
+        this.loadApplications(applicationId, openFeedback);
+      },
+
+      error: (err) => {
+        console.error('Failed to open application from notification:', err);
+      },
+    });
   }
 
   onPostingSelect() {
@@ -184,11 +145,7 @@ export class HrApplicationsComponent implements OnInit {
     this.loadApplications();
   }
 
-  loadApplications(
-    applicationId?: string,
-    openFeedbackModal: boolean = false
-  ) {
-
+  loadApplications(applicationId?: string, openFeedbackModal: boolean = false) {
     if (!this.selectedPostingId) {
       return;
     }
@@ -197,59 +154,40 @@ export class HrApplicationsComponent implements OnInit {
     this.errorMessage = '';
 
     this.applicationService
-      .getApplicationsForPosting(
-        this.selectedPostingId,
-        {
-          stage: this.stageFilter,
-          sort: this.sortBy,
-          dir: this.sortDir,
-        }
-      )
+      .getApplicationsForPosting(this.selectedPostingId, {
+        stage: this.stageFilter,
+        sort: this.sortBy,
+        dir: this.sortDir,
+      })
       .subscribe({
-
         next: (apps) => {
-
           this.applications = apps;
 
           this.isLoadingApps = false;
 
           if (applicationId) {
-
-            const app = apps.find(
-              a => a.id === applicationId
-            );
+            const app = apps.find((a) => a.id === applicationId);
 
             if (app) {
-
               this.selectedApplicationId = app.id;
 
               if (openFeedbackModal) {
-
                 this.openFeedback(app);
-
               }
-
             }
-
           }
 
           this.cdr.markForCheck();
-
         },
 
         error: () => {
-
-          this.errorMessage =
-            'Could not load applications for this posting.';
+          this.errorMessage = 'Could not load applications for this posting.';
 
           this.isLoadingApps = false;
 
           this.cdr.markForCheck();
-
         },
-
       });
-
   }
 
   onFilterChange() {

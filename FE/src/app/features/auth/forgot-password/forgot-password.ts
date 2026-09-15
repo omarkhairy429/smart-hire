@@ -8,7 +8,7 @@ import { AuthService } from '../../../core/services/auth.service';
   standalone: true,
   imports: [RouterLink, ReactiveFormsModule],
   templateUrl: './forgot-password.html',
-  styleUrls: ['./forgot-password.css']
+  styleUrls: ['./forgot-password.css'],
 })
 export class ForgotPasswordComponent {
   forgotForm: FormGroup;
@@ -16,9 +16,12 @@ export class ForgotPasswordComponent {
   successMessage = '';
   loading = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+  ) {
     this.forgotForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, Validators.email]],
     });
   }
 
@@ -40,7 +43,7 @@ export class ForgotPasswordComponent {
       error: (err) => {
         this.loading = false;
         this.errorMessage = this.resolveError(err);
-      }
+      },
     });
   }
 

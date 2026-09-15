@@ -30,19 +30,27 @@ public class InterviewFeedback {
     @Column(name = "interviewer_id", nullable = false)
     private UUID interviewerId;
 
-    /** Overall rating 1–5 */
+    /**
+     * Overall rating 1–5
+     */
     @Column(columnDefinition = "INT CHECK (rating BETWEEN 1 AND 5)")
     private Integer rating;
 
-    /** Technical skills score 1–5 */
+    /**
+     * Technical skills score 1–5
+     */
     @Column(name = "technical_score")
     private Integer technicalScore;
 
-    /** Communication skills score 1–5 */
+    /**
+     * Communication skills score 1–5
+     */
     @Column(name = "communication_score")
     private Integer communicationScore;
 
-    /** Recommendation: PROCEED, HOLD, or REJECT */
+    /**
+     * Recommendation: PROCEED, HOLD, or REJECT
+     */
     @Enumerated(EnumType.STRING)
     @Column(length = 30)
     private FeedbackRecommendation recommendation;

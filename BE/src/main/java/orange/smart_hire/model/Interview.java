@@ -29,7 +29,9 @@ public class Interview {
     @Column(name = "scheduled_at", nullable = false)
     private LocalDateTime scheduledAt;
 
-    /** Format of the interview: IN_PERSON, VIDEO, or PHONE */
+    /**
+     * Format of the interview: IN_PERSON, VIDEO, or PHONE
+     */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private InterviewFormat format = InterviewFormat.VIDEO;

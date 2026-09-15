@@ -23,13 +23,15 @@
 .back-link {
   display: inline-block;
   margin-bottom: 1rem;
-  color: rgba(255,255,255,0.8);
+  color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
   font-size: 0.9rem;
   transition: color 0.2s;
 }
 
-.back-link:hover { color: var(--white); }
+.back-link:hover {
+  color: var(--white);
+}
 
 .job-banner-content h1 {
   font-size: 1.75rem;
@@ -43,7 +45,7 @@
 }
 
 .job-meta .badge {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   padding: 0.2rem 0.65rem;
   border-radius: 999px;
   font-size: 0.8rem;
@@ -103,8 +105,14 @@
   color: var(--text-main);
 }
 
-.required { color: #dc2626; }
-.optional { color: var(--text-muted); font-weight: 400; font-size: 0.8rem; }
+.required {
+  color: #dc2626;
+}
+.optional {
+  color: var(--text-muted);
+  font-weight: 400;
+  font-size: 0.8rem;
+}
 
 .field-group input,
 .field-group textarea {
@@ -114,7 +122,9 @@
   font-size: 0.95rem;
   font-family: 'Inter', sans-serif;
   background: var(--bg-main);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
   resize: vertical;
 }
 
@@ -175,4 +185,6 @@
   color: var(--text-muted);
 }
 
-.error-page p { margin-bottom: 1.5rem; }
+.error-page p {
+  margin-bottom: 1.5rem;
+}

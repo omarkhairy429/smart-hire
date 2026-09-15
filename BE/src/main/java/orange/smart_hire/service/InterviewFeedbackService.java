@@ -5,15 +5,10 @@ import orange.smart_hire.dto.SubmitFeedbackRequest;
 import orange.smart_hire.enums.NotificationType;
 import orange.smart_hire.exception.ForbiddenException;
 import orange.smart_hire.exception.ResourceNotFoundException;
-import orange.smart_hire.model.Application;
 import orange.smart_hire.model.Interview;
 import orange.smart_hire.model.InterviewFeedback;
 import orange.smart_hire.model.Posting;
-import orange.smart_hire.repository.ApplicationRepository;
-import orange.smart_hire.repository.InterviewFeedbackRepository;
-import orange.smart_hire.repository.InterviewRepository;
-import orange.smart_hire.repository.PostingRepository;
-import orange.smart_hire.repository.UserRepository;
+import orange.smart_hire.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,29 +65,29 @@ public class InterviewFeedbackService {
     }
 
     private void notifyHiringManager(UUID interviewId, UUID interviewerId) {
-    interviewRepository.findById(interviewId)
-            .flatMap(interview ->
-                    applicationRepository.findById(interview.getApplicationId())
-            )
-            .ifPresent(application -> {
+        interviewRepository.findById(interviewId)
+                .flatMap(interview ->
+                        applicationRepository.findById(interview.getApplicationId())
+                )
+                .ifPresent(application -> {
 
-                postingRepository.findById(application.getPostingId())
-                        .map(Posting::getHrManager)
-                        .ifPresent(hrManager -> {
+                    postingRepository.findById(application.getPostingId())
+                            .map(Posting::getHrManager)
+                            .ifPresent(hrManager -> {
 
-                            String interviewerName = userRepository.findById(interviewerId)
-                                    .map(u -> u.getFirstName() + " " + u.getLastName())
-                                    .orElse("An interviewer");
+                                String interviewerName = userRepository.findById(interviewerId)
+                                        .map(u -> u.getFirstName() + " " + u.getLastName())
+                                        .orElse("An interviewer");
 
-                            notificationService.sendNotification(
-                                    hrManager.getId(),
-                                    NotificationType.FEEDBACK_SUBMITTED,
-                                    "Interview Feedback Submitted",
-                                    interviewerName + " submitted feedback for an interview.",
-                                    application.getId()
-                            );
-                        });
-            });
+                                notificationService.sendNotification(
+                                        hrManager.getId(),
+                                        NotificationType.FEEDBACK_SUBMITTED,
+                                        "Interview Feedback Submitted",
+                                        interviewerName + " submitted feedback for an interview.",
+                                        application.getId()
+                                );
+                            });
+                });
     }
 
     @Transactional(readOnly = true)

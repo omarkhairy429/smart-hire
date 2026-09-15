@@ -10,7 +10,7 @@ import { InterviewService } from '../../../core/services/interview.service';
 import {
   ApplicationResponse,
   ApplicationStage,
-  InterviewResponse
+  InterviewResponse,
 } from '../../../core/models/api.models';
 
 @Component({
@@ -18,10 +18,9 @@ import {
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './my-applications.component.html',
-  styleUrls: ['./my-applications.component.css']
+  styleUrls: ['./my-applications.component.css'],
 })
 export class MyApplicationsComponent implements OnInit {
-
   applications: ApplicationResponse[] = [];
 
   /** Map of applicationId → interview details */
@@ -36,43 +35,35 @@ export class MyApplicationsComponent implements OnInit {
     private applicationService: ApplicationService,
     private interviewService: InterviewService,
     private cdr: ChangeDetectorRef,
-    private route: ActivatedRoute
-  ) { }
+    private route: ActivatedRoute,
+  ) {}
 
   ngOnInit() {
-
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       this.selectedApplicationId = params['applicationId'] ?? null;
     });
 
     forkJoin({
       applications: this.applicationService.getMyApplications(),
 
-      interviews: this.interviewService
-        .getMyInterviewsAsCandidate()
-        .pipe(
-          catchError((err) => {
-            console.warn(
-              '[MyApplications] Could not load candidate interviews:',
-              err
-            );
+      interviews: this.interviewService.getMyInterviewsAsCandidate().pipe(
+        catchError((err) => {
+          console.warn('[MyApplications] Could not load candidate interviews:', err);
 
-            return of([] as InterviewResponse[]);
-          })
-        )
+          return of([] as InterviewResponse[]);
+        }),
+      ),
     }).subscribe({
-
       next: ({ applications, interviews }) => {
-
         this.applications = applications;
 
-        interviews.forEach(iv => {
+        interviews.forEach((iv) => {
           this.interviewMap[iv.applicationId] = iv;
         });
 
         applications
-          .filter(a => a.stage === ApplicationStage.INTERVIEW)
-          .forEach(a => {
+          .filter((a) => a.stage === ApplicationStage.INTERVIEW)
+          .forEach((a) => {
             if (!(a.id in this.interviewMap)) {
               this.interviewMap[a.id] = null;
             }
@@ -87,7 +78,7 @@ export class MyApplicationsComponent implements OnInit {
         this.errorMessage = 'Could not load your applications.';
         this.isLoading = false;
         this.cdr.markForCheck();
-      }
+      },
     });
   }
 
@@ -101,7 +92,7 @@ export class MyApplicationsComponent implements OnInit {
     return new Date(dateStr).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     });
   }
 
@@ -113,7 +104,7 @@ export class MyApplicationsComponent implements OnInit {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   }
 

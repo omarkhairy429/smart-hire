@@ -118,8 +118,10 @@ public class HrApplicationsPipelineSteps {
 
     @Given("there are {int} applications for this posting")
     public void setup_applications_for_posting(int count) {
-        Application app1 = new Application(); app1.setCreatedAt(LocalDateTime.now());
-        Application app2 = new Application(); app2.setCreatedAt(LocalDateTime.now());
+        Application app1 = new Application();
+        app1.setCreatedAt(LocalDateTime.now());
+        Application app2 = new Application();
+        app2.setCreatedAt(LocalDateTime.now());
         when(applicationRepository.findByPostingIdAndOptionalStage(any(), any()))
                 .thenReturn(List.of(app1, app2));
     }

@@ -52,11 +52,15 @@ public class Posting {
 
     private String location;
 
-    /** Department name e.g. Engineering, Marketing */
+    /**
+     * Department name e.g. Engineering, Marketing
+     */
     @Column(length = 255)
     private String department;
 
-    /** Employment type e.g. FULL_TIME, PART_TIME, CONTRACT */
+    /**
+     * Employment type e.g. FULL_TIME, PART_TIME, CONTRACT
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "employment_type", length = 50)
     private EmploymentType employmentType;
@@ -74,4 +78,4 @@ public class Posting {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
-}
+}

@@ -9,14 +9,14 @@ import {
   DossierResponse,
   InterviewResponse,
   ScheduleInterviewRequest,
-  StaffResponse
+  StaffResponse,
 } from '../models/api.models';
 
 @Injectable({ providedIn: 'root' })
 export class InterviewService {
   private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   /** HR: staff who can be assigned to an interview. */
   getInterviewers(): Observable<StaffResponse[]> {
@@ -25,11 +25,11 @@ export class InterviewService {
 
   scheduleInterview(
     applicationId: string,
-    req: ScheduleInterviewRequest
+    req: ScheduleInterviewRequest,
   ): Observable<InterviewResponse> {
     return this.http.post<InterviewResponse>(
       `${this.apiUrl}/applications/${applicationId}/interviews`,
-      req
+      req,
     );
   }
 
@@ -41,18 +41,14 @@ export class InterviewService {
       format: string;
       location?: string;
       meetingLink?: string;
-    }
+    },
   ): Observable<InterviewResponse> {
-
-    return this.http.put<InterviewResponse>(
-      `/api/interviews/${interviewId}`,
-      data
-    );
+    return this.http.put<InterviewResponse>(`/api/interviews/${interviewId}`, data);
   }
 
   getInterviewsByApplication(applicationId: string): Observable<InterviewResponse[]> {
     return this.http.get<InterviewResponse[]>(
-      `${this.apiUrl}/applications/${applicationId}/interviews`
+      `${this.apiUrl}/applications/${applicationId}/interviews`,
     );
   }
 
@@ -66,17 +62,15 @@ export class InterviewService {
 
   getDossier(interviewId: string): Observable<DossierResponse> {
     return this.http.get<DossierResponse>(
-      `${this.apiUrl}/interviewer/interviews/${interviewId}/dossier`
+      `${this.apiUrl}/interviewer/interviews/${interviewId}/dossier`,
     );
   }
 
   /** Candidate: get the interview scheduled for a specific application. */
   getCandidateInterview(applicationId: string): Observable<InterviewResponse | null> {
-    return this.http.get<InterviewResponse[]>(
-      `${this.apiUrl}/applications/${applicationId}/interviews`
-    ).pipe(
-      map((list: InterviewResponse[]) => (list && list.length > 0 ? list[0] : null))
-    );
+    return this.http
+      .get<InterviewResponse[]>(`${this.apiUrl}/applications/${applicationId}/interviews`)
+      .pipe(map((list: InterviewResponse[]) => (list && list.length > 0 ? list[0] : null)));
   }
 
   /** Candidate: get all interviews for the currently logged-in candidate. */
@@ -87,20 +81,18 @@ export class InterviewService {
   submitFeedback(interviewId: string, req: SubmitFeedbackRequest): Observable<FeedbackResponse> {
     return this.http.post<FeedbackResponse>(
       `${this.apiUrl}/interviewer/interviews/${interviewId}/feedback`,
-      req
+      req,
     );
   }
 
   getMyFeedback(interviewId: string): Observable<FeedbackResponse | null> {
     return this.http.get<FeedbackResponse>(
-      `${this.apiUrl}/interviewer/interviews/${interviewId}/feedback`
+      `${this.apiUrl}/interviewer/interviews/${interviewId}/feedback`,
     );
   }
 
   /** HR / Super Admin: all feedback left on one interview. */
   getFeedbackForInterview(interviewId: string): Observable<FeedbackResponse[]> {
-    return this.http.get<FeedbackResponse[]>(
-      `${this.apiUrl}/interviews/${interviewId}/feedback`
-    );
+    return this.http.get<FeedbackResponse[]>(`${this.apiUrl}/interviews/${interviewId}/feedback`);
   }
 }

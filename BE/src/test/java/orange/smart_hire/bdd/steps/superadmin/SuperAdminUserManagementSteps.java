@@ -18,17 +18,16 @@ import orange.smart_hire.service.EmailService;
 import orange.smart_hire.service.SuperAdminService;
 import org.mockito.Mockito;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import org.springframework.web.server.ResponseStatusException;
+import static org.mockito.Mockito.anyString;
 
 public class SuperAdminUserManagementSteps {
 

@@ -10,7 +10,7 @@ import { InterviewResponse } from '../../../core/models/api.models';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './hr-schedule-interview.component.html',
-  styleUrls: ['./hr-schedule-interview.component.css']
+  styleUrls: ['./hr-schedule-interview.component.css'],
 })
 export class HrScheduleInterviewComponent implements OnInit {
   @Input({ required: true }) applicationId!: string;
@@ -39,8 +39,8 @@ export class HrScheduleInterviewComponent implements OnInit {
 
   constructor(
     private interviewService: InterviewService,
-    private cdr: ChangeDetectorRef
-  ) { }
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit() {
     this.interviewService.getInterviewers().subscribe({
@@ -53,7 +53,7 @@ export class HrScheduleInterviewComponent implements OnInit {
         this.errorMessage = 'Could not load interviewers.';
         this.isLoading = false;
         this.cdr.markForCheck();
-      }
+      },
     });
   }
 
@@ -63,65 +63,49 @@ export class HrScheduleInterviewComponent implements OnInit {
 
   submit() {
     if (!this.interviewerId || !this.scheduledAt || !this.format) {
-      this.errorMessage =
-        'Please fill in the interviewer, date, and interview format.';
+      this.errorMessage = 'Please fill in the interviewer, date, and interview format.';
       return;
     }
 
     // VIDEO → meeting link is required
-    if (
-      this.format === InterviewFormat.VIDEO &&
-      !this.meetingLink.trim()
-    ) {
-      this.errorMessage =
-        'Please provide a meeting link for video interviews.';
+    if (this.format === InterviewFormat.VIDEO && !this.meetingLink.trim()) {
+      this.errorMessage = 'Please provide a meeting link for video interviews.';
       return;
     }
 
     // IN_PERSON → location is required
-    if (
-      this.format === InterviewFormat.IN_PERSON &&
-      !this.location.trim()
-    ) {
-      this.errorMessage =
-        'Please provide a location for in-person interviews.';
+    if (this.format === InterviewFormat.IN_PERSON && !this.location.trim()) {
+      this.errorMessage = 'Please provide a location for in-person interviews.';
       return;
     }
 
     this.isSaving = true;
     this.errorMessage = '';
 
-    this.interviewService.scheduleInterview(this.applicationId, {
-      interviewerId: this.interviewerId,
-      scheduledAt: this.scheduledAt,
-      format: this.format,
+    this.interviewService
+      .scheduleInterview(this.applicationId, {
+        interviewerId: this.interviewerId,
+        scheduledAt: this.scheduledAt,
+        format: this.format,
 
-      location:
-        this.format === InterviewFormat.IN_PERSON
-          ? this.location.trim()
-          : undefined,
+        location: this.format === InterviewFormat.IN_PERSON ? this.location.trim() : undefined,
 
-      meetingLink:
-        this.format === InterviewFormat.VIDEO
-          ? this.meetingLink.trim()
-          : undefined,
+        meetingLink: this.format === InterviewFormat.VIDEO ? this.meetingLink.trim() : undefined,
+      })
+      .subscribe({
+        next: (interview) => {
+          this.isSaving = false;
+          this.scheduled.emit(interview);
+          this.closed.emit();
+        },
 
-    }).subscribe({
-      next: (interview) => {
-        this.isSaving = false;
-        this.scheduled.emit(interview);
-        this.closed.emit();
-      },
+        error: (err) => {
+          this.errorMessage = err?.error?.message ?? 'Could not schedule the interview.';
 
-      error: (err) => {
-        this.errorMessage =
-          err?.error?.message ??
-          'Could not schedule the interview.';
-
-        this.isSaving = false;
-        this.cdr.markForCheck();
-      }
-    });
+          this.isSaving = false;
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   close() {

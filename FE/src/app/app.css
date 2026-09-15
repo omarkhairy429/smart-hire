@@ -54,7 +54,9 @@
   background: var(--accent-blue);
   padding: 0.35rem 0.75rem;
   border-radius: 6px;
-  transition: background 0.2s, transform 0.15s !important;
+  transition:
+    background 0.2s,
+    transform 0.15s !important;
 }
 
 .nav-role-link:hover {
@@ -112,7 +114,9 @@
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-main);
-  transition: border-color 0.2s, background 0.2s;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
 }
 
 .user-menu-btn:hover {
@@ -240,7 +244,6 @@
   transform: translateY(-1px);
 }
 
-
 /* Unread badge */
 
 .notification-badge {
@@ -269,7 +272,6 @@
   border: 2px solid var(--white);
 }
 
-
 /* Notification dropdown */
 
 .notification-dropdown {
@@ -293,7 +295,6 @@
   z-index: 2000;
 }
 
-
 /* Header */
 
 .notification-header {
@@ -314,7 +315,6 @@
 
   color: var(--text-main);
 }
-
 
 /* Mark all button */
 
@@ -337,14 +337,12 @@
   text-decoration: underline;
 }
 
-
 /* Notification list */
 
 .notification-list {
   max-height: 420px;
   overflow-y: auto;
 }
-
 
 /* Individual notification */
 
@@ -370,7 +368,6 @@
   background-color: #f8fafc;
 }
 
-
 /* Unread notification */
 
 .notification-item.unread {
@@ -380,7 +377,6 @@
 .notification-item.unread:hover {
   background-color: #dbeafe;
 }
-
 
 /* Notification content */
 
@@ -408,7 +404,6 @@
   line-height: 1.4;
 }
 
-
 /* Notification time */
 
 .notification-time {
@@ -418,7 +413,6 @@
 
   font-size: 0.7rem;
 }
-
 
 /* Unread dot */
 
@@ -438,7 +432,6 @@
   transform: translateY(-50%);
 }
 
-
 /* Empty state */
 
 .notification-empty {
@@ -450,7 +443,6 @@
 
   font-size: 0.9rem;
 }
-
 
 /* Scrollbar */
 
@@ -467,13 +459,11 @@
   background: transparent;
 }
 
-
 /* ================================
    Responsive Navbar
    ================================ */
 
 @media (max-width: 900px) {
-
   .main-nav {
     padding: 1rem;
   }
@@ -491,9 +481,7 @@
   }
 }
 
-
 @media (max-width: 650px) {
-
   .main-nav {
     flex-wrap: wrap;
     gap: 0.75rem;
