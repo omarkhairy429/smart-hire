@@ -14,9 +14,21 @@
     <section class="card">
       <h3>Interview</h3>
       <p><strong>When:</strong> {{ formatDateTime(dossier.scheduledAt) }}</p>
-      <a [href]="dossier.meetingLink" target="_blank" rel="noopener" class="btn-primary">
-        Join Meeting
-      </a>
+      <p>
+        <strong>Format:</strong>
+        @if (dossier.format === InterviewFormat.VIDEO) {
+          📹 Video Call
+        } @else if (dossier.format === InterviewFormat.PHONE) {
+          📞 Phone Call
+        } @else {
+          🏢 In Person
+        }
+      </p>
+      @if (dossier.format === InterviewFormat.VIDEO && dossier.meetingLink) {
+        <a [href]="dossier.meetingLink" target="_blank" rel="noopener" class="btn-primary">
+          Join Meeting
+        </a>
+      }
     </section>
 
     <section class="card">
