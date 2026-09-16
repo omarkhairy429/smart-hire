@@ -14,7 +14,7 @@
     <section class="card">
       <h3>Interview</h3>
       <p><strong>When:</strong> {{ formatDateTime(dossier.scheduledAt) }}</p>
-      @if (dossier.meetingLink && dossier.format === 'online') {
+      @if (dossier.meetingLink && dossier.format === InterviewFormat.VIDEO) {
         <a [href]="dossier.meetingLink" target="_blank" rel="noopener" class="btn-primary">
           Join Meeting
         </a>

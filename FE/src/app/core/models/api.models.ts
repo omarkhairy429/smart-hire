@@ -1,3 +1,9 @@
+export enum InterviewFormat {
+  IN_PERSON = 'IN_PERSON',
+  VIDEO = 'VIDEO',
+  PHONE = 'PHONE',
+}
+
 export interface PostingResponse {
   id: string;
   hrManagerId: string;
@@ -121,7 +127,7 @@ export interface InterviewResponse {
 export interface DossierResponse {
   interviewId: string;
   scheduledAt: string;
-  format: string;
+  format: InterviewFormat;
   location?: string;
   meetingLink?: string;
   candidateId: string;
