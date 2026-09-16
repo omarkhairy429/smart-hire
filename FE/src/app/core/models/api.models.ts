@@ -108,7 +108,7 @@ export interface InterviewResponse {
   applicationId: string;
   interviewerId: string;
   scheduledAt: string;
-  format: string;
+  format: InterviewFormat;
   location?: string;
   meetingLink?: string;
   createdAt: string;
@@ -121,7 +121,7 @@ export interface InterviewResponse {
 export interface DossierResponse {
   interviewId: string;
   scheduledAt: string;
-  format: string;
+  format: InterviewFormat;
   location?: string;
   meetingLink?: string;
   candidateId: string;

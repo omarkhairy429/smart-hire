@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { InterviewService } from '../../../core/services/interview.service';
-import { InterviewResponse } from '../../../core/models/api.models';
+import { InterviewFormat, InterviewResponse } from '../../../core/models/api.models';
 
 @Component({
   selector: 'app-my-interviews',
@@ -12,6 +12,8 @@ import { InterviewResponse } from '../../../core/models/api.models';
   styleUrls: ['./my-interviews.component.css'],
 })
 export class MyInterviewsComponent implements OnInit {
+  readonly InterviewFormat = InterviewFormat;
+
   interviews: InterviewResponse[] = [];
   isLoading = true;
   errorMessage = '';

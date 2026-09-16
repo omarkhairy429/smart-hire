@@ -7,6 +7,7 @@ import {
   DossierResponse,
   FeedbackRecommendation,
   FeedbackResponse,
+  InterviewFormat,
 } from '../../../core/models/api.models';
 
 @Component({
@@ -17,6 +18,8 @@ import {
   styleUrls: ['./candidate-review.component.css'],
 })
 export class CandidateReviewComponent implements OnInit {
+  readonly InterviewFormat = InterviewFormat;
+
   dossier?: DossierResponse;
   isLoading = true;
   errorMessage = '';
