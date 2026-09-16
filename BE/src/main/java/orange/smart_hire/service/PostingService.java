@@ -5,6 +5,7 @@ import orange.smart_hire.dto.PostingResponse;
 import orange.smart_hire.enums.EmploymentType;
 import orange.smart_hire.enums.LocationType;
 import orange.smart_hire.enums.PostingStatus;
+import orange.smart_hire.enums.UserRole;
 import orange.smart_hire.exception.ForbiddenException;
 import orange.smart_hire.exception.InvalidOperationException;
 import orange.smart_hire.exception.ResourceNotFoundException;
@@ -110,6 +111,9 @@ public class PostingService {
 
     private void assertOwnedByCurrentUser(Posting posting) {
         User currentUser = SecurityUtils.getCurrentUser();
+        if (currentUser.getRole() == UserRole.SUPER_ADMIN) {
+            return; // SuperAdmin can manage any posting
+        }
         if (!posting.getHrManager().getId().equals(currentUser.getId())) {
             throw new ForbiddenException("You are not authorized to modify this posting");
         }
@@ -215,6 +219,12 @@ public class PostingService {
 
     public List<PostingResponse> getMyPostings() {
         User currentUser = SecurityUtils.getCurrentUser();
+        if (currentUser.getRole() == UserRole.SUPER_ADMIN) {
+            return postingRepository.findAll()
+                    .stream()
+                    .map(this::mapToResponse)
+                    .toList();
+        }
         return postingRepository.findByHrManagerId(currentUser.getId())
                 .stream()
                 .map(this::mapToResponse)
@@ -223,6 +233,12 @@ public class PostingService {
 
     public List<PostingResponse> getPostingsByCompany() {
         User currentUser = SecurityUtils.getCurrentUser();
+        if (currentUser.getRole() == UserRole.SUPER_ADMIN) {
+            return postingRepository.findAll()
+                    .stream()
+                    .map(this::mapToResponse)
+                    .toList();
+        }
         String companyName = currentUser.getCompanyName();
 
         return postingRepository.findByCompany(companyName)
