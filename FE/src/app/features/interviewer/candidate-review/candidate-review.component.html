@@ -14,9 +14,21 @@
     <section class="card">
       <h3>Interview</h3>
       <p><strong>When:</strong> {{ formatDateTime(dossier.scheduledAt) }}</p>
-      <a [href]="dossier.meetingLink" target="_blank" rel="noopener" class="btn-primary">
-        Join Meeting
-      </a>
+      <p>
+        <strong>Format:</strong>
+        @if (dossier.format === InterviewFormat.VIDEO) {
+          📹 Video Call
+        } @else if (dossier.format === InterviewFormat.PHONE) {
+          📞 Phone Call
+        } @else {
+          🏢 In Person
+        }
+      </p>
+      @if (dossier.format === InterviewFormat.VIDEO && dossier.meetingLink) {
+        <a [href]="dossier.meetingLink" target="_blank" rel="noopener" class="btn-primary">
+          Join Meeting
+        </a>
+      }
     </section>
 
     <section class="card">
@@ -63,7 +75,8 @@
 
       @if (existingFeedback) {
         <p class="muted feedback-meta">
-          You submitted feedback on {{ formatDateTime(existingFeedback.updatedAt) }}. You can update it below.
+          You submitted feedback on {{ formatDateTime(existingFeedback.updatedAt) }}. You can update
+          it below.
         </p>
       }
 
@@ -86,7 +99,12 @@
 
       <div class="form-group">
         <label for="technicalScore">Technical skills</label>
-        <select id="technicalScore" class="form-control" [(ngModel)]="technicalScore" name="technicalScore">
+        <select
+          id="technicalScore"
+          class="form-control"
+          [(ngModel)]="technicalScore"
+          name="technicalScore"
+        >
           <option [ngValue]="null">Not scored</option>
           @for (s of scores; track s) {
             <option [ngValue]="s">{{ s }} / 5</option>
@@ -96,7 +114,12 @@
 
       <div class="form-group">
         <label for="communicationScore">Communication</label>
-        <select id="communicationScore" class="form-control" [(ngModel)]="communicationScore" name="communicationScore">
+        <select
+          id="communicationScore"
+          class="form-control"
+          [(ngModel)]="communicationScore"
+          name="communicationScore"
+        >
           <option [ngValue]="null">Not scored</option>
           @for (s of scores; track s) {
             <option [ngValue]="s">{{ s }} / 5</option>
@@ -106,7 +129,12 @@
 
       <div class="form-group">
         <label for="recommendation">Recommendation <span class="required-star">*</span></label>
-        <select id="recommendation" class="form-control" [(ngModel)]="recommendation" name="recommendation">
+        <select
+          id="recommendation"
+          class="form-control"
+          [(ngModel)]="recommendation"
+          name="recommendation"
+        >
           <option value="">Select a recommendation</option>
           @for (r of recommendations; track r.value) {
             <option [value]="r.value">{{ r.label }}</option>
@@ -116,13 +144,25 @@
 
       <div class="form-group">
         <label for="comments">Comments</label>
-        <textarea id="comments" class="form-control" rows="4"
-                  [(ngModel)]="comments" name="comments"
-                  placeholder="How did the candidate do?"></textarea>
+        <textarea
+          id="comments"
+          class="form-control"
+          rows="4"
+          [(ngModel)]="comments"
+          name="comments"
+          placeholder="How did the candidate do?"
+        ></textarea>
       </div>
 
-      <button type="button" class="btn-primary" (click)="submitFeedback()" [disabled]="isSavingFeedback">
-        {{ isSavingFeedback ? 'Saving...' : (existingFeedback ? 'Update feedback' : 'Submit feedback') }}
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="submitFeedback()"
+        [disabled]="isSavingFeedback"
+      >
+        {{
+          isSavingFeedback ? 'Saving...' : existingFeedback ? 'Update feedback' : 'Submit feedback'
+        }}
       </button>
     </section>
   }

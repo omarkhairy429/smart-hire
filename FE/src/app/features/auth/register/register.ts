@@ -44,7 +44,9 @@ export class RegisterComponent {
           console.log('Registration successful!', res);
           this.router.navigate(['/jobs']);
         },
-        error: () => {},
+        error: (error) => {
+          console.error('Registration failed', error);
+        },
       });
     }
   }

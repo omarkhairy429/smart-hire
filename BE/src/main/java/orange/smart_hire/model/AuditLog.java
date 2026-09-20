@@ -21,23 +21,33 @@ public class AuditLog {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    /** The user who performed the action (nullable — system actions have no actor) */
+    /**
+     * The user who performed the action (nullable — system actions have no actor)
+     */
     @Column(name = "actor_id")
     private UUID actorId;
 
-    /** Action performed e.g. STAGE_UPDATED, STAFF_DEACTIVATED, STAFF_CREATED */
+    /**
+     * Action performed e.g. STAGE_UPDATED, STAFF_DEACTIVATED, STAFF_CREATED
+     */
     @Column(nullable = false, length = 100)
     private String action;
 
-    /** Type of entity affected e.g. Application, User */
+    /**
+     * Type of entity affected e.g. Application, User
+     */
     @Column(name = "entity_type", length = 60)
     private String entityType;
 
-    /** ID of the affected entity */
+    /**
+     * ID of the affected entity
+     */
     @Column(name = "entity_id")
     private UUID entityId;
 
-    /** Arbitrary JSON payload with before/after or extra context */
+    /**
+     * Arbitrary JSON payload with before/after or extra context
+     */
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private Map<String, Object> details;

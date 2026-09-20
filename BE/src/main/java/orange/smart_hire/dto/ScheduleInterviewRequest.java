@@ -16,7 +16,9 @@ public class ScheduleInterviewRequest {
     @NotNull
     private LocalDateTime scheduledAt;
 
-    /** Format is required: IN_PERSON, VIDEO, or PHONE */
+    /**
+     * Format is required: IN_PERSON, VIDEO, or PHONE
+     */
     @NotNull
     private InterviewFormat format;
 

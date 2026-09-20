@@ -12,7 +12,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       const message = extractMessage(httpError);
       errorService.show(message);
       return throwError(() => httpError);
-    })
+    }),
   );
 };
 
@@ -31,19 +31,24 @@ function extractMessage(httpError: HttpErrorResponse): string {
       try {
         const parsed: ApiError = JSON.parse(body);
         if (parsed?.message) return parsed.message;
-      } catch {
-      }
+      } catch {}
     }
   }
 
   switch (httpError.status) {
-    case 400: return 'Invalid request. Please check your input.';
-    case 401: return 'Session expired. Please log in again.';
-    case 403: return 'You do not have permission to perform this action.';
-    case 404: return 'The requested resource was not found.';
-    case 409: return 'This resource already exists.';
-    default:  return httpError.status >= 500
-      ? 'A server error occurred. Please try again later.'
-      : 'An unexpected error occurred. Please try again.';
+    case 400:
+      return 'Invalid request. Please check your input.';
+    case 401:
+      return 'Session expired. Please log in again.';
+    case 403:
+      return 'You do not have permission to perform this action.';
+    case 404:
+      return 'The requested resource was not found.';
+    case 409:
+      return 'This resource already exists.';
+    default:
+      return httpError.status >= 500
+        ? 'A server error occurred. Please try again later.'
+        : 'An unexpected error occurred. Please try again.';
   }
 }

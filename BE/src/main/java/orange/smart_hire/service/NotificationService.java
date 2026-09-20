@@ -24,7 +24,7 @@ public class NotificationService {
         this.userRepository = userRepository;
     }
 
-    public NotificationResponse sendNotification(
+    public void sendNotification(
             UUID recipientId,
             NotificationType type,
             String title,
@@ -43,7 +43,7 @@ public class NotificationService {
         notification.setRead(false);
 
         Notification saved = notificationRepository.save(notification);
-        return mapToResponse(saved);
+        mapToResponse(saved);
     }
 
     @Transactional(readOnly = true)

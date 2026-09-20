@@ -50,26 +50,26 @@ export class PostingService {
       .pipe(map((res: any) => (Array.isArray(res) ? res : (res?.data ?? res))));
   }
 
-   searchPublicPostings(filters: {
-     keyword?: string;
-     location?: string;
-     locationType?: string;
-     company?: string;
-     department?: string;
-     employmentType?: string;
-   }): Observable<PostingResponse[]> {
-     let params = new HttpParams();
-     if (filters.keyword) params = params.set('keyword', filters.keyword);
-     if (filters.location) params = params.set('location', filters.location);
-     if (filters.locationType) params = params.set('locationType', filters.locationType);
-     if (filters.company) params = params.set('company', filters.company);
-     if (filters.department) params = params.set('department', filters.department);
-     if (filters.employmentType) params = params.set('employmentType', filters.employmentType);
+  searchPublicPostings(filters: {
+    keyword?: string;
+    location?: string;
+    locationType?: string;
+    company?: string;
+    department?: string;
+    employmentType?: string;
+  }): Observable<PostingResponse[]> {
+    let params = new HttpParams();
+    if (filters.keyword) params = params.set('keyword', filters.keyword);
+    if (filters.location) params = params.set('location', filters.location);
+    if (filters.locationType) params = params.set('locationType', filters.locationType);
+    if (filters.company) params = params.set('company', filters.company);
+    if (filters.department) params = params.set('department', filters.department);
+    if (filters.employmentType) params = params.set('employmentType', filters.employmentType);
 
-     return this.http
-       .get<any>(`${environment.apiUrl}/public/postings`, { params })
-       .pipe(map((res: any) => (Array.isArray(res) ? res : (res?.data ?? res))));
-   }
+    return this.http
+      .get<any>(`${environment.apiUrl}/public/postings`, { params })
+      .pipe(map((res: any) => (Array.isArray(res) ? res : (res?.data ?? res))));
+  }
 
   getMyPostings(): Observable<PostingResponse[]> {
     return this.http
@@ -110,11 +110,9 @@ export class PostingService {
   }
 
   getPostingsByCompany(): Observable<PostingResponse[]> {
-    return this.http
-      .get<any>(`${this.apiUrl}/company`)
-      .pipe(
-        tap((res: any) => console.log('[PostingService] getPostingsByCompany raw response:', res)),
-        map((res: any) => (Array.isArray(res) ? res : (res?.data ?? res)))
-      );
+    return this.http.get<any>(`${this.apiUrl}/company`).pipe(
+      tap((res: any) => console.log('[PostingService] getPostingsByCompany raw response:', res)),
+      map((res: any) => (Array.isArray(res) ? res : (res?.data ?? res))),
+    );
   }
 }

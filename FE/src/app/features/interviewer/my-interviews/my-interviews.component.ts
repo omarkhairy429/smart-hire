@@ -2,23 +2,25 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { InterviewService } from '../../../core/services/interview.service';
-import { InterviewResponse } from '../../../core/models/api.models';
+import { InterviewFormat, InterviewResponse } from '../../../core/models/api.models';
 
 @Component({
   selector: 'app-my-interviews',
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './my-interviews.component.html',
-  styleUrls: ['./my-interviews.component.css']
+  styleUrls: ['./my-interviews.component.css'],
 })
 export class MyInterviewsComponent implements OnInit {
+  readonly InterviewFormat = InterviewFormat;
+
   interviews: InterviewResponse[] = [];
   isLoading = true;
   errorMessage = '';
 
   constructor(
     private interviewService: InterviewService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -32,15 +34,18 @@ export class MyInterviewsComponent implements OnInit {
         this.errorMessage = 'Could not load your interviews.';
         this.isLoading = false;
         this.cdr.markForCheck();
-      }
+      },
     });
   }
 
   formatDateTime(value: string): string {
     if (!value) return '—';
     return new Date(value).toLocaleString('en-US', {
-      year: 'numeric', month: 'short', day: 'numeric',
-      hour: '2-digit', minute: '2-digit'
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   }
 }

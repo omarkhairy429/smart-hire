@@ -6,6 +6,7 @@ import orange.smart_hire.dto.PipelineResponse;
 import orange.smart_hire.enums.ApplicationStage;
 import orange.smart_hire.enums.ApplicationStatus;
 import orange.smart_hire.enums.NotificationType;
+import orange.smart_hire.enums.UserRole;
 import orange.smart_hire.exception.CsvExportException;
 import orange.smart_hire.exception.DuplicateResourceException;
 import orange.smart_hire.exception.ForbiddenException;
@@ -14,12 +15,8 @@ import orange.smart_hire.model.Application;
 import orange.smart_hire.model.Posting;
 import orange.smart_hire.model.User;
 import orange.smart_hire.repository.ApplicationRepository;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import org.springframework.http.HttpStatus;
-import orange.smart_hire.repository.UserRepository;
 import orange.smart_hire.repository.PostingRepository;
-import orange.smart_hire.utils.SecurityUtils;
+import orange.smart_hire.repository.UserRepository;
 import orange.smart_hire.utils.SecurityUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -217,14 +214,13 @@ public class ApplicationService {
 
         StringWriter writer = new StringWriter();
         try (CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.builder()
-                .setHeader("Name", "Email", "Stage", "Status", "AppliedAt", "ResumeUrl")
+                .setHeader("Name", "Email", "Stage", "AppliedAt", "ResumeUrl")
                 .build())) {
             for (ApplicationResponse response : responses) {
                 printer.printRecord(
                         response.getCandidateName(),
                         response.getCandidateEmail(),
                         response.getStage(),
-                        response.getStatus(),
                         response.getCreatedAt(),
                         response.getResumeUrl()
                 );
@@ -241,6 +237,12 @@ public class ApplicationService {
                 .orElseThrow(() -> new ResourceNotFoundException("Posting not found"));
 
         User currentUser = SecurityUtils.getCurrentUser();
+
+        // SuperAdmin has no company — they can access any posting
+        if (currentUser.getRole() == UserRole.SUPER_ADMIN) {
+            return posting;
+        }
+
         boolean sameCompany = currentUser.getCompanyName() != null
                 && currentUser.getCompanyName().equalsIgnoreCase(posting.getCompany());
 

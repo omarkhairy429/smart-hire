@@ -4,17 +4,14 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PostingService } from '../../../core/services/postings.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ApplicationService } from '../../../core/services/application.service';
-import {
-  PostingResponse,
-  ApplicationResponse
-} from '../../../core/models/api.models';
+import { PostingResponse, ApplicationResponse } from '../../../core/models/api.models';
 
 @Component({
   selector: 'app-job-detail',
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './job-detail.html',
-  styleUrls: ['./job-detail.css']
+  styleUrls: ['./job-detail.css'],
 })
 export class JobDetailComponent implements OnInit {
   job: PostingResponse | null = null;
@@ -34,8 +31,8 @@ export class JobDetailComponent implements OnInit {
     private postingService: PostingService,
     private authService: AuthService,
     private applicationService: ApplicationService,
-    private cdr: ChangeDetectorRef
-  ) { }
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit() {
     this.isLoggedIn = this.authService.isLoggedIn();
@@ -81,7 +78,7 @@ export class JobDetailComponent implements OnInit {
         this.errorMessage = 'Failed to load job details.';
         this.isLoading = false;
         this.cdr.markForCheck();
-      }
+      },
     });
   }
 
@@ -90,26 +87,19 @@ export class JobDetailComponent implements OnInit {
 
     this.applicationService.getMyApplications().subscribe({
       next: (applications: ApplicationResponse[]) => {
-        this.myApplication =
-          applications.find(app => app.postingId === postingId) ?? null;
+        this.myApplication = applications.find((app) => app.postingId === postingId) ?? null;
 
         this.isCheckingApplication = false;
         this.cdr.markForCheck();
 
-        console.log(
-          '[JobDetail] Application for this job:',
-          this.myApplication
-        );
+        console.log('[JobDetail] Application for this job:', this.myApplication);
       },
       error: (err) => {
-        console.error(
-          '[JobDetail] Failed to load my applications:',
-          err
-        );
+        console.error('[JobDetail] Failed to load my applications:', err);
 
         this.isCheckingApplication = false;
         this.cdr.markForCheck();
-      }
+      },
     });
   }
 
@@ -119,8 +109,8 @@ export class JobDetailComponent implements OnInit {
     if (!this.isLoggedIn) {
       this.router.navigate(['/login'], {
         queryParams: {
-          returnUrl: `/apply/${this.job.id}`
-        }
+          returnUrl: `/apply/${this.job.id}`,
+        },
       });
     } else {
       this.router.navigate(['/apply', this.job.id]);
@@ -128,10 +118,7 @@ export class JobDetailComponent implements OnInit {
   }
 
   get isStaff(): boolean {
-    return (
-      this.userRole === 'HR_MANAGER' ||
-      this.userRole === 'SUPER_ADMIN'
-    );
+    return this.userRole === 'HR_MANAGER' || this.userRole === 'SUPER_ADMIN';
   }
 
   get hasApplied(): boolean {

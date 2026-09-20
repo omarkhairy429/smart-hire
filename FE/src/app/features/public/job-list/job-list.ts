@@ -22,7 +22,10 @@ export class JobListComponent implements OnInit {
   readonly locationTypes = ['REMOTE', 'HYBRID', 'ON_SITE'];
   readonly employmentTypes = ['FULL_TIME', 'PART_TIME', 'CONTRACT', 'INTERNSHIP', 'FREELANCE'];
 
-  constructor(private postingService: PostingService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private postingService: PostingService,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit() {
     this.search();

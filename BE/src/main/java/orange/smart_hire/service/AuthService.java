@@ -1,25 +1,21 @@
 package orange.smart_hire.service;
 
-import orange.smart_hire.dto.AuthResponse;
-import orange.smart_hire.dto.LoginRequest;
-import orange.smart_hire.dto.RegisterRequest;
+import orange.smart_hire.dto.*;
 import orange.smart_hire.enums.UserRole;
 import orange.smart_hire.exception.DuplicateResourceException;
 import orange.smart_hire.exception.ResourceNotFoundException;
 import orange.smart_hire.exception.TokenException;
-import orange.smart_hire.model.User;
-import orange.smart_hire.repository.UserRepository;
 import orange.smart_hire.model.CustomUserDetails;
+import orange.smart_hire.model.PasswordResetToken;
+import orange.smart_hire.model.User;
+import orange.smart_hire.repository.PasswordResetTokenRepository;
+import orange.smart_hire.repository.UserRepository;
 import orange.smart_hire.security.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import orange.smart_hire.model.PasswordResetToken;
-import orange.smart_hire.repository.PasswordResetTokenRepository;
-import orange.smart_hire.dto.ForgotPasswordRequest;
-import orange.smart_hire.dto.ResetPasswordRequest;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

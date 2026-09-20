@@ -67,6 +67,22 @@
   margin-top: 0.35rem;
 }
 
+.forgot-link {
+  text-align: right;
+  margin-top: -0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.forgot-link a {
+  font-size: 0.825rem;
+  color: var(--primary-blue);
+  text-decoration: none;
+}
+
+.forgot-link a:hover {
+  text-decoration: underline;
+}
+
 .error-banner {
   background-color: #fef2f2;
   color: #dc2626;
@@ -89,7 +105,9 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s, opacity 0.2s;
+  transition:
+    background-color 0.2s,
+    opacity 0.2s;
 }
 
 .auth-submit:hover:not(:disabled) {

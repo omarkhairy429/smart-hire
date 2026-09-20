@@ -19,6 +19,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     List<User> findByRoleIn(Collection<UserRole> roles);
 
-    /** Find staff by role(s) filtered to a specific company (for tenant isolation). */
+    /**
+     * Find staff by role(s) filtered to a specific company (for tenant isolation).
+     */
     List<User> findByRoleInAndCompanyName(Collection<UserRole> roles, String companyName);
 }

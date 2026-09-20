@@ -27,13 +27,25 @@
             <p class="posting-title">{{ interview.postingTitle }}</p>
           }
 
+          <p class="interview-format">
+            @if (interview.format === InterviewFormat.VIDEO) {
+              📹 Video Call
+            } @else if (interview.format === InterviewFormat.PHONE) {
+              📞 Phone Call
+            } @else {
+              🏢 In Person
+            }
+          </p>
+
           <div class="card-actions">
             <a [routerLink]="['/interviewer/interviews', interview.id]" class="btn-secondary">
               View candidate
             </a>
-            <a [href]="interview.meetingLink" target="_blank" rel="noopener" class="btn-primary">
-              Join Meeting
-            </a>
+            @if (interview.format === InterviewFormat.VIDEO && interview.meetingLink) {
+              <a [href]="interview.meetingLink" target="_blank" rel="noopener" class="btn-primary">
+                Join Meeting
+              </a>
+            }
           </div>
         </div>
       }

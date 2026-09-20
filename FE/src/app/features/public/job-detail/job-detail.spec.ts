@@ -9,7 +9,7 @@ import { PostingResponse } from '../../../core/models/api.models';
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './job-detail.html',
-  styleUrls: ['./job-detail.css']
+  styleUrls: ['./job-detail.css'],
 })
 export class JobDetailComponent implements OnInit {
   job: PostingResponse | null = null;
@@ -18,7 +18,7 @@ export class JobDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private postingService: PostingService
+    private postingService: PostingService,
   ) {}
 
   ngOnInit() {
@@ -33,7 +33,7 @@ export class JobDetailComponent implements OnInit {
           console.error('Error fetching job details', err);
           this.errorMessage = 'Failed to load job details. The backend might have thrown an error.';
           this.isLoading = false;
-        }
+        },
       });
     } else {
       this.errorMessage = 'No Job ID found in the URL.';

@@ -6,7 +6,8 @@ import { InterviewService } from '../../../core/services/interview.service';
 import {
   DossierResponse,
   FeedbackRecommendation,
-  FeedbackResponse
+  FeedbackResponse,
+  InterviewFormat,
 } from '../../../core/models/api.models';
 
 @Component({
@@ -14,9 +15,11 @@ import {
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './candidate-review.component.html',
-  styleUrls: ['./candidate-review.component.css']
+  styleUrls: ['./candidate-review.component.css'],
 })
 export class CandidateReviewComponent implements OnInit {
+  readonly InterviewFormat = InterviewFormat;
+
   dossier?: DossierResponse;
   isLoading = true;
   errorMessage = '';
@@ -33,7 +36,7 @@ export class CandidateReviewComponent implements OnInit {
   recommendations = [
     { value: FeedbackRecommendation.PROCEED, label: 'Proceed' },
     { value: FeedbackRecommendation.HOLD, label: 'Hold' },
-    { value: FeedbackRecommendation.REJECT, label: 'Reject' }
+    { value: FeedbackRecommendation.REJECT, label: 'Reject' },
   ];
 
   existingFeedback?: FeedbackResponse;
@@ -44,7 +47,7 @@ export class CandidateReviewComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private interviewService: InterviewService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -65,28 +68,40 @@ export class CandidateReviewComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (err) => {
-        this.errorMessage = err?.status === 403
-          ? 'This interview is not assigned to you.'
-          : 'Could not load the candidate details.';
+        this.errorMessage =
+          err?.status === 403
+            ? 'This interview is not assigned to you.'
+            : 'Could not load the candidate details.';
         this.isLoading = false;
         this.cdr.markForCheck();
-      }
+      },
     });
   }
 
-  /** A 404 here just means no feedback has been left yet. */
   private loadFeedback(interviewId: string) {
     this.interviewService.getMyFeedback(interviewId).subscribe({
       next: (feedback) => {
-        this.existingFeedback = feedback;
+        this.existingFeedback = feedback ?? undefined;
+
+        if (!feedback) {
+          this.rating = null;
+          this.technicalScore = null;
+          this.communicationScore = null;
+          this.recommendation = '';
+          this.comments = '';
+          this.cdr.markForCheck();
+          return;
+        }
+
         this.rating = feedback.rating;
         this.technicalScore = feedback.technicalScore ?? null;
         this.communicationScore = feedback.communicationScore ?? null;
         this.recommendation = feedback.recommendation;
         this.comments = feedback.comments ?? '';
+
         this.cdr.markForCheck();
       },
-      error: () => {}
+      error: () => {},
     });
   }
 
@@ -100,34 +115,40 @@ export class CandidateReviewComponent implements OnInit {
     this.feedbackError = '';
     this.feedbackSaved = false;
 
-    this.interviewService.submitFeedback(this.interviewId, {
-      rating: this.rating,
-      technicalScore: this.technicalScore,
-      communicationScore: this.communicationScore,
-      recommendation: this.recommendation as FeedbackRecommendation,
-      comments: this.comments.trim()
-    }).subscribe({
-      next: (feedback) => {
-        this.existingFeedback = feedback;
-        this.isSavingFeedback = false;
-        this.feedbackSaved = true;
-        this.cdr.markForCheck();
-      },
-      error: (err) => {
-        this.feedbackError = err?.status === 403
-          ? 'This interview is not assigned to you.'
-          : 'Could not save your feedback.';
-        this.isSavingFeedback = false;
-        this.cdr.markForCheck();
-      }
-    });
+    this.interviewService
+      .submitFeedback(this.interviewId, {
+        rating: this.rating,
+        technicalScore: this.technicalScore,
+        communicationScore: this.communicationScore,
+        recommendation: this.recommendation as FeedbackRecommendation,
+        comments: this.comments.trim(),
+      })
+      .subscribe({
+        next: (feedback) => {
+          this.existingFeedback = feedback;
+          this.isSavingFeedback = false;
+          this.feedbackSaved = true;
+          this.cdr.markForCheck();
+        },
+        error: (err) => {
+          this.feedbackError =
+            err?.status === 403
+              ? 'This interview is not assigned to you.'
+              : 'Could not save your feedback.';
+          this.isSavingFeedback = false;
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   formatDateTime(value: string): string {
     if (!value) return '—';
     return new Date(value).toLocaleString('en-US', {
-      year: 'numeric', month: 'short', day: 'numeric',
-      hour: '2-digit', minute: '2-digit'
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   }
 }

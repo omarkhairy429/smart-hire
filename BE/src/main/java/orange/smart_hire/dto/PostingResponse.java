@@ -29,6 +29,7 @@ public class PostingResponse {
     private Instant createdAt;
     private Instant updatedAt;
 
-    public PostingResponse() {}
+    public PostingResponse() {
+    }
 
 }
